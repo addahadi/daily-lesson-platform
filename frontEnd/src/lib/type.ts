@@ -1,0 +1,57 @@
+
+
+
+
+
+export interface CourseCardProps  {
+    title : string
+    category : string
+    level : string 
+    guest? : boolean
+    img_url : string
+    slug : string
+    content : string[]
+}
+
+
+export interface ModuleCardProps {
+  title: string;
+  created_at: string;
+  order_index: string;
+  module_id: string;
+}
+
+
+export type LessonSectionProps  = {
+  text : string 
+  heading : string
+} | {
+  code : string 
+  heading : string
+} | {
+  bullets : string[]
+  heading : string
+}
+
+
+
+export interface LessonCardProps {
+  lesson_id: string;
+  title: string;
+  lesson_slug: string;
+  duration_minutes: string;
+  level: string;
+}
+
+
+
+export interface CourseProps extends CourseCardProps{
+    description : string , 
+    id : string, 
+    total : string
+}
+
+export interface ToastProps {
+    type: "success" | "error" | "info";
+    message: string;
+}
