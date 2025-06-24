@@ -1,6 +1,5 @@
 
 
-import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -147,7 +146,7 @@ const Dashboard = () => {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 overflow-auto bg-gray-50 p-6">
+        <main className="flex-1 overflow-auto bg-gray-50 ">
           <Outlet />
         </main>
       </div>

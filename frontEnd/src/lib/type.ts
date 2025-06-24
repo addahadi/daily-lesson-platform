@@ -21,7 +21,6 @@ export interface ModuleCardProps {
   module_id: string;
 }
 
-
 export type LessonSectionProps  = {
   text : string 
   heading : string
@@ -41,9 +40,16 @@ export interface LessonCardProps {
   lesson_slug: string;
   duration_minutes: string;
   level: string;
+  order_index? : string
 }
 
 
+export type Lesson = Pick<LessonCardProps, "title" | "order_index"> & {slug : string};
+
+export interface LessonBarProps {
+  course: Pick<CourseCardProps, "title" | "slug">;
+  modules: Array<ModuleCardProps & { lessons: Lesson[] }>;
+}
 
 export interface CourseProps extends CourseCardProps{
     description : string , 

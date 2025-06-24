@@ -68,6 +68,7 @@ export function CourseApiController(){
         console.log(err);
       }
     }
+
     return {
         getAllCourses ,
         getCourseBySlug , 

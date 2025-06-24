@@ -16,7 +16,6 @@ export const userApiController = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log(data)
                 return data;
             }
         }
@@ -24,7 +23,40 @@ export const userApiController = () => {
             console.error('Error enrolling to course:', error);
         }
     }
+
+    const checkEnroll = async (courseId : string , userId : string) => {
+        try {
+            const response = await fetch(`http://localhost:8090/auth/checkenroll?courseId=${courseId}&userId=${userId}`, {
+                method: 'GET',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                return data;
+            }
+        }
+        catch (error) {
+            console.error('Error enrolling to course:', error);
+        }
+    }
+    const getEnroll = async (courseId : string , userId : string) => {
+        try {
+          const response = await fetch(
+            `http://localhost:8090/auth/getenroll?courseId=${courseId}&userId=${userId}`,
+            {
+              method: "GET",
+            }
+          );
+          if (response.ok) {
+            const data = await response.json();
+            return data;
+          }
+        } catch (error) {
+          console.error("Error enrolling to course:", error);
+        }
+    }
     return {
-        EnrollToCourse
+        EnrollToCourse,
+        checkEnroll,
+        getEnroll
     }
 }
