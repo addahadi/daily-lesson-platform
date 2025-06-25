@@ -2,9 +2,12 @@ import { lessonApiController } from "@/Api/lesson.Api";
 import LessonBar from "@/components/component/Lesson/LessonBar";
 import LessonBullet from "@/components/component/Lesson/LessonBullet";
 import LessonCode from "@/components/component/Lesson/LessonCode";
+import LessonQuizz from "@/components/component/Lesson/LessonQuizz";
+import LessonSummary from "@/components/component/Lesson/LessonSummary";
 import LessonText from "@/components/component/Lesson/LessonText";
 import { Button } from "@/components/ui/button";
 import useEnroll from "@/hook/useEnroll";
+import type QuizzProps from "@/lib/type";
 import type { LessonSectionProps } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
 import { BookOpen, ChevronLeft, ChevronRight, Clock } from "lucide-react";
@@ -15,20 +18,27 @@ const Lesson = () => {
   const {courseId , moduleId,lessonId} = useParams();
   const [lessonDetail , setLessonDetail] = useState<any>();
   const [lessonSections , setLessonSections] = useState<LessonSectionProps[]>()
+  const [quizz , setQuizz] = useState<QuizzProps>()
   const {user} = useUser()
   const { enrollmentId } = useEnroll(
     courseId ? courseId : "",
     user?.id ? user.id : ""
   );
 
+
+  const Summary = lessonSections?.filter((section) => section.heading === 'Summary')
   useEffect(() => {
     async function fetchData(){
       if(!lessonId) return 
       const {"0" : data} = await lessonApiController().getLessonDetails(lessonId)
       console.log(data)
       const {content : {sections}} = data 
+      const {question , options , correct_option_index} = data
+      
+      setQuizz({question , options , correct_option_index})
       setLessonSections(sections)
       setLessonDetail(data)
+
     }
     fetchData()
   }, [])
@@ -43,6 +53,9 @@ const Lesson = () => {
     }
     fetchData();
   }, [enrollmentId , user?.id , moduleId , lessonId])
+
+
+
   return (
     <div className="flex flex-row gap-5">
       <LessonBar />
@@ -76,6 +89,7 @@ const Lesson = () => {
         </section>
         <section className="flex flex-col gap-3">
           {lessonSections?.map((lessonSection) => {
+            if(lessonSection.heading == 'Summary') return
             return (
               <>
                 {"text" in lessonSection && (
@@ -100,6 +114,16 @@ const Lesson = () => {
             );
           })}
         </section>
+        <section>
+          <LessonQuizz quizz={quizz as QuizzProps} />
+        </section>
+
+        {Summary?.map((lessonSection) => {
+          return (<LessonSummary
+            text={lessonSection.text}
+            heading={lessonSection.heading}
+          />)
+        })}
       </div>
     </div>
   );

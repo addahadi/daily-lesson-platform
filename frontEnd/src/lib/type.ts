@@ -43,6 +43,12 @@ export interface LessonCardProps {
   order_index? : string
 }
 
+export default interface QuizzProps {
+  options : string[]
+  question : string 
+  correct_option_index : string
+}
+
 
 export type Lesson = Pick<LessonCardProps, "title" | "order_index"> & {slug : string};
 
