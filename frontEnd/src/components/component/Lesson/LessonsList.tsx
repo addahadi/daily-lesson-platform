@@ -1,7 +1,7 @@
 import { lessonApiController } from "@/Api/lesson.Api";
 import type { ModuleCardProps, Lesson } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
-import { Book, ChevronDown, ChevronRight, FileText, Lock } from "lucide-react";
+import { Book, CheckCircle, ChevronDown, ChevronRight, FileText, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
@@ -107,17 +107,20 @@ const LessonsList = ({
             const LessonContent = (
               <div
                 className={`px-6 py-3 border-l-4 ${
-                  isModuleAccessible
-                    ? "hover:bg-gray-50 cursor-pointer border-l-gray-200"
-                    : "cursor-not-allowed border-l-red-200 bg-red-25"
-                }`}
+                  !isModuleAccessible &&
+                  "cursor-not-allowed border-l-red-200 bg-red-25"
+                } ${
+                  lesson.completed
+                    ? " bg-green-50 cursor-pointer border-l-green-500"
+                    : "hover:bg-gray-50 cursor-pointer border-l-gray-200"
+                }  `}
               >
                 <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-4 h-4 rounded-full border-2 ${
-                      isModuleAccessible ? "border-gray-300" : "border-red-300"
-                    }`}
-                  />
+                  {
+                    lesson.completed 
+                      ? <CheckCircle className="w-5 h-5 text-green-500" />
+                      : <div className=" w-5 h-5 rounded-full border border-gray-50" />
+                  }
                   <FileText
                     className={`w-4 h-4 ${
                       isModuleAccessible ? "text-gray-400" : "text-red-400"

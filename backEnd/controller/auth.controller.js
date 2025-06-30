@@ -4,7 +4,6 @@ const sql = require("../db");
 async function SignUp(req, res) {
   const { id, fullName, imageUrl, emailAddresses } = req.body;
 
-  console.log(id);
 
   try {
     const result = await sql`
@@ -14,14 +13,12 @@ async function SignUp(req, res) {
       RETURNING *;
     `;
 
-    console.log(result);
 
     res.status(201).json({
       message: "User inserted",
       data: result[0], 
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -36,7 +33,6 @@ async function enrollToCourse(req, res) {
     res.status(201).json({
       message: "User enrolled to course",
     });
-    console.log(response);
   }
   catch (err) {
     console.error(err);
@@ -50,7 +46,6 @@ async function checkEnroll(req ,res){
   const {courseId , userId} = req.query
   try {
     const response = await sql`SELECT EXISTS (SELECT 1 FROM enrollments WHERE course_id = ${courseId} AND user_id = ${userId})`
-    console.log(response)
     res.status(200).send(response[0])
   }
   catch(err){
@@ -62,7 +57,6 @@ async function getEnroll(req, res) {
   const { courseId, userId } = req.query;
 
   try {
-    console.log(courseId , userId)
     const response = await sql`
       SELECT e.id AS enrollmentId 
       FROM enrollments e 

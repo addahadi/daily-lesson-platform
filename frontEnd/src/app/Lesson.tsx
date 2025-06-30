@@ -11,87 +11,163 @@ import type QuizzProps from "@/lib/type";
 import type { LessonSectionProps } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
 import { BookOpen, ChevronLeft, ChevronRight, Clock } from "lucide-react";
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Lesson = () => {
-  const {courseId , moduleId,lessonId} = useParams();
-  const [lessonDetail , setLessonDetail] = useState<any>();
-  const [lessonSections , setLessonSections] = useState<LessonSectionProps[]>()
-  const [quizz , setQuizz] = useState<QuizzProps>()
-  const {user} = useUser()
-  const { enrollmentId } = useEnroll(
-    courseId ? courseId : "",
-    user?.id ? user.id : ""
+  const { courseId, moduleId, lessonId } = useParams();
+  const [lessonDetail, setLessonDetail] = useState<any>();
+  const [lessonSections, setLessonSections] = useState<LessonSectionProps[]>();
+  const [quizz, setQuizz] = useState<QuizzProps>();
+  const { user } = useUser();
+  const { enrollmentId } = useEnroll(courseId, user?.id);
+  const [completed , setCompleted] = useState<boolean | undefined>()
+  const navigate = useNavigate()
+  const Summary = lessonSections?.filter(
+    (section) => section.heading === "Summary"
   );
 
-
-  const Summary = lessonSections?.filter((section) => section.heading === 'Summary')
   useEffect(() => {
-    async function fetchData(){
-      if(!lessonId) return 
-      const {"0" : data} = await lessonApiController().getLessonDetails(lessonId)
-      console.log(data)
-      const {content : {sections}} = data 
-      const {question , options , correct_option_index} = data
-      
-      setQuizz({question , options , correct_option_index})
-      setLessonSections(sections)
-      setLessonDetail(data)
+    async function fetchLessonDetails() {
+      if (!lessonId || !user?.id) return;
 
+      setLessonDetail(undefined); 
+      setLessonSections(undefined);
+      setQuizz(undefined);
+
+      try {
+        const { "0": data } = await lessonApiController().getLessonDetails(
+          lessonId,
+          user.id
+        );
+        const {
+          content: { sections },
+        } = data;
+        const {
+          question,
+          options,
+          correct_option_index,
+          quizz_id,
+          selected_option_index,
+          is_correct,
+        } = data;
+
+        setQuizz({
+          question,
+          options,
+          correct_option_index,
+          quizz_id,
+          selected_option_index,
+          is_correct,
+        });
+
+        setLessonSections(sections);
+        setLessonDetail(data);
+
+      } catch (error) {
+        console.error("Error fetching lesson details:", error);
+      }
     }
-    fetchData()
-  }, [])
+
+    fetchLessonDetails();
+  }, [lessonId, user]);
   
-
   useEffect(() => {
-    async function fetchData() {
-      if(!(lessonId && moduleId && enrollmentId)) return 
+    async function startLessonProgress() {
+      if (!(lessonId && moduleId && enrollmentId)) return;
 
-      const response = await lessonApiController().startLesson(enrollmentId , moduleId , lessonId)
-      console.log(response)
+      const response = await lessonApiController().startLesson(
+        enrollmentId,
+        moduleId,
+        lessonId
+      );
+      const {completed} = response
+      setCompleted(completed)
     }
-    fetchData();
-  }, [enrollmentId , user?.id , moduleId , lessonId])
 
+    startLessonProgress();
+  }, [enrollmentId, moduleId, lessonId]);
 
+  const handlePrevious = async () => {
+    if(!lessonDetail) return
+    console.log(lessonDetail.order_index) 
+    await lessonApiController().getNextLesson(lessonDetail.order_index-1).then((response) => {
+      const {result} = response
+      navigate(
+        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
+      );
+      
+    }).catch((err) => {
+      console.log(err)
+    })
+  };
+
+  const handleNext = async () => {
+    if (!lessonDetail) return;
+    await lessonApiController()
+      .getNextLesson(lessonDetail.order_index + 1)
+      .then((response) => {
+        const { result } = response;
+        navigate(
+          `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  if (!lessonDetail) {
+    return <div className=" min-h-screen w-full flex justify-center items-center">Loading lesson...</div>;
+  }
 
   return (
-    <div className="flex flex-row gap-5">
-      <LessonBar />
-      <div className=" flex-1 px-5">
+    <div key={lessonId} className="flex flex-row gap-5">
+      <LessonBar  enrollmentId = {enrollmentId} courseId = {courseId}/>
 
-        <section className=" bg-white-1 flex flex-col p-5 rounded-lg gap-3 mt-5 mb-5">
-          <div className="flex flex-row gap-2  text-gray-500 items-center">
+      <div className="flex-1 px-5">
+        <section className="bg-white-1 flex flex-col p-5 rounded-lg gap-3 mt-5 mb-5">
+          <div className="flex flex-row gap-2 text-gray-500 items-center">
             <BookOpen className="w-4 h-4" />
-            <span>Lesson {lessonDetail?.order_index}</span>
+            <span>Lesson {lessonDetail.order_index}</span>
           </div>
-          <h1 className=" text-2xl font-semibold">{lessonDetail?.title}</h1>
+
+          <h1 className="text-2xl font-semibold">{lessonDetail.title}</h1>
+
           <div className="flex items-center space-x-4 text-sm text-gray-600">
             <div className="flex items-center space-x-1">
               <Clock className="w-4 h-4" />
-              <span>{lessonDetail?.duration_minutes} min</span>
+              <span>{lessonDetail.duration_minutes} min</span>
             </div>
           </div>
+
           <div className="flex flex-row gap-4 mt-3">
             <Button
               variant="outline"
               className="flex items-center border-orange-1"
+              onClick={handlePrevious}
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Previous</span>
             </Button>
-            <Button className="flex items-center bg-orange-1" variant="destructive">
+
+            <Button
+              className="flex items-center bg-orange-1"
+              variant="destructive"
+              onClick={handleNext}
+            >
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         </section>
+
         <section className="flex flex-col gap-3">
-          {lessonSections?.map((lessonSection) => {
-            if(lessonSection.heading == 'Summary') return
+          {lessonSections?.map((lessonSection, index) => {
+            if (lessonSection.heading === "Summary") return null;
+
             return (
-              <>
+              <div key={index}>
                 {"text" in lessonSection && (
                   <LessonText
                     text={lessonSection.text}
@@ -110,23 +186,30 @@ const Lesson = () => {
                     heading={lessonSection.heading}
                   />
                 )}
-              </>
+              </div>
             );
           })}
         </section>
-        <section>
-          <LessonQuizz quizz={quizz as QuizzProps} />
-        </section>
 
-        {Summary?.map((lessonSection) => {
-          return (<LessonSummary
+        {quizz && (
+          <section>
+            <LessonQuizz quizz={quizz} />
+          </section>
+        )}
+
+        {Summary?.map((lessonSection, index) => (
+          <LessonSummary
+            key={`summary-${index}`}
             text={lessonSection.text}
             heading={lessonSection.heading}
-          />)
-        })}
+            enrollementId = {enrollmentId}
+            completed = {completed}
+            setCompleted={setCompleted}
+          />
+        ))}
       </div>
     </div>
   );
-}
+};
 
-export default Lesson
+export default Lesson;

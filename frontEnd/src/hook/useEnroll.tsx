@@ -2,14 +2,15 @@
 
 
 import { userApiController } from '@/Api/user.Api'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-const useEnroll = (courseId : string , userId : string) => {
+const useEnroll = (courseId : string | undefined , userId : string | undefined) => {
     const [enrollmentId , setEnrollmentId] = useState<string | undefined>()
 
     useEffect(() => {
         async function fetchData(){
             try {
+                if(!courseId || !userId) return 
                 const response = await userApiController().getEnroll(courseId , userId)
                 const {data} = response
                 setEnrollmentId(data[0].enrollmentid)

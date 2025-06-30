@@ -1,29 +1,51 @@
-import React from 'react'
+import { lessonApiController } from "@/Api/lesson.Api";
+import { CheckCircle } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 const LessonSummary = ({
   text,
   heading,
+  enrollementId,
+  completed,
+  setCompleted
 }: {
   text: string;
   heading: string;
+  enrollementId: string | undefined;
+  completed: boolean | undefined;
+  setCompleted: React.Dispatch<React.SetStateAction<boolean| undefined>>;
 }) => {
+  const { moduleId, lessonId } = useParams();
+
+  async function handleComplete() {
+    console.log(enrollementId, lessonId);
+    if (!enrollementId || !moduleId || !lessonId) return;
+    await lessonApiController()
+      .markAsComplete(enrollementId, moduleId, lessonId)
+      .then(() => {
+        setCompleted(true)
+      })
+      .catch(() => {setCompleted(false)});
+  }
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mt-7 mb-7 w-full">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">{heading}</h2>
-        <p className="text-gray-700 leading-relaxed mb-6">
-        {text}
-        </p>
-        
-        <button 
-           
-            className="w-full lg:w-auto px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">{heading}</h2>
+      <p className="text-gray-700 leading-relaxed mb-6">{text}</p>
+      {!completed ? (
+        <button
+          onClick={handleComplete}
+          className="w-full px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
         >
-            Mark as Completed
+          Mark as Completed
         </button>
-        
+      ) : (
+        <div className="flex items-center space-x-2 text-green-600">
+          <CheckCircle className="w-5 h-5" />
+          <span className="font-medium">Lesson Completed!</span>
+        </div>
+      )}
     </div>
-            
-  )
+  );
 };
 
 export default LessonSummary

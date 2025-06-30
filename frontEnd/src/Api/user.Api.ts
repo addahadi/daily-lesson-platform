@@ -57,6 +57,6 @@ export const userApiController = () => {
     return {
         EnrollToCourse,
         checkEnroll,
-        getEnroll
+        getEnroll,
     }
 }

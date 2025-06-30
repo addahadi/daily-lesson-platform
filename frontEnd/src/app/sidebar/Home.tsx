@@ -1,14 +1,13 @@
-import DashboardWelcome from "@/components/component/DashboardWelcom";
-import RecentCourses from "@/components/component/RecentCourses";
-import TodaysLesson from "@/components/component/TodayLesson";
+import Activities from "@/components/component/Home/Activities";
+import ContinueLearning from "@/components/component/Home/ContinueLearning";
 
 
 const Home = () => {
+  
   return (
-    <div>
-      <DashboardWelcome />
-      <RecentCourses />
-      <TodaysLesson />
+    <div className=" py-5 px-5">
+      <Activities />
+      <ContinueLearning />
     </div>
   );
 };
