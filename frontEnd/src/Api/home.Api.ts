@@ -61,11 +61,27 @@ const homeApiController = () => {
         console.log(err);
       }
     };
+    const getDailyStreak = async (userId: string) => {
+      const URL = `http://localhost:8090/home/streak-days/${userId}`;
+      try {
+        const response = await fetch(URL, {
+          method: "GET",
+        });
+        if (response.ok) {
+          const result = await response.json();
+          const { data } = result;
+          return data;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
     return {
         getEnrolledCourses,
         getNextLesson,
         getEnrolledCoursesNumber,
-        getTotalLessons
+        getTotalLessons,
+        getDailyStreak
     }
 }
 

@@ -88,7 +88,27 @@ async function getTotalLessons(req , res){
 }
 
 
+async function getDailyStreak(req , res){
+    const {userId} = req.params
+    try {
+      const user = await sql`SELECT streak_count , last_study_date
+        FROM users WHERE users.clerk_id = ${userId}`;
 
+      if (user.length == 0) {
+        return res.status(404).json({
+          status: false,
+          message: " user not found",
+        });
+      }
+      res.status(200).json({
+        status: true,
+        data: user,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Internal server error" });
+    } 
+}
 
 async function getNextLesson(req , res)  {
     const {courseId , enrollmentId} = req.query
@@ -146,4 +166,4 @@ async function getNextLesson(req , res)  {
 }
 
 
-module.exports = {getEnrolledCourses , getNextLesson , getEnrolledCoursesNumber , getTotalLessons}
+module.exports = {getEnrolledCourses , getNextLesson , getEnrolledCoursesNumber , getTotalLessons , getDailyStreak}

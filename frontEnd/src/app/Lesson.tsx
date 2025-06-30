@@ -1,4 +1,3 @@
-import { lessonApiController } from "@/Api/lesson.Api";
 import LessonBar from "@/components/component/Lesson/LessonBar";
 import LessonBullet from "@/components/component/Lesson/LessonBullet";
 import LessonCode from "@/components/component/Lesson/LessonCode";
@@ -6,126 +5,41 @@ import LessonQuizz from "@/components/component/Lesson/LessonQuizz";
 import LessonSummary from "@/components/component/Lesson/LessonSummary";
 import LessonText from "@/components/component/Lesson/LessonText";
 import { Button } from "@/components/ui/button";
-import useEnroll from "@/hook/useEnroll";
-import type QuizzProps from "@/lib/type";
-import type { LessonSectionProps } from "@/lib/type";
-import { useUser } from "@clerk/clerk-react";
+import { useLessonDetails } from "@/hook/useLessonDetails";
 import { BookOpen, ChevronLeft, ChevronRight, Clock } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
 const Lesson = () => {
-  const { courseId, moduleId, lessonId } = useParams();
-  const [lessonDetail, setLessonDetail] = useState<any>();
-  const [lessonSections, setLessonSections] = useState<LessonSectionProps[]>();
-  const [quizz, setQuizz] = useState<QuizzProps>();
-  const { user } = useUser();
-  const { enrollmentId } = useEnroll(courseId, user?.id);
-  const [completed , setCompleted] = useState<boolean | undefined>()
-  const navigate = useNavigate()
+  const {
+    lessonDetail,
+    lessonSections,
+    quizz,
+    completed,
+    setCompleted,
+    handleNext,
+    handlePrevious,
+    loading,
+    enrollmentId,
+    courseId,
+  } = useLessonDetails();
+
   const Summary = lessonSections?.filter(
     (section) => section.heading === "Summary"
   );
 
-  useEffect(() => {
-    async function fetchLessonDetails() {
-      if (!lessonId || !user?.id) return;
-
-      setLessonDetail(undefined); 
-      setLessonSections(undefined);
-      setQuizz(undefined);
-
-      try {
-        const { "0": data } = await lessonApiController().getLessonDetails(
-          lessonId,
-          user.id
-        );
-        const {
-          content: { sections },
-        } = data;
-        const {
-          question,
-          options,
-          correct_option_index,
-          quizz_id,
-          selected_option_index,
-          is_correct,
-        } = data;
-
-        setQuizz({
-          question,
-          options,
-          correct_option_index,
-          quizz_id,
-          selected_option_index,
-          is_correct,
-        });
-
-        setLessonSections(sections);
-        setLessonDetail(data);
-
-      } catch (error) {
-        console.error("Error fetching lesson details:", error);
-      }
-    }
-
-    fetchLessonDetails();
-  }, [lessonId, user]);
-  
-  useEffect(() => {
-    async function startLessonProgress() {
-      if (!(lessonId && moduleId && enrollmentId)) return;
-
-      const response = await lessonApiController().startLesson(
-        enrollmentId,
-        moduleId,
-        lessonId
-      );
-      const {completed} = response
-      setCompleted(completed)
-    }
-
-    startLessonProgress();
-  }, [enrollmentId, moduleId, lessonId]);
-
-  const handlePrevious = async () => {
-    if(!lessonDetail) return
-    console.log(lessonDetail.order_index) 
-    await lessonApiController().getNextLesson(lessonDetail.order_index-1).then((response) => {
-      const {result} = response
-      navigate(
-        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
-      );
-      
-    }).catch((err) => {
-      console.log(err)
-    })
-  };
-
-  const handleNext = async () => {
-    if (!lessonDetail) return;
-    await lessonApiController()
-      .getNextLesson(lessonDetail.order_index + 1)
-      .then((response) => {
-        const { result } = response;
-        navigate(
-          `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  if (!lessonDetail) {
-    return <div className=" min-h-screen w-full flex justify-center items-center">Loading lesson...</div>;
+  if (loading || !lessonDetail) {
+    return (
+      <div className="min-h-screen w-full flex justify-center items-center">
+        Loading lesson...
+      </div>
+    );
   }
 
   return (
-    <div key={lessonId} className="flex flex-row gap-5">
-      <LessonBar  enrollmentId = {enrollmentId} courseId = {courseId}/>
+    <div key={lessonDetail.slug} className="flex flex-row gap-5">
+      <LessonBar enrollmentId={enrollmentId} courseId={courseId} />
 
       <div className="flex-1 px-5">
+        {/* Lesson Header */}
         <section className="bg-white-1 flex flex-col p-5 rounded-lg gap-3 mt-5 mb-5">
           <div className="flex flex-row gap-2 text-gray-500 items-center">
             <BookOpen className="w-4 h-4" />
@@ -152,8 +66,8 @@ const Lesson = () => {
             </Button>
 
             <Button
-              className="flex items-center bg-orange-1"
               variant="destructive"
+              className="flex items-center bg-orange-1"
               onClick={handleNext}
             >
               <span>Next</span>
@@ -162,6 +76,7 @@ const Lesson = () => {
           </div>
         </section>
 
+        {/* Lesson Sections */}
         <section className="flex flex-col gap-3">
           {lessonSections?.map((lessonSection, index) => {
             if (lessonSection.heading === "Summary") return null;
@@ -191,19 +106,21 @@ const Lesson = () => {
           })}
         </section>
 
+        {/* Quizz */}
         {quizz && (
           <section>
             <LessonQuizz quizz={quizz} />
           </section>
         )}
 
+        {/* Summary */}
         {Summary?.map((lessonSection, index) => (
           <LessonSummary
             key={`summary-${index}`}
             text={lessonSection.text}
             heading={lessonSection.heading}
-            enrollementId = {enrollmentId}
-            completed = {completed}
+            enrollementId={enrollmentId}
+            completed={completed}
             setCompleted={setCompleted}
           />
         ))}

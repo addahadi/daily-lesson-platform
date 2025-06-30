@@ -20,7 +20,6 @@ const LessonBar = ({
         const data = await lessonApiController().getLessonsDetails(courseId , enrollmentId)
         if(data){
             setCML(data)
-            console.log(data)
         }
     }
     fetchData()

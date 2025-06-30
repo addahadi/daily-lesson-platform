@@ -81,6 +81,7 @@ export const lessonApiController = () => {
         moduleId,
         lessonId,
       };
+      console.log(requestBody)
       const URL = `http://localhost:8090/lesson/startlesson`;
       try {
         const response = await fetch(URL, {
@@ -92,6 +93,7 @@ export const lessonApiController = () => {
         });
         if (response.ok) {
           const result = await response.json();
+          console.log(result)
           return result;
         }
       } catch (err) {
@@ -133,8 +135,8 @@ export const lessonApiController = () => {
       }
     };
     
-    const getNextLesson = async (order_index: number) => {
-      const URL = `http://localhost:8090/lesson/nextlesson/${order_index}`;
+    const getNextLesson = async (order_index: number , module_id : string) => {
+      const URL = `http://localhost:8090/lesson/nextlesson/${module_id}/${order_index}`;
       try {
         const response = await fetch(URL, {
           method: "GET",
@@ -148,11 +150,12 @@ export const lessonApiController = () => {
       }
     };
 
-     const markAsComplete = async (enrollmentId : string , moduleId : string , lessonId : string) => {
+     const markAsComplete = async (enrollmentId : string , moduleId : string , lessonId : string , userId : string) => {
       const requestBody = {
         enrollmentId,
         moduleId,
         lessonSlug : lessonId,
+        userId
       };
       const URL = `http://localhost:8090/lesson/markascomplete`;
       try {

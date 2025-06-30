@@ -26,9 +26,12 @@ router.get("/submitanswer" , (req , res) => {
 })
 
 
-router.get("/nextlesson/:orderIndex" , (req , res) => {
-    getNextLesson(req , res)
-})
+router.get(
+  "/nextlesson/:moduleId/:orderIndex",
+  (req, res) => {
+    getNextLesson(req, res);
+  }
+);
 
 
 router.get("/getLessons" , (req , res) => {

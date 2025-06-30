@@ -1,91 +1,50 @@
+const sql = require("../db");
 
-const { response } = require("express");
-const sql = require("../db")
-
-async function getLessonDetails(req , res){
-    const { lessonId , userId } = req.query;
-    
-    try {
-      console.log(lessonId , userId)
-        const response = await sql`SELECT 
-          l.id AS lesson_id, 
-          l.title, 
-          l.content, 
-          l.duration_minutes, 
-          l.level, 
-          l.order_index, 
-          l.slug AS lesson_slug,
-          
-          q.id AS quizz_id,
-          q.question, 
-          q.options, 
-          q.correct_option_index,
-
-          a.id AS answer_id,
-          a.selected_option_index,
-          a.is_correct
-
-        FROM lessons l
-        LEFT JOIN quizzes q ON l.id = q.lesson_id
-        LEFT JOIN quiz_answers a ON a.quiz_id = q.id AND a.user_id = ${userId} 
-        WHERE l.slug = ${lessonId};
-;
-
-        `;
-        const result = {
-            status : true,
-            data : response
-          }
-          res.status(200).json(result)
-    }
-    catch(err) {
-        console.log(err);
-        res.status(500).json({error : err.message})
-    }
-
-    
+async function getLessonDetails(req, res) {
+  const { lessonId, userId } = req.query;
+  try {
+    const lessons = await sql`
+      SELECT 
+        l.id AS lesson_id, 
+        l.title, 
+        l.content, 
+        l.duration_minutes, 
+        l.level, 
+        l.order_index, 
+        l.slug AS lesson_slug,
+        q.id AS quizz_id,
+        q.question, 
+        q.options, 
+        q.correct_option_index,
+        a.id AS answer_id,
+        a.selected_option_index,
+        a.is_correct
+      FROM lessons l
+      LEFT JOIN quizzes q ON l.id = q.lesson_id
+      LEFT JOIN quiz_answers a ON a.quiz_id = q.id AND a.user_id = ${userId} 
+      WHERE l.slug = ${lessonId};
+    `;
+    res.status(200).json({ status: true, data: lessons });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ status: false, error: err.message });
+  }
 }
 
 async function getLessonsDetails(req, res) {
   try {
     const { courseId, enrollmentId } = req.query;
-
     const courseResponse = await sql`
-      SELECT id, slug, title 
-      FROM courses 
-      WHERE slug = ${courseId}
+      SELECT id, slug, title FROM courses WHERE slug = ${courseId}
     `;
-
     if (courseResponse.length === 0) {
-      return res.status(404).json({
-        status: false,
-        error: "Course not found",
-      });
+      return res.status(404).json({ status: false, error: "Course not found" });
     }
-
     const course = courseResponse[0];
-
     const modulesResponse = await sql`
-      SELECT id, title, order_index 
-      FROM modules 
-      WHERE course_id = ${course.id} 
-      ORDER BY order_index
+      SELECT id, title, order_index FROM modules WHERE course_id = ${course.id} ORDER BY order_index
     `;
-
-    if (modulesResponse.length === 0) {
-      return res.status(200).json({
-        status: true,
-        data: {
-          course,
-          modules: [],
-        },
-      });
-    }
-
     const moduleIds = modulesResponse.map((module) => module.id);
-    console.log("Module IDs:", moduleIds);
-
-    // Fixed query - using proper array handling and LEFT JOIN for progress
     const lessonsResponse = await sql`
       SELECT 
         l.id, 
@@ -93,15 +52,12 @@ async function getLessonsDetails(req, res) {
         l.order_index, 
         l.slug, 
         l.topic_id,
-        COALESCE(p.completed, false) as completed
+        COALESCE(p.completed, false) AS completed
       FROM lessons l
       LEFT JOIN lesson_progress p ON (l.id = p.lesson_id AND p.enrollment_id = ${enrollmentId})
       WHERE l.topic_id = ANY(${moduleIds})
       ORDER BY l.topic_id, l.order_index
     `;
-
-    console.log("Lessons Response:", lessonsResponse);
-
     const structuredModules = modulesResponse.map((module) => ({
       module_id: module.id,
       title: module.title,
@@ -116,304 +72,238 @@ async function getLessonsDetails(req, res) {
           completed: lesson.completed,
         })),
     }));
-
-    const result = {
-      status: true,
-      data: {
-        course,
-        modules: structuredModules,
-      },
-    };
-
-    res.status(200).json(result);
+    res
+      .status(200)
+      .json({ status: true, data: { course, modules: structuredModules } });
   } catch (err) {
     console.log(err);
-    res.status(500).json({
-      status: false,
-      error: err.message,
-    });
+    res.status(500).json({ status: false, error: err.message });
   }
 }
 
-async function getFirstLesson(req , res){
-  const {courseId} = req.params
-  
+async function getFirstLesson(req, res) {
+  const { courseId } = req.params;
   try {
-    const response = await sql`SELECT l.slug as lesson_id, m.id as module_id 
-    FROM courses c 
-    JOIN modules m ON c.id = m.course_id 
-    JOIN lessons l ON m.id = l.topic_id 
-    WHERE c.slug = ${courseId} 
-    AND m.order_index = 1 
-    AND l.order_index = 1`;
-    res.status(200).json(response);
-
+    const firstLesson = await sql`
+      SELECT l.slug AS lesson_id, m.id AS module_id
+      FROM courses c
+      JOIN modules m ON c.id = m.course_id
+      JOIN lessons l ON m.id = l.topic_id
+      WHERE c.slug = ${courseId} AND m.order_index = 1 AND l.order_index = 1
+    `;
+    res.status(200).json({ status: true, data: firstLesson });
   } catch (err) {
     console.log(err);
-    res.status(500).json({
-      status: false,
-      error: err.message,
-    });
+    res.status(500).json({ status: false, error: err.message });
   }
-
 }
 
 async function isLessonAccessible(req, res) {
   const { userId, courseId, moduleId } = req.body;
-
   try {
     const courseResponse = await sql`
-      SELECT  id , slug , title 
-      FROM courses 
-      WHERE slug = ${courseId}
+      SELECT id, slug, title FROM courses WHERE slug = ${courseId}
     `;
-
     if (courseResponse.length === 0) {
-      return res.status(404).json({
-        status: false,
-        error: "Course not found",
-      });
+      return res.status(404).json({ status: false, error: "Course not found" });
     }
-
     const course = courseResponse[0];
-
-    const response = await sql`
+    const accessCheck = await sql`
       SELECT EXISTS (
         SELECT 1 FROM module_progress mp
         JOIN enrollments e ON mp.enrollment_id = e.id
         WHERE e.user_id = ${userId}
-        AND e.course_id = ${course.id}
-        AND mp.module_id = (
-          SELECT id
-          FROM modules
-          WHERE modules.course_id = ${course.id}
-          AND order_index = (
-            SELECT order_index - 1
-            FROM modules
-            WHERE id = ${moduleId}
+          AND e.course_id = ${course.id}
+          AND mp.module_id = (
+            SELECT id FROM modules
+            WHERE modules.course_id = ${course.id}
+              AND order_index = (
+                SELECT order_index - 1 FROM modules WHERE id = ${moduleId}
+              )
           )
-        )
-        AND mp.progress = 100
+          AND mp.progress = 100
       ) OR (
         SELECT order_index FROM modules WHERE id = ${moduleId}
-      ) = 1 as is_accessible`;
-
-    res.status(200).json({
-      isAccessible: response[0].is_accessible,
-    });
+      ) = 1 AS is_accessible
+    `;
+    res.status(200).json({ isAccessible: accessCheck[0].is_accessible });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ status: false, error: err.message });
   }
 }
 
 async function startLesson(req, res) {
   const { enrollmentId, moduleId, lessonId: lessonSlug } = req.body;
-
   try {
-
     const lessonResult = await sql`
-      SELECT id FROM lessons 
-      WHERE slug = ${lessonSlug} AND topic_id = ${moduleId}
+      SELECT id FROM lessons WHERE slug = ${lessonSlug} AND topic_id = ${moduleId}
     `;
-
     if (lessonResult.length === 0) {
-      return res.status(404).json({
-        status: false,
-        message: "Lesson not found",
-      });
+      return res
+        .status(404)
+        .json({ status: false, message: "Lesson not found" });
     }
-
     const lessonId = lessonResult[0].id;
-
     await sql`
       INSERT INTO module_progress (enrollment_id, module_id, started_at, progress)
       VALUES (${enrollmentId}, ${moduleId}, NOW(), 0)
       ON CONFLICT (enrollment_id, module_id) DO NOTHING
     `;
-
     const existingProgress = await sql`
       SELECT completed FROM lesson_progress
-      WHERE enrollment_id = ${enrollmentId}
-        AND module_id = ${moduleId}
-        AND lesson_id = ${lessonId};
+      WHERE enrollment_id = ${enrollmentId} AND module_id = ${moduleId} AND lesson_id = ${lessonId}
     `;
-
-    let isCompleted;
-
-    if (existingProgress.length > 0) {
-        isCompleted = existingProgress[0].completed;
-    } else {
-
+    let isCompleted =
+      existingProgress.length > 0 ? existingProgress[0].completed : false;
+    if (existingProgress.length === 0) {
       await sql`
         INSERT INTO lesson_progress (enrollment_id, module_id, lesson_id, completed)
-        VALUES (${enrollmentId}, ${moduleId}, ${lessonId}, false);
+        VALUES (${enrollmentId}, ${moduleId}, ${lessonId}, false)
       `;
-      isCompleted = false;
     }
-
-    res.status(200).json({
-      status: true,
-      message: "Lesson progress ensured",
-      completed: isCompleted,
-    });
+    res
+      .status(200)
+      .json({
+        status: true,
+        message: "Lesson progress ensured",
+        completed: isCompleted,
+      });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      status: false,
-      message: err.message,
-    });
+    res.status(500).json({ status: false, error: err.message });
   }
 }
 
-
-
-
-async function SubmitQuizzAnswer(req , res){
+async function SubmitQuizzAnswer(req, res) {
   try {
-    const { quizz_id, lesson_id, user_id, selected_option, correct , module_id } =
-      req.query;
-
-      
-    const lessonResult = await sql`
-    SELECT id FROM lessons 
-    WHERE slug = ${lesson_id} AND topic_id = ${module_id}
-  `;
-
-    if (lessonResult.length === 0) {
-      return res.status(404).json({
-        status: false,
-        message: "Lesson not found",
-      });
+    const {
+      quizz_id,
+      lesson_id,
+      user_id,
+      selected_option,
+      correct,
+      module_id,
+    } = req.query;
+    if (
+      !quizz_id ||
+      !lesson_id ||
+      !user_id ||
+      selected_option == null ||
+      correct == null ||
+      !module_id
+    ) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Missing required fields" });
     }
-
+    const lessonResult = await sql`
+      SELECT id FROM lessons WHERE slug = ${lesson_id} AND topic_id = ${module_id}
+    `;
+    if (lessonResult.length === 0) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Lesson not found" });
+    }
     const lessonId = lessonResult[0].id;
-
-
     await sql`
-      INSERT INTO quiz_answers (quiz_id, lesson_id, user_id, selected_option_index , is_correct)
-      VALUES (${quizz_id}, ${lessonId}, ${user_id}, ${selected_option} , ${correct})
+      INSERT INTO quiz_answers (quiz_id, lesson_id, user_id, selected_option_index, is_correct)
+      VALUES (${quizz_id}, ${lessonId}, ${user_id}, ${selected_option}, ${correct})
       ON CONFLICT (quiz_id, lesson_id, user_id) DO NOTHING
     `;
-    res.status(200).json({
-      status: true,
-      message: "successful",
-    });
+    res.status(200).json({ status: true, message: "Quiz answer submitted" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({
-      status: false,
-      message: err.message,
-    });
+    res.status(500).json({ status: false, error: err.message });
   }
 }
 
 
-async function getNextLesson(req , res) {
+async function getNextLesson(req, res) {
   try {
-    const {orderIndex} = req.params
-    console.log(orderIndex)
-    const response = await sql`
-    SELECT slug FROM lessons WHERE order_index = ${orderIndex}
-    `
-    console.log(response)
-    res.status(200).json(
-      {
-        status : true ,
-        result : response
-      }
-    )
-  }
-  catch(err){
-    console.log(err)
-    res.status(500).json({message : err.message})
-  }
-}
-async function MarkAsComplete(req, res) {
-  const { lessonSlug, enrollmentId, moduleId } = req.body;
-
-  try {
-
-    const lessonResult = await sql`
-      SELECT id FROM lessons 
-      WHERE slug = ${lessonSlug} AND topic_id = ${moduleId}
+    const { orderIndex, moduleId } = req.params;
+    const nextLesson = await sql`
+      SELECT slug FROM lessons WHERE order_index = ${orderIndex} AND topic_id = ${moduleId}
     `;
+    res.status(200).json({ status: true, result: nextLesson });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ status: false, error: err.message });
+  }
+}
 
+async function MarkAsComplete(req, res) {
+  const { lessonSlug, enrollmentId, moduleId, userId } = req.body;
+  const today = new Date().toISOString().split("T")[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  try {
+    const lessonResult = await sql`
+      SELECT id FROM lessons WHERE slug = ${lessonSlug} AND topic_id = ${moduleId}
+    `;
     if (lessonResult.length === 0) {
-      return res.status(404).json({
-        status: false,
-        message: "Lesson not found",
-      });
+      return res
+        .status(404)
+        .json({ status: false, message: "Lesson not found" });
     }
-
     const lessonId = lessonResult[0].id;
     const solved = await sql`
-      SELECT EXISTS (
-        SELECT 1 FROM quiz_answers 
-        WHERE lesson_id = ${lessonId}
-      ) AS exists
+      SELECT EXISTS (SELECT 1 FROM quiz_answers WHERE lesson_id = ${lessonId}) AS exists
     `;
-
     if (!solved[0].exists) {
       return res.json({
         success: false,
         message: "You need to solve the quiz first ❌",
       });
     }
-
-    // Mark lesson as completed
-    const response = await sql`
-      UPDATE lesson_progress
-      SET completed = TRUE,
-          completed_at = NOW()
-      WHERE enrollment_id = ${enrollmentId}
-        AND lesson_id = ${lessonId};
+    const updateResult = await sql`
+      UPDATE lesson_progress SET completed = TRUE, completed_at = NOW()
+      WHERE enrollment_id = ${enrollmentId} AND lesson_id = ${lessonId}
     `;
-
-    if (response.rowCount === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No matching lesson_progress found ❌",
-      });
+    if (updateResult.rowCount === 0) {
+      return res
+        .status(404)
+        .json({
+          success: false,
+          message: "No matching lesson_progress found ❌",
+        });
     }
-
     const totalLessons = await sql`
-      SELECT COUNT(*) AS count FROM lessons WHERE topic_id = ${moduleId};
+      SELECT COUNT(*) AS count FROM lessons WHERE topic_id = ${moduleId}
     `;
-
     const completedLessons = await sql`
       SELECT COUNT(*) AS count FROM lesson_progress
-      WHERE completed = TRUE
-        AND enrollment_id = ${enrollmentId}
-        AND lesson_id IN (
-          SELECT id FROM lessons WHERE module_id = ${moduleId}
-        );
+      WHERE completed = TRUE AND enrollment_id = ${enrollmentId} AND lesson_id IN (
+        SELECT id FROM lessons WHERE topic_id = ${moduleId}
+      )
     `;
-
     const progress = Math.round(
       (completedLessons[0].count / totalLessons[0].count) * 100
     );
-
     await sql`
-      UPDATE module_progress
-      SET progress = ${progress}
-      WHERE enrollment_id = ${enrollmentId}
-        AND module_id = ${moduleId};
+      UPDATE module_progress SET progress = ${progress} WHERE enrollment_id = ${enrollmentId} AND module_id = ${moduleId}
     `;
-
-    return res.status(200).json({
-      success: true,
-      message: "Lesson marked complete ✅",
-    });
+    await sql`
+      UPDATE users SET
+        streak_count = CASE WHEN last_study_date = ${yesterday} THEN streak_count + 1 ELSE 1 END,
+        last_study_date = ${today}
+      WHERE clerk_id = ${userId} AND last_study_date IS DISTINCT FROM ${today}
+    `;
+    res
+      .status(200)
+      .json({ success: true, message: "Lesson marked complete ✅" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      success: false,
-      error: err.message,
-    });
+    res.status(500).json({ success: false, error: err.message });
   }
 }
 
-
-
-module.exports = {getLessonDetails , getLessonsDetails , getFirstLesson , isLessonAccessible , startLesson , SubmitQuizzAnswer , getNextLesson , MarkAsComplete}
+module.exports = {
+  getLessonDetails,
+  getLessonsDetails,
+  getFirstLesson,
+  isLessonAccessible,
+  startLesson,
+  SubmitQuizzAnswer,
+  getNextLesson,
+  MarkAsComplete,
+};

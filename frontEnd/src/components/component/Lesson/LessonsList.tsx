@@ -12,7 +12,7 @@ const LessonsList = ({
 }) => {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
-  const { courseId , moduleId } = useParams();
+  const { courseId } = useParams();
   const [isModuleAccessible, setIsModuleAccessible] = useState<boolean | null>(
     null
   );
@@ -39,7 +39,6 @@ const LessonsList = ({
     fetchData();
   }, [courseId, module.module_id, user?.id]);
 
-  // Show loading state
   if (loading) {
     return (
       <div className="cursor-pointer p-3 rounded-lg border border-gray-500 animate-pulse">
@@ -152,16 +151,14 @@ const LessonsList = ({
             return (
               <div key={index}>
                 {isModuleAccessible ? (
-                  <Link to={`/dashboard/course/${courseId}/module/${moduleId}/lesson/${lesson.slug}`}>
+                  <Link to={`/dashboard/course/${courseId}/module/${module.module_id}/lesson/${lesson.slug}`}>
                     {LessonContent}
                   </Link>
                 ) : (
                   <div
                     onClick={(e) => {
                       e.preventDefault();
-                      console.log(
-                        "Lesson locked - complete previous module first"
-                      );
+
                     }}
                   >
                     {LessonContent}

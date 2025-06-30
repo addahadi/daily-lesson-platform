@@ -1,4 +1,5 @@
 import { lessonApiController } from "@/Api/lesson.Api";
+import { useUser } from "@clerk/clerk-react";
 import { CheckCircle } from "lucide-react";
 import { useParams } from "react-router-dom";
 
@@ -16,22 +17,25 @@ const LessonSummary = ({
   setCompleted: React.Dispatch<React.SetStateAction<boolean| undefined>>;
 }) => {
   const { moduleId, lessonId } = useParams();
+  const {user} = useUser()
+
 
   async function handleComplete() {
-    console.log(enrollementId, lessonId);
-    if (!enrollementId || !moduleId || !lessonId) return;
+    if (!enrollementId || !moduleId || !lessonId || !user?.id) return;
     await lessonApiController()
-      .markAsComplete(enrollementId, moduleId, lessonId)
+      .markAsComplete(enrollementId, moduleId, lessonId , user.id)
       .then(() => {
         setCompleted(true)
       })
       .catch(() => {setCompleted(false)});
   }
+
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mt-7 mb-7 w-full">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">{heading}</h2>
       <p className="text-gray-700 leading-relaxed mb-6">{text}</p>
-      {!completed ? (
+      {completed ? (
         <button
           onClick={handleComplete}
           className="w-full px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"

@@ -12,7 +12,6 @@ const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
   const {lessonId , moduleId} = useParams()
 
   useEffect(() => {
-    console.log(quizz)
     if (quizz?.selected_option_index) {
       setSelectedAnswer(quizz.selected_option_index);
     }
@@ -22,8 +21,6 @@ const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
     try  {
       if(!selectedAnswer) return 
       if (!lessonId || !user?.id || !moduleId || !quizz.quizz_id) return;
-      console.log(quizz.quizz_id)
-      console.log(quizz.quizz_id , user.id , lessonId , selectedAnswer , moduleId)
       await lessonApiController().SubmitQuizzAnswer(quizz.quizz_id , user?.id, lessonId , selectedAnswer-1 , selectedAnswer-1 == quizz.correct_option_index , moduleId)
     } 
     catch(err){

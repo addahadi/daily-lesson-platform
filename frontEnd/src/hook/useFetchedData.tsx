@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { CourseApiController } from "@/Api/course.Api";
 import { userApiController } from "@/Api/user.Api";
 import type { CourseProps } from "@/lib/type";
+
 export function useCourseAndEnrollment(CourseId : string | undefined, user : any) {
   const [CourseData, setCourseData] = useState<CourseProps | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
