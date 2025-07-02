@@ -1,0 +1,15 @@
+name: Run Supabase Streak Cleanup
+
+on:
+  schedule:
+    # Runs every day at midnight UTC
+    - cron: '0 0 * * *'
+
+jobs:
+  streak-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Supabase Edge Function
+        run: |
+          curl -X POST https://geqnbgshgrnptkpvkujg.supabase.co/functions/v1/quick-service \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
