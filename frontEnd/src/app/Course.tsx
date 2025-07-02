@@ -1,4 +1,4 @@
-import { BookCheck } from "lucide-react";
+import { Award, BookCheck, BookOpen, Clock, Globe } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ModuleSection from "@/components/component/Course/ModuleSection";
@@ -47,8 +47,8 @@ const Course = () => {
     }
   }
   return (
-    <div>
-      <div className="w-full relative">
+    <div className=" h-screen  w-full relative overflow-y-scroll">
+      <div className="relative">
         <img
           src={CourseData?.img_url}
           alt="Course Banner"
@@ -59,18 +59,67 @@ const Course = () => {
           <p className="text-lg mt-2">{CourseData?.description}</p>
         </div>
         <section className=" px-7 -mt-7 absolute w-full">
-          <div className="flex justify-around  w-full py-7 bg-gray-100 text-center shadow-lg">
-            <div className=" font-semibold">
-              Level: <span>{CourseData?.level}</span>
-            </div>
-            <div className=" font-semibold">
-              Duration: <span>5 hours</span>
-            </div>
-            <div className=" font-semibold">
-              Total Modules: <span>{CourseData?.total}</span>
-            </div>
-            <div className=" font-semibold">
-              Language: <span>English</span>
+          <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
+            <div className="flex flex-row justify-between items-center gap-6">
+              <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Award className="w-5 h-5 text-green-600" />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                    Level
+                  </p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {CourseData?.level}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-blue-600" />
+
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                    Duration
+                  </p>
+                  <p className="text-lg font-semibold text-gray-900"> 5 hours</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-purple-600" />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                    Total Modules
+                  </p>
+                  <p className="text-lg font-semibold text-gray-900">{CourseData?.total}</p>
+                </div>
+              </div>
+
+              {/* Language */}
+              <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-orange-600" />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                    Language
+                  </p>
+                  <p className="text-lg font-semibold text-gray-900">English</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -108,8 +157,11 @@ const Course = () => {
             className="w-fit"
             onClick={redirectToFirstLesson}
           >
-            {!loading ? <span>Start with the first lesson</span> : <LoaderIcon className=" w-5 h-5 text-black-1"/> }
-            
+            {!loading ? (
+              <span>Start with the first lesson</span>
+            ) : (
+              <LoaderIcon className=" w-5 h-5 text-black-1" />
+            )}
           </Button>
         )}
       </div>

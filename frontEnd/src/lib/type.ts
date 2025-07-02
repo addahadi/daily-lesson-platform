@@ -14,6 +14,17 @@ export interface CourseCardProps  {
 }
 
 
+export default interface notesProps {
+  note_title : string
+  lesson_title : string
+  content  : string
+  created_at : string
+  course_slug : string 
+  topic_id : string 
+  lesson_slug : string
+}
+
+
 export interface ModuleCardProps {
   title: string;
   created_at: string;

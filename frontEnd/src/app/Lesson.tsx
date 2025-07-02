@@ -1,6 +1,7 @@
 import LessonBar from "@/components/component/Lesson/LessonBar";
 import LessonBullet from "@/components/component/Lesson/LessonBullet";
 import LessonCode from "@/components/component/Lesson/LessonCode";
+import LessonNote from "@/components/component/Lesson/LessonNote";
 import LessonQuizz from "@/components/component/Lesson/LessonQuizz";
 import LessonSummary from "@/components/component/Lesson/LessonSummary";
 import LessonText from "@/components/component/Lesson/LessonText";
@@ -35,12 +36,12 @@ const Lesson = () => {
   }
 
   return (
-    <div key={lessonDetail.slug} className="flex flex-row gap-5">
+    <div key={lessonDetail.slug} className="flex flex-row gap-5 overflow-hidden">
       <LessonBar enrollmentId={enrollmentId} courseId={courseId} />
-
-      <div className="flex-1 px-5">
+      <div className="flex-1 px-5 overflow-y-scroll h-screen">
+        <LessonNote />
         {/* Lesson Header */}
-        <section className="bg-white-1 flex flex-col p-5 rounded-lg gap-3 mt-5 mb-5">
+        <section className="bg-white border border-gray-200 flex flex-col p-5 rounded-lg gap-3 mt-16 mb-5 ">
           <div className="flex flex-row gap-2 text-gray-500 items-center">
             <BookOpen className="w-4 h-4" />
             <span>Lesson {lessonDetail.order_index}</span>

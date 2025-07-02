@@ -12,10 +12,10 @@ import useSyncUserProfile from "./hook/useSyncUserProfile"
 import Discover from "./app/sidebar/Discover";
 import Course from "./app/Course";
 import Lesson from "./app/Lesson";
+import Notes from "./app/sidebar/Notes";
 function App() {
   useSyncUserProfile();
   return (
-    <>
       <Routes>
         <Route path="/" element={<PrivateRoute />}></Route>
         <Route path="/login" element={<LoginInPage />} />
@@ -26,6 +26,7 @@ function App() {
           <Route path="courses" element={<Courses/>} />
           <Route path="discover" element={<Discover />} />
           <Route path="course/:CourseId" element={<Course/>} />
+          <Route path="notes" element={<Notes/>} />
         <Route
           path="course/:courseId/module/:moduleId/lesson/:lessonId"
           element={<Lesson />}
@@ -33,7 +34,7 @@ function App() {
         </Route>
 
       </Routes>
-    </>
+    
   );
 }
 export default App;

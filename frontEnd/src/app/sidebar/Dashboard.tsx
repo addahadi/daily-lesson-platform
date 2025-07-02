@@ -7,6 +7,7 @@ import {
   Telescope,
   UserRound,
   LogOut,
+  Save,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { UserButton } from "@clerk/clerk-react";
@@ -28,7 +29,7 @@ const Dashboard = () => {
   const sidebarWidth = isLessonPage ? "w-16" : "w-64";
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex  bg-gray-50 overflow-hidden">
       <aside
         className={`${sidebarWidth} bg-white shadow-sm border-r border-gray-200 flex flex-col transition-all duration-300`}
       >
@@ -61,7 +62,7 @@ const Dashboard = () => {
             </Link>
 
             <Link
-              to="/dashboard/lessons"
+              to="/dashboard/notes"
               className={`flex items-center ${
                 isLessonPage ? "justify-center p-3" : "gap-3 px-4 py-3"
               } rounded-lg font-medium transition-colors ${
@@ -72,7 +73,22 @@ const Dashboard = () => {
               title={isLessonPage ? "My Lessons" : ""}
             >
               <BookCheck size={20} />
-              {!isLessonPage && <span>My Lessons</span>}
+              {!isLessonPage && <span>My Notes</span>}
+            </Link>
+
+            <Link
+              to="/dashboard/notes"
+              className={`flex items-center ${
+                isLessonPage ? "justify-center p-3" : "gap-3 px-4 py-3"
+              } rounded-lg font-medium transition-colors ${
+                isActiveLink("/dashboard/lessons")
+                  ? "bg-orange-100 text-orange-600"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
+              }`}
+              title={isLessonPage ? "My Lessons" : ""}
+            >
+              <Save size={20} />
+              {!isLessonPage && <span>Save</span>}
             </Link>
 
             <Link
@@ -123,7 +139,7 @@ const Dashboard = () => {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col w-full">
         <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-end gap-4">
             <Input
@@ -146,7 +162,7 @@ const Dashboard = () => {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 overflow-auto bg-gray-50 ">
+        <main className="flex-1  bg-gray-50 w-full ">
           <Outlet />
         </main>
       </div>

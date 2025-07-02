@@ -7,7 +7,7 @@ const LessonBullet = ({
     bullets : string[]
 }) => {
   return (
-    <div className="bg-white-1 flex flex-col p-5 rounded-lg gap-3 mt-5 mb-5">
+    <div className="bg-white border border-gray-200 flex flex-col p-5 rounded-lg gap-3 mt-5 mb-5">
       <h1>
         <span className=" text-black-1 text-xl">{heading}</span>
       </h1>
