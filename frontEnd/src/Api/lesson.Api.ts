@@ -45,7 +45,8 @@ export const lessonApiController = () => {
         });
         if (response.ok) {
           const result = await response.json();
-          return result;
+          const {data} = result;
+          return data
         }
       } catch (err) {
         console.log(err);
@@ -126,17 +127,17 @@ export const lessonApiController = () => {
 
         if (response.ok) {
           const result = await response.json();
-          return result;
-        } else {
-          console.error("Failed response", response.status);
+          console.log(result)
+          return result
         }
+
       } catch (err) {
         console.error("Fetch error", err);
       }
     };
     
-    const getNextLesson = async (order_index: number , module_id : string) => {
-      const URL = `http://localhost:8090/lesson/nextlesson/${module_id}/${order_index}`;
+    const getNextLesson = async (order_index: number , course_id : string) => {
+      const URL = `http://localhost:8090/lesson/nextlesson/${course_id}/${order_index}`;
       try {
         const response = await fetch(URL, {
           method: "GET",

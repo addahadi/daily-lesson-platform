@@ -91,6 +91,7 @@ async function getTotalLessons(req , res){
 async function getDailyStreak(req , res){
     const {userId} = req.params
     try {
+
       const user = await sql`SELECT streak_count , last_study_date
         FROM users WHERE users.clerk_id = ${userId}`;
 

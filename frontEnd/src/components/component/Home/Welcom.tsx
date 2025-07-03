@@ -24,19 +24,33 @@ const Welcom = () => {
             alt="profile"
             className="rounded-full shadow-md"
           />
-          <div className=' mt-4'>
+          <div className=" mt-4">
             <h2 className="text-2xl font-semibold text-gray-800">
               Welcome , {user?.firstName || "Student"} 👋
             </h2>
-            <p className="text-gray-600 text-lg mt-2">
-              You’ve completed{" "}
-              <span className="font-bold text-orange-500">{streak}</span> Streak
-              days
-            </p>
+            {!(streak == 0) ? (
+              <p className="text-gray-600 text-lg mt-2">
+                You’ve completed{" "}
+                <span className="font-bold text-orange-500">{streak}</span>{" "}
+                Streak days
+              </p>
+            ) : (
+              <p className="text-gray-600 text-lg mt-2">
+                you have{" "}
+                <span className="font-bold text-orange-500">{streak}</span>
+                {" "} try to complete 1 lesson to increase your streak day
+              </p>
+            )}
           </div>
         </div>
-        <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-          <Zap className="w-6 h-6 text-orange-600" />
+        <div className={`w-12 h-12  rounded-lg flex items-center justify-center
+           ${!(streak == 0) ? "bg-orange-100" : "bg-gray-100"} 
+          `}>
+          {
+            !(streak == 0) 
+            ? <Zap className="w-6 h-6 text-orange-600" />
+            : <Zap className="w-6 h-6 text-gray-500" />
+          }
         </div>
       </div>
     );

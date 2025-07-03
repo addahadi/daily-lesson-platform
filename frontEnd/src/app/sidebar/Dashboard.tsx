@@ -1,5 +1,3 @@
-
-
 import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -13,125 +11,111 @@ import { Input } from "@/components/ui/input";
 import { UserButton } from "@clerk/clerk-react";
 
 const Dashboard = () => {
-  
   const location = useLocation();
 
-  const isActiveLink = (path : string) => {
-    return location.pathname === path;
-  };
-
-  // Check if we're on a lesson page
-  const isLessonPage =
-    location.pathname.includes("/course/") &&
-    location.pathname.includes("/module/") &&
-    location.pathname.includes("/lesson/");
-
+  const isActiveLink = (path: string) => location.pathname === path;
+  const isLessonPage = location.pathname.includes("lesson");
   const sidebarWidth = isLessonPage ? "w-16" : "w-64";
+  const gridCols = isLessonPage
+    ? "grid-cols-[4rem_1fr]"
+    : "grid-cols-[16rem_1fr]";
 
   return (
-    <div className="flex  bg-gray-50 overflow-hidden">
+    <div className={`grid ${gridCols} h-screen`}>
       <aside
-        className={`${sidebarWidth} bg-white shadow-sm border-r border-gray-200 flex flex-col transition-all duration-300`}
+        className={`row-span-2 col-start-1 col-end-2 bg-white shadow-sm border-r border-gray-200 flex flex-col fixed left-0 top-0 z-20 h-screen ${sidebarWidth} ${
+          isLessonPage ? "p-2" : "p-6"
+        }`}
       >
         <div
-          className={`${isLessonPage ? "p-3" : "p-6"} border-b border-gray-200`}
+          className={`border-b border-gray-200 pb-4 mb-4 flex items-center ${
+            isLessonPage ? "justify-center" : ""
+          }`}
         >
-          <div className="flex items-center justify-center">
-            <img src="/icon/logo.svg" alt="logo" width={40} height={40} />
-            {!isLessonPage && (
-              <h2 className="ml-3 text-xl font-bold text-gray-800">Learn Dz</h2>
-            )}
-          </div>
+          <img src="/icon/logo.svg" alt="logo" width={40} height={40} />
+          {!isLessonPage && (
+            <h2 className="ml-3 text-xl font-bold text-gray-800">Learn Dz</h2>
+          )}
         </div>
 
-        <nav className={`flex-1 ${isLessonPage ? "p-3" : "p-6"}`}>
-          <div className="space-y-2">
-            <Link
-              to="/dashboard"
-              className={`flex items-center ${
-                isLessonPage ? "justify-center p-3" : "gap-3 px-4 py-3"
-              } rounded-lg font-medium transition-colors ${
-                isActiveLink("/dashboard")
-                  ? "bg-orange-100 text-orange-600"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-              }`}
-              title={isLessonPage ? "Dashboard" : ""}
-            >
-              <LayoutDashboard size={20} />
-              {!isLessonPage && <span>Dashboard</span>}
-            </Link>
+        <nav className="flex-1 space-y-2">
+          <Link
+            to="/dashboard"
+            className={`flex items-center rounded-lg font-medium transition-colors ${
+              isLessonPage ? "justify-center p-2" : "gap-3 px-4 py-3"
+            } ${
+              isActiveLink("/dashboard")
+                ? "bg-orange-100 text-orange-600"
+                : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
+            }`}
+          >
+            <LayoutDashboard size={20} />
+            {!isLessonPage && <span>Dashboard</span>}
+          </Link>
 
-            <Link
-              to="/dashboard/notes"
-              className={`flex items-center ${
-                isLessonPage ? "justify-center p-3" : "gap-3 px-4 py-3"
-              } rounded-lg font-medium transition-colors ${
-                isActiveLink("/dashboard/lessons")
-                  ? "bg-orange-100 text-orange-600"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-              }`}
-              title={isLessonPage ? "My Lessons" : ""}
-            >
-              <BookCheck size={20} />
-              {!isLessonPage && <span>My Notes</span>}
-            </Link>
+          <Link
+            to="/dashboard/notes"
+            className={`flex items-center rounded-lg font-medium transition-colors ${
+              isLessonPage ? "justify-center p-2" : "gap-3 px-4 py-3"
+            } ${
+              isActiveLink("/dashboard/notes")
+                ? "bg-orange-100 text-orange-600"
+                : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
+            }`}
+          >
+            <BookCheck size={20} />
+            {!isLessonPage && <span>My Notes</span>}
+          </Link>
 
-            <Link
-              to="/dashboard/notes"
-              className={`flex items-center ${
-                isLessonPage ? "justify-center p-3" : "gap-3 px-4 py-3"
-              } rounded-lg font-medium transition-colors ${
-                isActiveLink("/dashboard/lessons")
-                  ? "bg-orange-100 text-orange-600"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-              }`}
-              title={isLessonPage ? "My Lessons" : ""}
-            >
-              <Save size={20} />
-              {!isLessonPage && <span>Save</span>}
-            </Link>
+          <Link
+            to="/dashboard/saved"
+            className={`flex items-center rounded-lg font-medium transition-colors ${
+              isLessonPage ? "justify-center p-2" : "gap-3 px-4 py-3"
+            } ${
+              isActiveLink("/dashboard/saved")
+                ? "bg-orange-100 text-orange-600"
+                : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
+            }`}
+          >
+            <Save size={20} />
+            {!isLessonPage && <span>Saved</span>}
+          </Link>
 
-            <Link
-              to="/dashboard/discover"
-              className={`flex items-center ${
-                isLessonPage ? "justify-center p-3" : "gap-3 px-4 py-3"
-              } rounded-lg font-medium transition-colors ${
-                isActiveLink("/dashboard/discover")
-                  ? "bg-orange-100 text-orange-600"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-              }`}
-              title={isLessonPage ? "Discover" : ""}
-            >
-              <Telescope size={20} />
-              {!isLessonPage && <span>Discover</span>}
-            </Link>
+          <Link
+            to="/dashboard/discover"
+            className={`flex items-center rounded-lg font-medium transition-colors ${
+              isLessonPage ? "justify-center p-2" : "gap-3 px-4 py-3"
+            } ${
+              isActiveLink("/dashboard/discover")
+                ? "bg-orange-100 text-orange-600"
+                : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
+            }`}
+          >
+            <Telescope size={20} />
+            {!isLessonPage && <span>Discover</span>}
+          </Link>
 
-            <Link
-              to="/dashboard/profile"
-              className={`flex items-center ${
-                isLessonPage ? "justify-center p-3" : "gap-3 px-4 py-3"
-              } rounded-lg font-medium transition-colors ${
-                isActiveLink("/dashboard/profile")
-                  ? "bg-orange-100 text-orange-600"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-              }`}
-              title={isLessonPage ? "Profile" : ""}
-            >
-              <UserRound size={20} />
-              {!isLessonPage && <span>Profile</span>}
-            </Link>
-          </div>
+          <Link
+            to="/dashboard/profile"
+            className={`flex items-center rounded-lg font-medium transition-colors ${
+              isLessonPage ? "justify-center p-2" : "gap-3 px-4 py-3"
+            } ${
+              isActiveLink("/dashboard/profile")
+                ? "bg-orange-100 text-orange-600"
+                : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
+            }`}
+          >
+            <UserRound size={20} />
+            {!isLessonPage && <span>Profile</span>}
+          </Link>
         </nav>
 
-        <div
-          className={`${isLessonPage ? "p-3" : "p-6"} border-t border-gray-200`}
-        >
+        <div className="border-t border-gray-200 pt-4">
           <Link
             to="/logout"
-            className={`flex items-center ${
-              isLessonPage ? "justify-center p-3" : "gap-3 px-4 py-3"
-            } rounded-lg font-medium text-red-600 hover:bg-red-50 transition-colors`}
-            title={isLessonPage ? "Logout" : ""}
+            className={`flex items-center rounded-lg font-medium text-red-600 hover:bg-red-50 transition-colors ${
+              isLessonPage ? "justify-center p-2" : "gap-3 px-4 py-3"
+            }`}
           >
             <LogOut size={20} />
             {!isLessonPage && <span>Logout</span>}
@@ -139,33 +123,26 @@ const Dashboard = () => {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col w-full">
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-end gap-4">
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-80 max-w-sm"
-            />
-            <div className="flex items-center gap-3">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <img
-                  src="/icon/notification.svg"
-                  alt="notifications"
-                  width={24}
-                  height={24}
-                />
-              </button>
-              <UserButton />
-            </div>
-          </div>
-        </header>
+      <header className="w-full sticky top-0 z-10 py-4 col-start-2 col-end-3 row-start-1 row-end-2 bg-white border-b border-gray-200 px-6 flex items-center justify-end gap-4">
+        <Input
+          type="search"
+          placeholder="Search..."
+          className="w-80 max-w-sm"
+        />
+        <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <img
+            src="/icon/notification.svg"
+            alt="notifications"
+            width={24}
+            height={24}
+          />
+        </button>
+        <UserButton />
+      </header>
 
-        {/* Main content */}
-        <main className="flex-1  bg-gray-50 w-full ">
-          <Outlet />
-        </main>
-      </div>
+      <main className="col-start-2 col-end-3 row-start-2 row-end-3 bg-gray-50 ">
+        <Outlet />
+      </main>
     </div>
   );
 };

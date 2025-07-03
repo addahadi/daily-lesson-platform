@@ -86,14 +86,14 @@ export function useLessonDetails() {
   }, [enrollmentId, moduleId, lessonId]);
 
   const handlePrevious = async () => {
-    if (!lessonDetail || !moduleId) return;
+    if (!lessonDetail || !courseId) return;
     try {
       const { result } = await lessonApiController().getNextLesson(
         lessonDetail.order_index - 1,
-        moduleId
+        courseId
       );
       navigate(
-        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
+        `/dashboard/course/${courseId}/module/${result[0].topic_id}/lesson/${result[0].slug}`
       );
     } catch (err) {
       console.error("Failed to load previous lesson:", err);
@@ -101,14 +101,14 @@ export function useLessonDetails() {
   };
 
   const handleNext = async () => {
-    if (!lessonDetail || !moduleId) return;
+    if (!lessonDetail || !courseId) return;
     try {
       const { result } = await lessonApiController().getNextLesson(
         lessonDetail.order_index + 1,
-        moduleId
+        courseId
       );
       navigate(
-        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
+        `/dashboard/course/${courseId}/module/${result[0].topic_id}/lesson/${result[0].slug}`
       );
     } catch (err) {
       console.error("Failed to load next lesson:", err);

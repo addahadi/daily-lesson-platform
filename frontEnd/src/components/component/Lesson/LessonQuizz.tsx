@@ -7,21 +7,41 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
-  const [selectedAnswer, setSelectedAnswer] = useState<number>();
   const {user} = useUser()
   const {lessonId , moduleId} = useParams()
-
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   useEffect(() => {
-    if (quizz?.selected_option_index) {
+    if (quizz) {
       setSelectedAnswer(quizz.selected_option_index);
+      const isAlreadySubmitted =
+        quizz.selected_option_index !== null &&
+        quizz.selected_option_index !== undefined;
+      setIsSubmitted(isAlreadySubmitted)
+      setIsCorrect(quizz.is_correct)
+
     }
   }, [quizz]);
   
   async function handleClick(){
     try  {
-      if(!selectedAnswer) return 
-      if (!lessonId || !user?.id || !moduleId || !quizz.quizz_id) return;
-      await lessonApiController().SubmitQuizzAnswer(quizz.quizz_id , user?.id, lessonId , selectedAnswer-1 , selectedAnswer-1 == quizz.correct_option_index , moduleId)
+      if (
+        !lessonId ||
+        !user?.id ||
+        !moduleId ||
+        !quizz.quizz_id ||
+        selectedAnswer === null ||
+        selectedAnswer === undefined
+      )
+        return;
+        console.log(selectedAnswer == quizz.correct_option_index , selectedAnswer , quizz.correct_option_index);
+      await lessonApiController().SubmitQuizzAnswer(quizz.quizz_id , user?.id, lessonId , selectedAnswer , selectedAnswer == quizz.correct_option_index , moduleId)
+      if(selectedAnswer == quizz.correct_option_index){
+        setIsCorrect(true)
+        setIsSubmitted(true)
+      }
+      else {setIsCorrect(false)}
     } 
     catch(err){
       console.log(err)
@@ -37,6 +57,7 @@ const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
         {quizz?.question}
       </h3>
       <div className="flex flex-col gap-5">
+        
         {quizz?.options?.map((option, index) => {
           return (
             <label
@@ -46,8 +67,8 @@ const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
               <input
                 type="radio"
                 name="quiz"
-                value={(index+1)}
-                checked={selectedAnswer == index+1}
+                value={(index)}
+                checked={selectedAnswer == index}
                 onChange={(e) => setSelectedAnswer(parseInt(e.target.value))}
                 className="text-purple-600"
               />
@@ -57,7 +78,7 @@ const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
         })}
       </div>
       <div className=" m-auto w-full">
-        {!quizz?.selected_option_index ? (
+        {!isSubmitted ? (
           <Button
             className=" bg-purple-600 text-white-1  m-auto mt-5"
             onClick={handleClick}
@@ -67,24 +88,24 @@ const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
         ) : (
           <div
             className={`p-4 rounded-lg mt-5 ${
-              !quizz?.is_correct
+              !isCorrect
                 ? "bg-red-50 border border-red-200"
                 : "bg-green-50 border border-green-200"
             }`}
           >
             <p
               className={`font-medium ${
-                quizz?.is_correct
+                isCorrect
                   ? "text-green-800"
                   : "text-red-800"
               }`}
             >
-              { quizz?.is_correct
+              { isCorrect
                 ? "Correct!"
                 : "Incorrect"}
             </p>
             <p className="text-sm text-gray-600 mt-1">
-              The correct answer is: {quizz?.options[quizz?.correct_option_index-1]}
+              The correct answer is: {quizz?.options[quizz?.correct_option_index]}
             </p>
           </div>
         )}

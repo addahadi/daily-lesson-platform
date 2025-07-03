@@ -36,9 +36,9 @@ const Lesson = () => {
   }
 
   return (
-    <div key={lessonDetail.slug} className="flex flex-row gap-5 overflow-hidden">
+    <div key={lessonDetail.slug} className="flex flex-row gap-5 overflow-auto">
       <LessonBar enrollmentId={enrollmentId} courseId={courseId} />
-      <div className="flex-1 px-5 overflow-y-scroll h-screen">
+      <div className="flex-1 px-5  ">
         <LessonNote />
         {/* Lesson Header */}
         <section className="bg-white border border-gray-200 flex flex-col p-5 rounded-lg gap-3 mt-16 mb-5 ">

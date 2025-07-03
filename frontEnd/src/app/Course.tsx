@@ -37,6 +37,7 @@ const Course = () => {
         setLoading(true)
         const {'0' : result} = response
         setIds(result)
+        console.log(result)
         navigate(`/dashboard/course/${CourseId}/module/${result.module_id}/lesson/${result.lesson_id}`)
       }).catch((error) => {
         console.log(error)

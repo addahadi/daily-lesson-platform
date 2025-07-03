@@ -27,7 +27,7 @@ router.get("/submitanswer" , (req , res) => {
 
 
 router.get(
-  "/nextlesson/:moduleId/:orderIndex",
+  "/nextlesson/:courseId/:orderIndex",
   (req, res) => {
     getNextLesson(req, res);
   }

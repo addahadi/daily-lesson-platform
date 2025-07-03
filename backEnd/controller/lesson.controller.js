@@ -185,6 +185,7 @@ async function SubmitQuizzAnswer(req, res) {
       correct,
       module_id,
     } = req.query;
+
     if (
       !quizz_id ||
       !lesson_id ||
@@ -197,6 +198,9 @@ async function SubmitQuizzAnswer(req, res) {
         .status(400)
         .json({ status: false, message: "Missing required fields" });
     }
+
+    const isCorrect = correct === "true" || correct === true;
+
     const lessonResult = await sql`
       SELECT id FROM lessons WHERE slug = ${lesson_id} AND topic_id = ${module_id}
     `;
@@ -205,12 +209,15 @@ async function SubmitQuizzAnswer(req, res) {
         .status(404)
         .json({ status: false, message: "Lesson not found" });
     }
+
     const lessonId = lessonResult[0].id;
+
     await sql`
       INSERT INTO quiz_answers (quiz_id, lesson_id, user_id, selected_option_index, is_correct)
-      VALUES (${quizz_id}, ${lessonId}, ${user_id}, ${selected_option}, ${correct})
+      VALUES (${quizz_id}, ${lessonId}, ${user_id}, ${selected_option}, ${isCorrect})
       ON CONFLICT (quiz_id, lesson_id, user_id) DO NOTHING
     `;
+
     res.status(200).json({ status: true, message: "Quiz answer submitted" });
   } catch (err) {
     console.log(err);
@@ -219,11 +226,18 @@ async function SubmitQuizzAnswer(req, res) {
 }
 
 
+
 async function getNextLesson(req, res) {
   try {
-    const { orderIndex, moduleId } = req.params;
+    const { orderIndex, courseId } = req.params;
+    const courseSlug = await sql`
+    SELECT id as course_id FROM courses where slug = ${courseId}`
     const nextLesson = await sql`
-      SELECT slug FROM lessons WHERE order_index = ${orderIndex} AND topic_id = ${moduleId}
+      SELECT slug , topic_id FROM lessons WHERE order_index = ${orderIndex} AND topic_id IN(
+      SELECT id
+      FROM modules 
+      WHERE course_id = ${courseSlug[0].course_id}
+      )
     `;
     res.status(200).json({ status: true, result: nextLesson });
   } catch (err) {
