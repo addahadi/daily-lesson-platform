@@ -21,7 +21,7 @@ const Dashboard = () => {
     : "grid-cols-[16rem_1fr]";
 
   return (
-    <div className={`grid ${gridCols} h-screen`}>
+    <div className={`grid ${gridCols}  h-screen`}>
       <aside
         className={`row-span-2 col-start-1 col-end-2 bg-white shadow-sm border-r border-gray-200 flex flex-col fixed left-0 top-0 z-20 h-screen ${sidebarWidth} ${
           isLessonPage ? "p-2" : "p-6"
@@ -34,7 +34,7 @@ const Dashboard = () => {
         >
           <img src="/icon/logo.svg" alt="logo" width={40} height={40} />
           {!isLessonPage && (
-            <h2 className="ml-3 text-xl font-bold text-gray-800">Learn Dz</h2>
+            <h2 className="ml-3 text-xl  text-gray-800">Learn Dz</h2>
           )}
         </div>
 
@@ -122,27 +122,28 @@ const Dashboard = () => {
           </Link>
         </div>
       </aside>
-
-      <header className="w-full sticky top-0 z-10 py-4 col-start-2 col-end-3 row-start-1 row-end-2 bg-white border-b border-gray-200 px-6 flex items-center justify-end gap-4">
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="w-80 max-w-sm"
-        />
-        <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-          <img
-            src="/icon/notification.svg"
-            alt="notifications"
-            width={24}
-            height={24}
+      <div className="col-start-2 col-end-3  flex flex-col ">
+        <header className="w-full  sticky top-0 z-10 py-3 bg-white border-b border-gray-200 px-6 flex items-center justify-end gap-4">
+          <Input
+            type="search"
+            placeholder="Search..."
+            className="w-80 max-w-sm"
           />
-        </button>
-        <UserButton />
-      </header>
+          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <img
+              src="/icon/notification.svg"
+              alt="notifications"
+              width={24}
+              height={24}
+            />
+          </button>
+          <UserButton />
+        </header>
 
-      <main className="col-start-2 col-end-3 row-start-2 row-end-3 bg-gray-50 ">
-        <Outlet />
-      </main>
+        <main className=" flex-1 bg-gray-50  h-screen">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

@@ -64,7 +64,7 @@ async function getEnroll(req, res) {
       WHERE c.slug = ${courseId} 
         AND e.user_id = ${userId}
     `;
-
+    console.log(response)
     if (response.length === 0) {
       return res.status(404).json({
         status: false,
@@ -86,4 +86,58 @@ async function getEnroll(req, res) {
 }
 
 
-module.exports = { SignUp , enrollToCourse , checkEnroll , getEnroll};
+
+
+async function getUserAchievments(req , res){
+  const {userId} = req.params
+  try {
+    const user_achievements = await sql`
+    SELECT 
+    a.*, 
+    EXISTS (
+      SELECT 1 
+      FROM user_achievements 
+      WHERE user_id = ${userId} 
+        AND achievement_id = a.id
+    ) AS earned
+    FROM achievements a;
+
+    `
+    res.status(200).json({
+      status : true , 
+      data : user_achievements
+    })
+  }
+  catch(err){
+    console.log(err)
+    res.status(500).json({
+      message : err.message
+    })
+  }
+}
+
+
+
+
+async function getUserInfo(req ,res){
+  const {userId} = req.params
+  try {
+    const userInfoResult = await sql`
+    SELECT * FROM users WHERE clerk_id = ${userId}
+    `
+    res.status(200).json({
+      status: true , 
+      data : userInfoResult
+    })
+  }
+  catch(err){
+    console.error(err);
+    res.status(500).json({
+      status: false,
+      error: err.message,
+    });
+  }
+}
+
+
+module.exports = { SignUp , enrollToCourse , checkEnroll , getEnroll , getUserInfo , getUserAchievments};

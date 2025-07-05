@@ -107,7 +107,7 @@ export const lessonApiController = () => {
       lesson_id: string,
       selected_option_index: number,
       is_correct: boolean,
-      module_id : string
+      module_id : string,
     ) => {
       const queryParams = new URLSearchParams({
         quizz_id,
@@ -115,7 +115,7 @@ export const lessonApiController = () => {
         lesson_id,
         selected_option : selected_option_index.toString(),
         correct : is_correct.toString(),
-        module_id : module_id
+        module_id : module_id,
       });
 
       const URL = `http://localhost:8090/lesson/submitanswer?${queryParams.toString()}`;
@@ -156,7 +156,7 @@ export const lessonApiController = () => {
         enrollmentId,
         moduleId,
         lessonSlug : lessonId,
-        userId
+        userId,
       };
       const URL = `http://localhost:8090/lesson/markascomplete`;
       try {

@@ -58,8 +58,7 @@ const ContinueLearning = () => {
         </h1>
         <section className="flex flex-col gap-5 w-full">
             {
-                courses?.map((course , index) => {
-                    console.log(lessons)
+                lessons && lessons[0] && courses?.map((course , index) => {
                     return (
                       <div
                         key={index}

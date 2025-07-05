@@ -26,7 +26,6 @@ const Lesson = () => {
   const Summary = lessonSections?.filter(
     (section) => section.heading === "Summary"
   );
-
   if (loading || !lessonDetail) {
     return (
       <div className="min-h-screen w-full flex justify-center items-center">
@@ -78,7 +77,7 @@ const Lesson = () => {
         </section>
 
         {/* Lesson Sections */}
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col">
           {lessonSections?.map((lessonSection, index) => {
             if (lessonSection.heading === "Summary") return null;
 

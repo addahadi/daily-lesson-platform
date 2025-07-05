@@ -25,6 +25,8 @@ app.use("/course" , courseRoutes);
 app.use("/lesson" , lessonRoutes);
 app.use("/home" , homeRoutes)
 app.use("/note" , noteRoutes)
+app.use(errorHandler);
+
 app.listen(8090 , () => {
     console.log("it is working")
 })

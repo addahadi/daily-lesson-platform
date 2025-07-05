@@ -1,4 +1,5 @@
 const sql = require("../db");
+const { addXp, checkAchievements } = require("../controller/xp.controller");
 
 async function getLessonDetails(req, res) {
   const { lessonId, userId } = req.query;
@@ -24,10 +25,15 @@ async function getLessonDetails(req, res) {
       LEFT JOIN quiz_answers a ON a.quiz_id = q.id AND a.user_id = ${userId} 
       WHERE l.slug = ${lessonId};
     `;
-    res.status(200).json({ status: true, data: lessons });
+    if(lessons.length == 0){
+     res.status(404).json({
+      
+     })  
+    }
+    res.status(200).json({ success: true, data: lessons });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ status: false, error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 }
 
@@ -38,13 +44,17 @@ async function getLessonsDetails(req, res) {
       SELECT id, slug, title FROM courses WHERE slug = ${courseId}
     `;
     if (courseResponse.length === 0) {
-      return res.status(404).json({ status: false, error: "Course not found" });
+      return res
+        .status(404)
+        .json({ status: false, error: "Course not found." });
     }
+
     const course = courseResponse[0];
     const modulesResponse = await sql`
       SELECT id, title, order_index FROM modules WHERE course_id = ${course.id} ORDER BY order_index
     `;
     const moduleIds = modulesResponse.map((module) => module.id);
+
     const lessonsResponse = await sql`
       SELECT 
         l.id, 
@@ -58,6 +68,7 @@ async function getLessonsDetails(req, res) {
       WHERE l.topic_id = ANY(${moduleIds})
       ORDER BY l.topic_id, l.order_index
     `;
+
     const structuredModules = modulesResponse.map((module) => ({
       module_id: module.id,
       title: module.title,
@@ -72,6 +83,7 @@ async function getLessonsDetails(req, res) {
           completed: lesson.completed,
         })),
     }));
+
     res
       .status(200)
       .json({ status: true, data: { course, modules: structuredModules } });
@@ -105,8 +117,11 @@ async function isLessonAccessible(req, res) {
       SELECT id, slug, title FROM courses WHERE slug = ${courseId}
     `;
     if (courseResponse.length === 0) {
-      return res.status(404).json({ status: false, error: "Course not found" });
+      return res
+        .status(404)
+        .json({ status: false, error: "Course not found." });
     }
+
     const course = courseResponse[0];
     const accessCheck = await sql`
       SELECT EXISTS (
@@ -142,33 +157,37 @@ async function startLesson(req, res) {
     if (lessonResult.length === 0) {
       return res
         .status(404)
-        .json({ status: false, message: "Lesson not found" });
+        .json({ status: false, message: "Lesson not found." });
     }
+
     const lessonId = lessonResult[0].id;
+
     await sql`
       INSERT INTO module_progress (enrollment_id, module_id, started_at, progress)
       VALUES (${enrollmentId}, ${moduleId}, NOW(), 0)
       ON CONFLICT (enrollment_id, module_id) DO NOTHING
     `;
+
     const existingProgress = await sql`
       SELECT completed FROM lesson_progress
       WHERE enrollment_id = ${enrollmentId} AND module_id = ${moduleId} AND lesson_id = ${lessonId}
     `;
+
     let isCompleted =
       existingProgress.length > 0 ? existingProgress[0].completed : false;
+
     if (existingProgress.length === 0) {
       await sql`
         INSERT INTO lesson_progress (enrollment_id, module_id, lesson_id, completed)
         VALUES (${enrollmentId}, ${moduleId}, ${lessonId}, false)
       `;
     }
-    res
-      .status(200)
-      .json({
-        status: true,
-        message: "Lesson progress ensured",
-        completed: isCompleted,
-      });
+
+    res.status(200).json({
+      status: true,
+      message: "Lesson progress initialized successfully.",
+      completed: isCompleted,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ status: false, error: err.message });
@@ -177,66 +196,73 @@ async function startLesson(req, res) {
 
 async function SubmitQuizzAnswer(req, res) {
   try {
-    const {
-      quizz_id,
-      lesson_id,
-      user_id,
-      selected_option,
-      correct,
-      module_id,
-    } = req.query;
+    await sql.begin(async (client) => {
+      const {
+        quizz_id,
+        lesson_id,
+        user_id,
+        selected_option,
+        correct,
+        module_id,
+      } = req.query;
 
-    if (
-      !quizz_id ||
-      !lesson_id ||
-      !user_id ||
-      selected_option == null ||
-      correct == null ||
-      !module_id
-    ) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Missing required fields" });
-    }
+      if (
+        !quizz_id ||
+        !lesson_id ||
+        !user_id ||
+        selected_option == null ||
+        correct == null ||
+        !module_id
+      ) {
+        return res
+          .status(400)
+          .json({ status: false, message: "Missing required fields." });
+      }
 
-    const isCorrect = correct === "true" || correct === true;
+      const isCorrect = correct === "true" || correct === true;
 
-    const lessonResult = await sql`
-      SELECT id FROM lessons WHERE slug = ${lesson_id} AND topic_id = ${module_id}
-    `;
-    if (lessonResult.length === 0) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Lesson not found" });
-    }
+      const lessonResult = await client`
+        SELECT id FROM lessons WHERE slug = ${lesson_id} AND topic_id = ${module_id}
+      `;
+      if (lessonResult.length === 0) {
+        return res
+          .status(404)
+          .json({ status: false, message: "Lesson not found." });
+      }
 
-    const lessonId = lessonResult[0].id;
+      const lessonId = lessonResult[0].id;
 
-    await sql`
-      INSERT INTO quiz_answers (quiz_id, lesson_id, user_id, selected_option_index, is_correct)
-      VALUES (${quizz_id}, ${lessonId}, ${user_id}, ${selected_option}, ${isCorrect})
-      ON CONFLICT (quiz_id, lesson_id, user_id) DO NOTHING
-    `;
+      await client`
+        INSERT INTO quiz_answers (quiz_id, lesson_id, user_id, selected_option_index, is_correct)
+        VALUES (${quizz_id}, ${lessonId}, ${user_id}, ${selected_option}, ${isCorrect})
+        ON CONFLICT (quiz_id, lesson_id, user_id) DO NOTHING
+      `;
 
-    res.status(200).json({ status: true, message: "Quiz answer submitted" });
+      if (isCorrect) {
+        const xp = 50;
+        const source = "quizz_completed";
+        await addXp(client, source, user_id, parseInt(xp));
+      }
+
+      res
+        .status(200)
+        .json({ status: true, message: "Quiz answer recorded successfully." });
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ status: false, error: err.message });
   }
 }
 
-
-
 async function getNextLesson(req, res) {
   try {
     const { orderIndex, courseId } = req.params;
     const courseSlug = await sql`
-    SELECT id as course_id FROM courses where slug = ${courseId}`
+      SELECT id as course_id FROM courses WHERE slug = ${courseId}
+    `;
     const nextLesson = await sql`
-      SELECT slug , topic_id FROM lessons WHERE order_index = ${orderIndex} AND topic_id IN(
-      SELECT id
-      FROM modules 
-      WHERE course_id = ${courseSlug[0].course_id}
+      SELECT slug, topic_id FROM lessons WHERE order_index = ${orderIndex} AND topic_id IN (
+        SELECT id FROM modules WHERE course_id = ${courseSlug[0].course_id}
       )
     `;
     res.status(200).json({ status: true, result: nextLesson });
@@ -250,61 +276,77 @@ async function MarkAsComplete(req, res) {
   const { lessonSlug, enrollmentId, moduleId, userId } = req.body;
   const today = new Date().toISOString().split("T")[0];
   const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  const xp = 10;
+  const source = "lesson_complete";
+
   try {
-    const lessonResult = await sql`
-      SELECT id FROM lessons WHERE slug = ${lessonSlug} AND topic_id = ${moduleId}
-    `;
-    if (lessonResult.length === 0) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Lesson not found" });
-    }
-    const lessonId = lessonResult[0].id;
-    const solved = await sql`
-      SELECT EXISTS (SELECT 1 FROM quiz_answers WHERE lesson_id = ${lessonId}) AS exists
-    `;
-    if (!solved[0].exists) {
-      return res.json({
-        success: false,
-        message: "You need to solve the quiz first ❌",
-      });
-    }
-    const updateResult = await sql`
-      UPDATE lesson_progress SET completed = TRUE, completed_at = NOW()
-      WHERE enrollment_id = ${enrollmentId} AND lesson_id = ${lessonId}
-    `;
-    if (updateResult.rowCount === 0) {
-      return res
-        .status(404)
-        .json({
+    await sql.begin(async (client) => {
+      const lessonResult = await client`
+        SELECT id FROM lessons WHERE slug = ${lessonSlug} AND topic_id = ${moduleId}
+      `;
+      if (lessonResult.length === 0) {
+        return res
+          .status(404)
+          .json({ status: false, message: "Lesson not found." });
+      }
+
+      const lessonId = lessonResult[0].id;
+
+      const solved = await client`
+        SELECT EXISTS (SELECT 1 FROM quiz_answers WHERE lesson_id = ${lessonId}) AS exists
+      `;
+      if (!solved[0].exists) {
+        return res.json({
           success: false,
-          message: "No matching lesson_progress found ❌",
+          message:
+            "Please complete the quiz before marking the lesson as complete.",
         });
-    }
-    const totalLessons = await sql`
-      SELECT COUNT(*) AS count FROM lessons WHERE topic_id = ${moduleId}
-    `;
-    const completedLessons = await sql`
-      SELECT COUNT(*) AS count FROM lesson_progress
-      WHERE completed = TRUE AND enrollment_id = ${enrollmentId} AND lesson_id IN (
-        SELECT id FROM lessons WHERE topic_id = ${moduleId}
-      )
-    `;
-    const progress = Math.round(
-      (completedLessons[0].count / totalLessons[0].count) * 100
-    );
-    await sql`
-      UPDATE module_progress SET progress = ${progress} WHERE enrollment_id = ${enrollmentId} AND module_id = ${moduleId}
-    `;
-    await sql`
-      UPDATE users SET
-        streak_count = CASE WHEN last_study_date = ${yesterday} THEN streak_count + 1 ELSE 1 END,
-        last_study_date = ${today}
-      WHERE clerk_id = ${userId} AND last_study_date IS DISTINCT FROM ${today}
-    `;
-    res
-      .status(200)
-      .json({ success: true, message: "Lesson marked complete ✅" });
+      }
+
+      const updateResult = await client`
+        UPDATE lesson_progress SET completed = TRUE, completed_at = NOW()
+        WHERE enrollment_id = ${enrollmentId} AND lesson_id = ${lessonId}
+      `;
+      if (updateResult.count === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Lesson progress entry not found.",
+        });
+      }
+
+      const totalLessons = await client`
+        SELECT COUNT(*) AS count FROM lessons WHERE topic_id = ${moduleId}
+      `;
+      const completedLessons = await client`
+        SELECT COUNT(*) AS count FROM lesson_progress
+        WHERE completed = TRUE AND enrollment_id = ${enrollmentId} AND lesson_id IN (
+          SELECT id FROM lessons WHERE topic_id = ${moduleId}
+        )
+      `;
+      const progress = Math.round(
+        (completedLessons[0].count / totalLessons[0].count) * 100
+      );
+
+      await client`
+        UPDATE module_progress SET progress = ${progress}
+        WHERE enrollment_id = ${enrollmentId} AND module_id = ${moduleId}
+      `;
+
+      await client`
+        UPDATE users SET
+          streak_count = CASE WHEN last_study_date = ${yesterday} THEN streak_count + 1 ELSE 1 END,
+          last_study_date = ${today}
+        WHERE clerk_id = ${userId} AND last_study_date IS DISTINCT FROM ${today}
+      `;
+
+      await addXp(client, source, userId, xp);
+      await checkAchievements(client, enrollmentId, userId);
+
+      res.status(200).json({
+        success: true,
+        message: "Lesson marked as completed.",
+      });
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, error: err.message });

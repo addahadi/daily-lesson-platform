@@ -48,7 +48,7 @@ const Course = () => {
     }
   }
   return (
-    <div className=" h-screen  w-full relative overflow-y-scroll">
+    <div className="  w-full relative ">
       <div className="relative">
         <img
           src={CourseData?.img_url}

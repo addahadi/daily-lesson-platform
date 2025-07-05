@@ -1,5 +1,7 @@
 import { lessonApiController } from '@/Api/lesson.Api';
 import { Button } from '@/components/ui/button'
+import { Toast } from '@/components/ui/Toast';
+import type { ToastProps } from '@/lib/type';
 import type QuizzProps from '@/lib/type'
 import { useUser } from '@clerk/clerk-react';
 import { Trophy } from 'lucide-react'
@@ -12,6 +14,7 @@ const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [toast , setToast] = useState<ToastProps>()
   useEffect(() => {
     if (quizz) {
       setSelectedAnswer(quizz.selected_option_index);
@@ -36,9 +39,15 @@ const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
       )
         return;
         console.log(selectedAnswer == quizz.correct_option_index , selectedAnswer , quizz.correct_option_index);
+        const xp = "50"
+        const source = "quizz_complete"
       await lessonApiController().SubmitQuizzAnswer(quizz.quizz_id , user?.id, lessonId , selectedAnswer , selectedAnswer == quizz.correct_option_index , moduleId)
       if(selectedAnswer == quizz.correct_option_index){
         setIsCorrect(true)
+        setToast({
+          type : "success",
+          message : "you earned 50xp"
+        })
         setIsSubmitted(true)
       }
       else {setIsCorrect(false)}
@@ -110,6 +119,13 @@ const LessonQuizz = ({quizz} : {quizz : QuizzProps}) => {
           </div>
         )}
       </div>
+      {toast && (
+              <Toast
+                type={toast ? toast.type : "success"}
+                message={toast ? toast.message : ""}
+                onClose={() => setToast(undefined)}
+      />)}
+
     </div>
   );
 }

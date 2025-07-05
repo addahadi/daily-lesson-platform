@@ -47,8 +47,9 @@ export const userApiController = () => {
             }
           );
           if (response.ok) {
-            const data = await response.json();
-            return data;
+            const result = await response.json();
+            const {data} = result
+            return data
           }
         } catch (error) {
           console.error("Error enrolling to course:", error);

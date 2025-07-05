@@ -11,8 +11,8 @@ const useEnroll = (courseId : string | undefined , userId : string | undefined) 
         async function fetchData(){
             try {
                 if(!courseId || !userId) return 
-                const response = await userApiController().getEnroll(courseId , userId)
-                const {data} = response
+                const data = await userApiController().getEnroll(courseId , userId)
+                
                 setEnrollmentId(data[0].enrollmentid)
             }
             catch(err) {

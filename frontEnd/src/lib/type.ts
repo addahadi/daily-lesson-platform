@@ -13,6 +13,26 @@ export interface CourseCardProps  {
     content : string[]
 }
 
+export interface achievementsProps {
+  code: string
+  description: string
+  earned: boolean
+  icon: string 
+  name: string
+  id : string
+}
+
+
+export interface UserInfoProps {
+  avatar_url : string
+  bio : string 
+  created_at : string
+  xp : number 
+  streak_count : number
+  level : number
+  name : string
+}
+
 
 export default interface notesProps {
   note_title : string

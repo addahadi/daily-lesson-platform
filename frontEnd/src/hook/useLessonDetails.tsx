@@ -11,7 +11,7 @@ export function useLessonDetails() {
   const { user } = useUser();
   const navigate = useNavigate();
   const { enrollmentId } = useEnroll(courseId, user?.id);
-
+  
   const [lessonDetail, setLessonDetail] = useState<any>();
   const [lessonSections, setLessonSections] = useState<LessonSectionProps[]>();
   const [quizz, setQuizz] = useState<QuizzProps>();
@@ -114,7 +114,6 @@ export function useLessonDetails() {
       console.error("Failed to load next lesson:", err);
     }
   };
-
   return {
     lessonDetail,
     lessonSections,

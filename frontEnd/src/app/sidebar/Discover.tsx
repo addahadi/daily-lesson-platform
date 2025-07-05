@@ -17,7 +17,7 @@ const Discover = () => {
   }, []);
     
   return (
-    <div className="flex flex-col gap-20 overflow-y-auto h-screen">
+    <div className="flex flex-col gap-20">
       <DiscoverSection
         sectionTitle="Top Courses"
         Courses={ CourseCardData as CourseCardProps[]}
