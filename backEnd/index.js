@@ -1,12 +1,12 @@
 const express = require("express");
 require("dotenv").config();
-const pool = require("./db");
 const cors = require("cors")
 const authRoutes = require("../backEnd/routes/auth.route")
 const courseRoutes = require("../backEnd/routes/course.route")
 const lessonRoutes = require("../backEnd/routes/lesson.route")
 const homeRoutes = require("../backEnd/routes/home.route")
 const noteRoutes = require("../backEnd/routes/note.route")
+const errorHandler = require("../backEnd/middleware/error.middleware")
 const app = express();
 app.use(express.json());
 
