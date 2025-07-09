@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const {SignUp , enrollToCourse , checkEnroll , getEnroll, getUserInfo, getUserAchievments} = require("../controller/auth.controller");
-const { getXpLogs } = require("../controller/xp.controller");
+const {SignUp , enrollToCourse , checkEnroll , getEnroll, getUserInfo, getUserAchievments} = require("../../controller/students/auth.controller");
+const { getXpLogs } = require("../../controller/students/xp.controller")
 
 
 router.post("/signup" , (req , res) => {

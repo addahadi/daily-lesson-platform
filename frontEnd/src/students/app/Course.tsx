@@ -2,12 +2,12 @@ import { Award, BookCheck, BookOpen, Clock, Globe } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ModuleSection from "@/students/components/Course/ModuleSection";
-import { Button } from "@/students/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/clerk-react";
 import { userApiController } from "@/students/Api/user.Api";
-import { Toast } from "@/students/components/ui/Toast";
+import { Toast } from "@/components/ui/Toast";
 import { useCourseAndEnrollment } from "@/students/hook/useFetchedData";
-import type { ToastProps } from "@/students/lib/type";
+import type { ToastProps } from "@/lib/type";
 import { lessonApiController } from "@/students/Api/lesson.Api";
 import { LoaderIcon } from "lucide-react";
 const Course = () => {

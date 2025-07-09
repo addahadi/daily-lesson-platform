@@ -64,6 +64,12 @@ export const renderMarkdown = (text : string) => {
     .replace(/\n/g, "<br>")
     .replace(/^(.+)$/gm, '<p class="mb-4">$1</p>');
 };
+export const formatDuration = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${hours}h ${mins}m`;
+};
+
 
 export function getLevelColor(level : string | undefined) {
   switch (level) {

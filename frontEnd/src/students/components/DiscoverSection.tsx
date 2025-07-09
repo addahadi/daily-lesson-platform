@@ -1,5 +1,5 @@
-import type { CourseCardProps } from "@/students/lib/type";
-import CourseCard from "../../students/components/Discover/CourseCard";
+import type { CourseCardProps } from "@/lib/type";
+import CourseCard from "./Discover/CourseCard";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRef } from "react";
 

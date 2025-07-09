@@ -3,7 +3,7 @@ import AchievementBadges from "@/students/components/profile/AcheivmentBadges";
 import StreakCounter from "@/students/components/profile/streakCounter";
 import UserInfo from "@/students/components/profile/UserInfo";
 import XpChart from "@/students/components/profile/XpChart";
-import type { UserInfoProps } from "@/students/lib/type";
+import type { UserInfoProps } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 

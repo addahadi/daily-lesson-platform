@@ -5,16 +5,20 @@ import LoginInPage from "./students/app/LoginInPage";
 import SignUpPage from "./students/app/SignUpPage";
 import Home from "./students/app/sidebar/Home";
 import Dashboard from "./students/app/sidebar/Dashboard";
-import PrivateRoute from "./components/component/PrivateRoute";
+import PrivateRoute from "./students/components/PrivateRoute";
 import Profile from "./students/app/sidebar/Profile";
 import Courses from "./students/app/sidebar/Courses";
-import useSyncUserProfile from "./students/hook/useSyncUserProfile";
 import Discover from "./students/app/sidebar/Discover";
 import Course from "./students/app/Course";
 import Lesson from "./students/app/Lesson";
 import Notes from "./students/app/sidebar/Notes";
+import Private from "./Private";
+import UserManagement from "./admin/app/UserManagement";
+import CourseManegement from "./admin/app/courseManegement";
+
+
+
 function App() {
-  useSyncUserProfile();
   return (
     <Routes>
       <Route path="/" element={<PrivateRoute />}></Route>
@@ -32,7 +36,13 @@ function App() {
           element={<Lesson />}
         />
       </Route>
+      <Route path="/admin" element={<Private />} >
+        <Route path="user-management" element = {<UserManagement />} />
+        <Route path="course-management" element = {<CourseManegement />} />
+      </Route>
     </Routes>
   );
 }
+
+
 export default App;

@@ -1,4 +1,4 @@
-import homeApiController from "@/students/Api/home.Api";
+import useHomeApi from "@/students/Api/home.Api";
 import { useUser } from "@clerk/clerk-react";
 import { Zap } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -6,11 +6,11 @@ import { useEffect, useState } from "react";
 const Welcom = () => {
   const { user } = useUser();
   const [streak, setSteak] = useState<number | undefined>();
-
+  const {getDailyStreak} = useHomeApi()
   useEffect(() => {
     async function fetchData() {
       if (!user?.id) return;
-      const result = await homeApiController().getDailyStreak(user.id);
+      const result = await getDailyStreak(user.id);
       setSteak(result[0].streak_count);
     }
     fetchData();

@@ -1,5 +1,11 @@
 const express = require("express")
-const { getEnrolledCourses, getNextLesson, getEnrolledCoursesNumber, getTotalLessons, getDailyStreak } = require("../controller/home.controller")
+const {
+  getEnrolledCourses,
+  getNextLesson,
+  getEnrolledCoursesNumber,
+  getTotalLessons,
+  getDailyStreak,
+} = require("../../controller/students/home.controller");
 const router = express.Router()
 
 

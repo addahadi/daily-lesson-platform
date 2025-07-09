@@ -1,5 +1,5 @@
-import type { CourseCardProps } from "@/students/lib/type";
-import { getLevelColor } from "@/students/lib/utils";
+import type { CourseCardProps } from "@/lib/type";
+import { getLevelColor } from "@/lib/utils";
 import { Clock, Heart, Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

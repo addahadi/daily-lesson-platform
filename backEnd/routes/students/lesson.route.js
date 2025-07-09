@@ -1,5 +1,14 @@
 const express = require("express")
-const { getLessonDetails , getLessonsDetails  , getFirstLesson , isLessonAccessible , startLesson , SubmitQuizzAnswer , getNextLesson, MarkAsComplete} = require("../controller/lesson.controller")
+const {
+  getLessonDetails,
+  getLessonsDetails,
+  getFirstLesson,
+  isLessonAccessible,
+  startLesson,
+  SubmitQuizzAnswer,
+  getNextLesson,
+  MarkAsComplete,
+} = require("../../controller/students/lesson.controller");
 const router = express.Router()
 
 

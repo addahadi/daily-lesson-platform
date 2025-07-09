@@ -11,5 +11,12 @@ const {
 router.get("/lesson-note/:lessonId/:userId", getLessonNote);
 router.post("/add-note", addNote);
 router.delete("/delete-note", deleteNote);
-router.get("/all-notes", getAllNotes);
+router.get("/all-notes" , (req ,res) => {
+    console.log("✅ /note/all-notes hit");
+    console.log("Auth:", req.auth);
+    getAllNotes(req , res)
+});
+
+
+
 module.exports = router;

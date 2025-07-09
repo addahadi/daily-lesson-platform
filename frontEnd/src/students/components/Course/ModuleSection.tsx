@@ -1,5 +1,5 @@
 import { CourseApiController } from "@/students/Api/course.Api";
-import type { ModuleCardProps } from "@/students/lib/type";
+import type { ModuleCardProps } from "@/lib/type";
 import { useEffect, useState } from "react";
 import Modules from "./Module";
 

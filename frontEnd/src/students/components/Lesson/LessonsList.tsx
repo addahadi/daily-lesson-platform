@@ -1,5 +1,5 @@
 import { lessonApiController } from "@/students/Api/lesson.Api";
-import type { ModuleCardProps, Lesson } from "@/students/lib/type";
+import type { ModuleCardProps, Lesson } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
 import {
   Book,

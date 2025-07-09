@@ -1,6 +1,6 @@
 import { lessonApiController } from "@/students/Api/lesson.Api";
-import { Toast } from "@/students/components/ui/Toast";
-import type { ToastProps } from "@/students/lib/type";
+import { Toast } from "@/components/ui/Toast";
+import type { ToastProps } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
 import { CheckCircle } from "lucide-react";
 import { useState } from "react";

@@ -1,8 +1,8 @@
 import { lessonApiController } from "@/students/Api/lesson.Api";
-import { Button } from "@/students/components/ui/button";
-import { Toast } from "@/students/components/ui/Toast";
-import type { ToastProps } from "@/students/lib/type";
-import type QuizzProps from "@/students/lib/type";
+import { Button } from "@/components/ui/button";
+import { Toast } from "@/components/ui/Toast";
+import type { ToastProps } from "@/lib/type";
+import type QuizzProps from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
 import { Trophy } from "lucide-react";
 import { useEffect, useState } from "react";

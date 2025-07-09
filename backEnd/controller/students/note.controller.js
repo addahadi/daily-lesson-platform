@@ -55,6 +55,7 @@ async function getLessonNote(req, res, next) {
 }
 
 async function getAllNotes(req, res, next) {
+
   try {
     const { userId, page } = req.query;
     const pageSize = 4;

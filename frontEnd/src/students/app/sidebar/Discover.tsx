@@ -1,14 +1,14 @@
 import { CourseApiController } from "@/students/Api/course.Api";
-import { Button } from "@/students/components/ui/button";
-import { Input } from "@/students/components/ui/input";
-import type { CourseCardProps } from "@/students/lib/type";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import type { CourseCardProps } from "@/lib/type";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/students/components/ui/select";
+} from "@/components/ui/select";
 import { Filter } from "lucide-react";
 import { useEffect, useState } from "react";
 import CourseCard from "@/students/components/Discover/CourseCard";

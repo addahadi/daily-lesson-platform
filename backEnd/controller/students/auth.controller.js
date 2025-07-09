@@ -1,26 +1,15 @@
+const { request } = require("express");
 const sql = require("../../db");
 
 
-async function SignUp(req, res , next) {
-  const { id, fullName, imageUrl, emailAddresses } = req.body;
-
-
-  try {
+async function SignUp(requestBody) {
     const result = await sql`
-      INSERT INTO users (clerk_id, name, avatar_url , email)
-      VALUES (${id}, ${fullName}, ${imageUrl} , ${emailAddresses})
+      INSERT INTO users (clerk_id, name, avatar_url , email,role , status)
+      VALUES (${requestBody.clerk_id}, ${requestBody.full_name}, ${requestBody.image_url} , ${requestBody.email} , ${requestBody.role} , ${requestBody.status})
       ON CONFLICT (id) DO NOTHING
       RETURNING *;
     `;
-
-
-    res.status(201).json({
-      message: "User inserted",
-      data: result[0], 
-    });
-  } catch (err) {
-    next()
-  }
+    return result
 }
 
 

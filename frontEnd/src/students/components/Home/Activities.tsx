@@ -1,4 +1,4 @@
-import homeApiController from "@/students/Api/home.Api";
+import useHomeApi from "@/students/Api/home.Api";
 import { useUser } from "@clerk/clerk-react";
 import { BookOpen, CheckCircle, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -10,10 +10,12 @@ const Activities = () => {
     total_lessons: string;
   }>();
   const { user } = useUser();
+
+  const {getTotalLessons , getEnrolledCoursesNumber} = useHomeApi()
   useEffect(() => {
     async function fetchData() {
       if (!user) return;
-      const result = await homeApiController().getEnrolledCoursesNumber(
+      const result = await getEnrolledCoursesNumber(
         user?.id
       );
       const { total_courses } = result[0];
@@ -22,7 +24,7 @@ const Activities = () => {
     }
     async function fetchLessons() {
       if (!user) return;
-      const result = await homeApiController().getTotalLessons(user?.id);
+      const result = await getTotalLessons(user?.id);
       setLessonActivity(result[0]);
     }
     fetchLessons();

@@ -1,4 +1,4 @@
-import type { CourseCardProps, CourseProps } from "@/students/lib/type";
+import type { CourseCardProps, CourseProps } from "@/lib/type";
 
 export function CourseApiController() {
   async function getAllCourses() {

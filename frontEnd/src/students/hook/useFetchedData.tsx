@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CourseApiController } from "@/students/Api/course.Api";
 import { userApiController } from "@/students/Api/user.Api";
-import type { CourseProps } from "@/students/lib/type";
+import type { CourseProps } from "@/lib/type";
 
 export function useCourseAndEnrollment(
   CourseId: string | undefined,

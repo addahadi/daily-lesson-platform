@@ -1,4 +1,4 @@
-import type { UserInfoProps } from "@/students/lib/type";
+import type { UserInfoProps } from "@/lib/type";
 import { Edit, User } from "lucide-react";
 import { useState } from "react";
 

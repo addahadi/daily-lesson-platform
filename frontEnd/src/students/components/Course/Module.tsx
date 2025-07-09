@@ -1,5 +1,5 @@
 import { CourseApiController } from "@/students/Api/course.Api";
-import type { LessonCardProps, ModuleCardProps } from "@/students/lib/type";
+import type { LessonCardProps, ModuleCardProps } from "@/lib/type";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";

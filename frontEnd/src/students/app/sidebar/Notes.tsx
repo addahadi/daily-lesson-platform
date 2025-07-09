@@ -1,10 +1,10 @@
-import noteApiController from "@/students/Api/note.Api";
-import type notesProps from "@/students/lib/type";
-import { renderMarkdown } from "@/students/lib/utils";
+import type notesProps from "@/lib/type";
+import { renderMarkdown } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { X, FileText, PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import useNoteApi from "@/students/Api/note.Api";
 
 const PAGE_SIZE = 4;
 const Notes = () => {
@@ -15,12 +15,15 @@ const Notes = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState(false);
+  const { getAllNotes } = useNoteApi();
+
   useEffect(() => {
     const fetchData = async () => {
       if (!user?.id) return;
       setLoading(true);
-      const result = await noteApiController().getAllNotes(user.id, page);
-
+      console.log("hihihih");
+      const result = await getAllNotes(user.id, page);
+      console.log(result);
       if (result === null || result.length === 0) {
         if (page === 1) setNoNotes(true);
         setHasMore(false);

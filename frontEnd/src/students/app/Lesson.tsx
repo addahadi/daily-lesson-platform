@@ -1,11 +1,11 @@
-import LessonBar from "@/components/component/Lesson/LessonBar";
-import LessonBullet from "@/components/component/Lesson/LessonBullet";
-import LessonCode from "@/components/component/Lesson/LessonCode";
-import LessonNote from "@/components/component/Lesson/LessonNote";
-import LessonQuizz from "@/components/component/Lesson/LessonQuizz";
-import LessonSummary from "@/components/component/Lesson/LessonSummary";
-import LessonText from "@/components/component/Lesson/LessonText";
-import { Button } from "@/students/components/ui/button";
+import LessonBar from "../components/Lesson/LessonBar";
+import LessonNote from "../components/Lesson/LessonNote";
+import LessonCode from "../components/Lesson/LessonCode";
+import LessonQuizz from "../components/Lesson/LessonQuizz";
+import LessonSummary from "../components/Lesson/LessonSummary";
+import LessonText from "../components/Lesson/LessonText";
+import LessonBullet from "../components/Lesson/LessonBullet";
+import { Button } from "@/components/ui/button";
 import { useLessonDetails } from "@/students/hook/useLessonDetails";
 import { BookOpen, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 

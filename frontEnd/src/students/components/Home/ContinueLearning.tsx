@@ -1,7 +1,7 @@
-import homeApiController from "@/students/Api/home.Api";
-import { Button } from "@/students/components/ui/button";
-import type { EnrolledLessons } from "@/students/lib/type";
-import { getLevelColor } from "@/students/lib/utils";
+import useHomeApi from "@/students/Api/home.Api";
+import { Button } from "@/components/ui/button";
+import type { EnrolledLessons } from "@/lib/type";
+import { getLevelColor } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { BookX, Clock, Play } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -15,11 +15,11 @@ const ContinueLearning = () => {
   const [noLesson, setNoLesson] = useState(false);
   const [noCourse, setNoCourse] = useState(false);
   const navigate = useNavigate();
+  const { getEnrolledCourses, getNextLesson } = useHomeApi();
   useEffect(() => {
     async function fetchData() {
       if (!user?.id) return;
-      await homeApiController()
-        .getEnrolledCourses(user.id)
+      await getEnrolledCourses(user.id)
         .then((response) => {
           if (response == null) {
             setNoCourse(true);
@@ -39,12 +39,10 @@ const ContinueLearning = () => {
 
       try {
         const lessonPromises = courses.map((course) =>
-          homeApiController()
-            .getNextLesson(course.course_id, course.enrollment_id)
-            .catch((err) => {
-              console.error("Error for course:", course.course_id, err);
-              return null;
-            })
+          getNextLesson(course.course_id, course.enrollment_id).catch((err) => {
+            console.error("Error for course:", course.course_id, err);
+            return null;
+          })
         );
 
         const lessons = await Promise.all(lessonPromises);

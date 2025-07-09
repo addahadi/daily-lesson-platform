@@ -1,5 +1,5 @@
 import profileApiController from "@/students/Api/profile.Api";
-import type { achievementsProps, UserInfoProps } from "@/students/lib/type";
+import type { achievementsProps, UserInfoProps } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
 import { Star } from "lucide-react";
 import { useEffect, useState } from "react";

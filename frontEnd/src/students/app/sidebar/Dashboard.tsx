@@ -7,7 +7,7 @@ import {
   LogOut,
   Save,
 } from "lucide-react";
-import { Input } from "@/students/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { UserButton } from "@clerk/clerk-react";
 
 const Dashboard = () => {

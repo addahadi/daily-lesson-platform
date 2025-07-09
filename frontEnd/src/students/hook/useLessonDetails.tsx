@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import useEnroll from "@/students/hook/useEnroll";
 import { lessonApiController } from "@/students/Api/lesson.Api";
-import type QuizzProps from "@/students/lib/type";
-import type { LessonSectionProps } from "@/students/lib/type";
+import type QuizzProps from "@/lib/type";
+import type { LessonSectionProps } from "@/lib/type";
 
 export function useLessonDetails() {
   const { courseId, moduleId, lessonId } = useParams();

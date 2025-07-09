@@ -1,5 +1,5 @@
 import { lessonApiController } from "@/students/Api/lesson.Api";
-import type { LessonBarProps } from "@/students/lib/type";
+import type { LessonBarProps } from "@/lib/type";
 
 import { useEffect, useState } from "react";
 import LessonsList from "./LessonsList";

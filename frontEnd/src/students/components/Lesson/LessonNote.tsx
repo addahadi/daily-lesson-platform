@@ -1,6 +1,6 @@
 import noteApiController from "@/students/Api/note.Api";
-import { Button } from "@/students/components/ui/button";
-import { renderMarkdown } from "@/students/lib/utils";
+import { Button } from "@/components/ui/button";
+import { renderMarkdown } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { Edit2, Edit3, Eye, Move, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
