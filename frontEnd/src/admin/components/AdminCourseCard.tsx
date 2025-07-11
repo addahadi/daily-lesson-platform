@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { formatDuration, getLevelColor } from '@/lib/utils';
 import { BookOpen, Clock, Edit, Trash2, Users } from 'lucide-react';
 import type { SetStateAction } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -23,6 +24,7 @@ const AdminCourseCard = ({
   course: Course;
   setEditedCourse: React.Dispatch<SetStateAction<Course | null>>;
 }) => {
+  const navigate = useNavigate()
   function handleEditCourse() {
     setEditedCourse(course)
   }
@@ -32,7 +34,7 @@ const AdminCourseCard = ({
       <CardHeader className=" flex flex-row gap-2">
         <div className=" object-cover w-[200px]  h-full">
           <img
-            src={course.img}
+            src={course.img_url}
             className=" w-full h-[80px] rounded-lg"
             alt="course-img"
           />
@@ -42,8 +44,8 @@ const AdminCourseCard = ({
             <CardTitle className=" text-lg">{course.title}</CardTitle>
             <CardDescription className=" flex flex-row gap-2">
               <Badge variant="secondary">{course.category}</Badge>
-              <Badge className={getLevelColor(course.difficulty)}>
-                {course.difficulty}
+              <Badge className={getLevelColor(course.level)}>
+                {course.level}
               </Badge>
             </CardDescription>
           </div>
@@ -72,18 +74,24 @@ const AdminCourseCard = ({
           <div className="flex items-center justify-between text-xs text-gray-500 mb-3 mt-4">
             <div className="flex items-center gap-1">
               <BookOpen className="w-3 h-3" />
-              <span>{course.moduleCount}</span>
+              <span>{course.modulecount}</span>
             </div>
             <div className="flex items-center gap-1">
               <Users className="w-3 h-3" />
-              <span>{course.lessonCount}</span>
+              <span>{course.lessoncount}</span>
             </div>
             <div className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              <span>{formatDuration(course.totalDuration)}</span>
+              <span>{formatDuration(course.totalduration)}</span>
             </div>
           </div>
-          <Button variant="outline" className=" w-full">
+          <Button variant="outline" className=" w-full"
+           onClick={() => 
+            navigate(`/admin/course/${course.id}`, {
+              state: { course: course },
+            })
+           }
+          >
             Manage the course
           </Button>
         </div>

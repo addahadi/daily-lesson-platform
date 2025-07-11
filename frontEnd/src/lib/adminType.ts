@@ -21,11 +21,32 @@ export interface Course {
   title: string;
   description: string;
   category: string;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  level: "beginner" | "intermediate" | "advanced";
   slug: string;
-  img: string;
-  moduleCount: number;
-  lessonCount: number;
-  totalDuration: number;
+  img_url: string;
+  modulecount: number;
+  lessoncount: number;
+  content : string[];
+  totalduration: number;
 }
   
+
+
+export interface Module {
+  id: string;
+  title: string;
+  order_index: number;
+  lessoncount: number;
+  totalduration: number;
+}
+
+export interface Lesson {
+  id: string;
+  title: string;
+  content: string;
+  duration: number;
+  level: "beginner" | "intermediate" | "hard";
+  slug: string;
+  order_index: number;
+  hasQuiz: boolean;
+}

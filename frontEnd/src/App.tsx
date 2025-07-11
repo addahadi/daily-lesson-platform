@@ -14,7 +14,8 @@ import Lesson from "./students/app/Lesson";
 import Notes from "./students/app/sidebar/Notes";
 import Private from "./Private";
 import UserManagement from "./admin/app/UserManagement";
-import CourseManegement from "./admin/app/courseManegement";
+import CourseManegement from "./admin/app/CourseManegement";
+import ModuleManagement from "./admin/app/ModuleManegement";
 
 
 
@@ -39,6 +40,7 @@ function App() {
       <Route path="/admin" element={<Private />} >
         <Route path="user-management" element = {<UserManagement />} />
         <Route path="course-management" element = {<CourseManegement />} />
+        <Route path="course/:courseId" element={<ModuleManagement />} />
       </Route>
     </Routes>
   );
