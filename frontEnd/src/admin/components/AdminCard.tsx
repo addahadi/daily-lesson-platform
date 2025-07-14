@@ -1,26 +1,32 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import type { Lesson, Module } from '@/lib/adminType'
 import { Edit, GripVertical, Trash2 } from 'lucide-react'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 
 
 type AdminCardProps = {
-    id: string
+    id: string | undefined
     title: string
     URL: string
     handleEditModule: () => void
     handleDeleteModule: () => void
+    State : Module | Lesson
     children: React.ReactNode
+
 }
 const AdminCard = ({
     id,
     title,
     URL,
+    State,
     handleEditModule,
     handleDeleteModule,
     children,
 } : AdminCardProps) => {
+
+  const navigate = useNavigate()
   return (
      <Card key={id} className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-3">
@@ -32,11 +38,16 @@ const AdminCard = ({
             <CardTitle className="text-lg">{title}</CardTitle>
           </div>
           <div className="flex items-center gap-2">
-            <Link to={URL}>
-              <Button variant="outline" size="sm">
-                Manage Lessons
-              </Button>
-            </Link>
+            
+            <Button 
+            onClick={() => navigate(URL , {
+              state: { State }
+            })}
+            
+            variant="outline" size="sm">
+              Manage Lessons
+            </Button>
+            
             <Button
               variant="outline"
               size="icon"

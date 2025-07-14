@@ -44,9 +44,12 @@ export interface Lesson {
   id: string;
   title: string;
   content: string;
-  duration: number;
+  duration_minutes: number;
+  description : string
   level: "beginner" | "intermediate" | "hard";
   slug: string;
   order_index: number;
-  hasQuiz: boolean;
 }
+
+export type section  = {heading : string , code : string , id : string} | {heading : string , text : string , id : string}
+

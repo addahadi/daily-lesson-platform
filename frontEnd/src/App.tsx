@@ -16,6 +16,9 @@ import Private from "./Private";
 import UserManagement from "./admin/app/UserManagement";
 import CourseManegement from "./admin/app/CourseManegement";
 import ModuleManagement from "./admin/app/ModuleManegement";
+import LessonManagement from "./admin/app/LessonManagement";
+import LessonContent from "./admin/app/LessonContent";
+import AdminAnalytics from "./admin/app/adminAnalytics";
 
 
 
@@ -41,6 +44,9 @@ function App() {
         <Route path="user-management" element = {<UserManagement />} />
         <Route path="course-management" element = {<CourseManegement />} />
         <Route path="course/:courseId" element={<ModuleManagement />} />
+        <Route path="course/:courseId/module/:moduleId" element={<LessonManagement />} />
+        <Route path="course/:courseId/module/:moduleId/lesson/:lessonId" element= {<LessonContent />} />
+        <Route path="analytics" element={<AdminAnalytics />} />
       </Route>
     </Routes>
   );

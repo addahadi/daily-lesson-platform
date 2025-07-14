@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import EditTitle from "../components/EditTitle";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, BookOpen, X } from "lucide-react";
+import EditTitle from "../components/ui/EditTitle";
+import { useLocation, useParams } from "react-router-dom";
+import { BookOpen, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getLevelColor } from "@/lib/utils";
@@ -27,15 +27,17 @@ import DraggableAdminCard from "../components/DraggbleAdminCard";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import AdminModuleCard from "../components/AdminModuleCard";
+import BackTo from "../components/ui/BackTo";
 
 interface Course {
   id: string;
   title: string;
   description: string;
   category: string;
-  difficulty: string;
+  level: string;
   slug: string;
-  img: string;
+  img_url: string;
 }
 
 const ModuleManagement = () => {
@@ -47,7 +49,6 @@ const ModuleManagement = () => {
   const [loading, setLoading] = useState(false);
   const [modules, setModules] = useState<Module[]>([]);
   const [noModules, setNoModules] = useState(false);
-  const { courseId } = useParams();
   const [isSaving, setIsSaving] = useState(false);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -98,21 +99,12 @@ const ModuleManagement = () => {
 
   return (
     <div className="p-6 min-h-screen">
-      <div className="mb-6">
-        <Link
-          to="/admin/course-management"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Courses
-        </Link>
-      </div>
-
+      <BackTo title="Back to Courses" URL="/admin/course-management" />
       <Card className="mb-14">
         <CardContent className="flex flex-row gap-4 p-6">
           <div className="w-[200px] h-full">
             <img
-              src={course?.img}
+              src={course?.img_url}
               className="w-full h-full object-cover rounded-lg"
               alt="Course"
             />
@@ -125,9 +117,9 @@ const ModuleManagement = () => {
               <Badge variant="outline">{course?.category}</Badge>
               <Badge
                 variant="destructive"
-                className={`${getLevelColor(course?.difficulty)}`}
+                className={`${getLevelColor(course?.level)}`}
               >
-                {course?.difficulty}
+                {course?.level}
               </Badge>
             </div>
             <div className="text-gray-500 text-sm">
@@ -185,12 +177,13 @@ const ModuleManagement = () => {
               >
                 <div className="space-y-4">
                   {modules.map((module) => (
-                    <DraggableAdminCard
-                      key={module.id}
-                      module={module}
-                      course_id={course.id}
-                      setEditModel={setEditModule}
-                    />
+                    <DraggableAdminCard key={module.id} Id={module.id}>
+                      <AdminModuleCard
+                        module={module}
+                        course_id={course.id}
+                        setEditModel={setEditModule}
+                      />
+                    </DraggableAdminCard>
                   ))}
                 </div>
               </SortableContext>
@@ -250,7 +243,7 @@ const EditModule = ({
   setModules: React.Dispatch<React.SetStateAction<Module[]>>;
   setNoModules: React.Dispatch<React.SetStateAction<boolean>>;
   close: () => void;
-  
+
   isCreate: boolean;
 }) => {
   const [newModule, setNewModule] = useState({
@@ -260,7 +253,7 @@ const EditModule = ({
     lessoncount: module?.lessoncount || 0,
     totalduration: module?.totalduration || 0,
   });
-  const { createModule , updateModule } = useModuleApi();
+  const { createModule, updateModule } = useModuleApi();
   const { courseId } = useParams();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,7 +270,7 @@ const EditModule = ({
       return;
     }
     if (!courseId) return;
-    if(isCreate){
+    if (isCreate) {
       const response = await createModule(courseId, newModule.title.trim());
       if (response) {
         const NewModule = {
@@ -287,17 +280,15 @@ const EditModule = ({
           lessoncount: 0,
           totalduration: 0,
         };
-        setModules((prev) => 
-          {
-            const updatedModules = [...prev, NewModule];
-            return updatedModules.sort((a, b) => a.order_index - b.order_index);
-          });
+        setModules((prev) => {
+          const updatedModules = [...prev, NewModule];
+          return updatedModules.sort((a, b) => a.order_index - b.order_index);
+        });
         setNoModules(false);
         toast.success("Module created successfully");
         close();
       }
-    }
-    else {
+    } else {
       const response = await updateModule(newModule.id, newModule.title.trim());
       if (response) {
         setModules((prev) =>

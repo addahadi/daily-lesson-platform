@@ -109,12 +109,12 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
     title: editedCourse?.title || "",
     description: editedCourse?.description || "",
     category: editedCourse?.category || "",
-    difficulty: editedCourse?.level || "",
+    level: editedCourse?.level || "",
     slug: editedCourse?.slug || "",
-    img: editedCourse?.img_url || "",
-    moduleCount: editedCourse?.moduleCount || "",
-    lessonCount: editedCourse?.lessonCount || "",
-    totalDuration: editedCourse?.totalDuration || "",
+    img_url: editedCourse?.img_url || "",
+    modulecount: editedCourse?.modulecount || "",
+    lessoncount: editedCourse?.lessoncount || "",
+    totalduration: editedCourse?.totalduration || "",
     content: editedCourse?.content || [""], 
   });
 
@@ -149,7 +149,7 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
     if(ImgUrl){
       setCourseInfo({
         ...courseInfo,
-        img: ImgUrl,
+        img_url: ImgUrl,
       });
     }
   }
@@ -162,9 +162,9 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
           !courseInfo.title ||
           !courseInfo.description ||
           !courseInfo.category ||
-          !courseInfo.difficulty ||
+          !courseInfo.level ||
           !courseInfo.slug ||
-          !courseInfo.img ||
+          !courseInfo.img_url ||
           courseInfo.content.length === 0
         ) {
           toast("Please fill all required fields", {
@@ -180,9 +180,9 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
         title: courseInfo.title,
         description: courseInfo.description,
         category: courseInfo.category,
-        difficulty: courseInfo.difficulty,
+        difficulty: courseInfo.level,
         slug: courseInfo.slug,
-        img_url: courseInfo.img,
+        img_url: courseInfo.img_url,
         content: courseInfo.content,
       };
 
@@ -254,7 +254,7 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
             <div>
               <Label>Difficulty Level</Label>
               <select
-                value={courseInfo.difficulty}
+                value={courseInfo.level}
                 onChange={(e) => handleChange("difficulty", e.target.value)}
                 className="w-full px-3 py-2 bg-surface border border-border rounded-lg
                            focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"

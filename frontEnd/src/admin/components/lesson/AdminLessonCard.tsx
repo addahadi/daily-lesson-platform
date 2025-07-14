@@ -1,7 +1,7 @@
-import type { Lesson, Module } from "@/lib/adminType";
+import type { Lesson } from "@/lib/adminType";
 import { formatDuration, getLevelColor } from "@/lib/utils";
-import { CheckCircle, Clock, FileText } from "lucide-react";
-import AdminCard from "./AdminCard";
+import { Clock } from "lucide-react";
+import AdminCard from "../AdminCard";
 import { Badge } from "@/components/ui/badge";
 
 const AdminLessonCard = ({
@@ -21,9 +21,10 @@ const AdminLessonCard = ({
   function handleDeleteModule() {}
   return (
     <AdminCard
-      id={module.id}
+      id={module_id}
       title={lesson.title}
-      URL={`/admin/course/${course_id}/module/${module.id}/lesson/${lesson.id}`}
+      State = {lesson}
+      URL={`/admin/course/${course_id}/module/${module_id}/lesson/${lesson.id}`}
       handleEditModule={handleEditModule}
       handleDeleteModule={handleDeleteModule}
     >
@@ -31,14 +32,8 @@ const AdminLessonCard = ({
         <Badge className={getLevelColor(lesson.level)}>{lesson.level}</Badge>
         <div className="flex items-center gap-1 text-gray-500">
           <Clock className="w-4 h-4" />
-          <span>{formatDuration(lesson.duration)}</span>
+          <span>{formatDuration(lesson.duration_minutes)}</span>
         </div>
-        {lesson.hasQuiz && (
-          <div className="flex items-center gap-1 text-green-600">
-            <CheckCircle className="w-4 h-4" />
-            <span>Has Quiz</span>
-          </div>
-        )}
         <Badge variant="secondary" className="text-xs">
           /{lesson.slug}
         </Badge>

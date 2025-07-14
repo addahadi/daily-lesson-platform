@@ -19,9 +19,10 @@ const AdminModuleCard = ({
   function handleDeleteModule() {
     // Implement delete logic if needed
   }
-
   return (
     <AdminCard
+      key={module.id}
+      State = {module}
       id={module.id}
       title={module.title}
       URL={`/admin/course/${course_id}/module/${module.id}`}

@@ -1,20 +1,16 @@
-import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import AdminModuleCard from "./AdminModuleCard";
-import type {Module} from "@/lib/adminType";
+import type React from "react";
 const DraggableAdminCard = ({
-  module,
-  course_id,
-  setEditModel,
+  Id,
+  children
 }: {
-  module: Module;
-  course_id: string;
-  setEditModel: (module: Module | null) => void;
+  Id: string;
+  children : React.ReactNode
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
-      id: module.id,
+      id: Id,
     });
 
   const style = {
@@ -24,11 +20,7 @@ const DraggableAdminCard = ({
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <AdminModuleCard
-        module={module}
-        course_id={course_id}
-        setEditModel={setEditModel}
-      />
+      {children}
     </div>
   );
 };
