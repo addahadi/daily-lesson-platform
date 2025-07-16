@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-import useEnroll from "@/students/hook/useEnroll";
+import useEnroll from "@/hook/useEnroll";
 import { lessonApiController } from "@/students/Api/lesson.Api";
 import type QuizzProps from "@/lib/type";
 import type { LessonSectionProps } from "@/lib/type";

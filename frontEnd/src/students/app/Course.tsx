@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/clerk-react";
 import { userApiController } from "@/students/Api/user.Api";
 import { Toast } from "@/components/ui/Toast";
-import { useCourseAndEnrollment } from "@/students/hook/useFetchedData";
+import { useCourseAndEnrollment } from "@/hook/useFetchedData";
 import type { ToastProps } from "@/lib/type";
 import { lessonApiController } from "@/students/Api/lesson.Api";
 import { LoaderIcon } from "lucide-react";

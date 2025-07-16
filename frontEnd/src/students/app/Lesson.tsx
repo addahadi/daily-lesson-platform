@@ -6,7 +6,7 @@ import LessonSummary from "../components/Lesson/LessonSummary";
 import LessonText from "../components/Lesson/LessonText";
 import LessonBullet from "../components/Lesson/LessonBullet";
 import { Button } from "@/components/ui/button";
-import { useLessonDetails } from "@/students/hook/useLessonDetails";
+import { useLessonDetails } from "@/hook/useLessonDetails";
 import { BookOpen, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 
 const Lesson = () => {
