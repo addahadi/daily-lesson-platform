@@ -1,5 +1,4 @@
 import "./App.css";
-
 import { Route, Routes } from "react-router-dom";
 import LoginInPage from "./students/app/LoginInPage";
 import SignUpPage from "./students/app/SignUpPage";
@@ -19,38 +18,54 @@ import ModuleManagement from "./admin/app/ModuleManegement";
 import LessonManagement from "./admin/app/LessonManagement";
 import LessonContent from "./admin/app/LessonContent";
 import AdminAnalytics from "./admin/app/adminAnalytics";
-
-
+import Notification from "./admin/app/Notification";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    const prefersDark = localStorage.getItem("theme") === "dark";
+    if (prefersDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
   return (
-    <Routes>
-      <Route path="/" element={<PrivateRoute />}></Route>
-      <Route path="/login" element={<LoginInPage />} />
-      <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/dashboard" element={<Dashboard />}>
-        <Route index element={<Home />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="courses" element={<Courses />} />
-        <Route path="discover" element={<Discover />} />
-        <Route path="course/:CourseId" element={<Course />} />
-        <Route path="notes" element={<Notes />} />
-        <Route
-          path="course/:courseId/module/:moduleId/lesson/:lessonId"
-          element={<Lesson />}
-        />
-      </Route>
-      <Route path="/admin" element={<Private />} >
-        <Route path="user-management" element = {<UserManagement />} />
-        <Route path="course-management" element = {<CourseManegement />} />
-        <Route path="course/:courseId" element={<ModuleManagement />} />
-        <Route path="course/:courseId/module/:moduleId" element={<LessonManagement />} />
-        <Route path="course/:courseId/module/:moduleId/lesson/:lessonId" element= {<LessonContent />} />
-        <Route path="analytics" element={<AdminAnalytics />} />
-      </Route>
-    </Routes>
+
+      <Routes>
+        <Route path="/" element={<PrivateRoute />} />
+        <Route path="/login" element={<LoginInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/dashboard" element={<Dashboard />}>
+          <Route index element={<Home />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="courses" element={<Courses />} />
+          <Route path="discover" element={<Discover />} />
+          <Route path="course/:CourseId" element={<Course />} />
+          <Route path="notes" element={<Notes />} />
+          <Route
+            path="course/:courseId/module/:moduleId/lesson/:lessonId"
+            element={<Lesson />}
+          />
+        </Route>
+        <Route path="/admin" element={<Private />}>
+          <Route path="user-management" element={<UserManagement />} />
+          <Route path="course-management" element={<CourseManegement />} />
+          <Route path="course/:courseId" element={<ModuleManagement />} />
+          <Route
+            path="course/:courseId/module/:moduleId"
+            element={<LessonManagement />}
+          />
+          <Route
+            path="course/:courseId/module/:moduleId/lesson/:lessonId"
+            element={<LessonContent />}
+          />
+          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="notification" element={<Notification />} />
+        </Route>
+      </Routes>
   );
 }
-
 
 export default App;

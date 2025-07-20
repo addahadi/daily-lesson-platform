@@ -42,8 +42,6 @@ const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
         selectedAnswer,
         quizz.correct_option_index
       );
-      const xp = "50";
-      const source = "quizz_complete";
       await lessonApiController().SubmitQuizzAnswer(
         quizz.quizz_id,
         user?.id,

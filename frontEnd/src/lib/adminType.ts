@@ -16,6 +16,7 @@ export interface UserInfo {
 
 
 
+
 export interface Course {
   id: string;
   title: string;
@@ -52,4 +53,16 @@ export interface Lesson {
 }
 
 export type section  = {heading : string , code : string , id : string} | {heading : string , text : string , id : string}
+
+
+export interface NotificationType {
+  id: string
+  type: string
+  title: string
+  body: string
+  created_at: string
+  sent_to: string
+  course_id : string | null
+  content_type : string | null
+}
 

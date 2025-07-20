@@ -8,54 +8,45 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useCourseApi from "../api/course.api";
 import LoadingSpinner from "@/components/ui/loading";
-import { useFetcher } from "react-router-dom";
 import uploadImageToCloudinary from "../api/Cloudinary";
-import { Toaster  } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 
 const CourseManegement = () => {
-    const [courses, setCourses] = useState<Course[]>([]);
-    const [loading , setLoading] = useState(false);
-    const [editedCourse , setEditedCourse] = useState<Course | null>(null)
-    const [isCreate , setIsCreate] = useState(false)
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [editedCourse, setEditedCourse] = useState<Course | null>(null);
+  const [isCreate, setIsCreate] = useState(false);
 
-    const {getCourses} = useCourseApi()
+  const { getCourses } = useCourseApi();
 
-
-    useEffect(() => {
-      const fetchCourses = async () => {
-        setLoading(true)
-        const data = await getCourses();
-        console.log(data)
-        if (data) {
-          setCourses(data);
-        } else {
-          setCourses([]);
-        }
-        setLoading(false)
-      };
-      fetchCourses()
-    }, []);
-
-
+  useEffect(() => {
+    const fetchCourses = async () => {
+      setLoading(true);
+      const data = await getCourses();
+      setCourses(data || []);
+      setLoading(false);
+    };
+    fetchCourses();
+  }, []);
 
   return (
-    <div className="min-h-screen  bg-white  p-6">
-      <div className=" w-full flex justify-between">
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-6 text-black dark:text-white">
+      <div className="w-full flex justify-between">
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-text-primary mb-2">
+          <h1 className="text-3xl font-semibold text-text-primary dark:text-white mb-2">
             Course Management
           </h1>
-          <p className="text-text-secondary">
+          <p className="text-text-secondary dark:text-gray-400">
             Manage your courses, modules, and lessons
           </p>
         </div>
         <Button
           variant="destructive"
           onClick={() => setIsCreate(true)}
-          className="  text-white bg-gray-900  hover:bg-gray-700"
+          className="text-white bg-gray-900 hover:bg-gray-700"
         >
-          <Plus className=" w-5 h-5  text-white" />
+          <Plus className="w-5 h-5 text-white" />
           <span>new course</span>
         </Button>
       </div>
@@ -65,12 +56,14 @@ const CourseManegement = () => {
         </div>
       ) : courses.length === 0 ? (
         <div className="flex justify-center items-center h-[60vh]">
-          <p className="text-text-secondary text-lg">No courses found</p>
+          <p className="text-text-secondary text-lg dark:text-gray-400">
+            No courses found
+          </p>
         </div>
       ) : (
-        <div className=" mt-8">
+        <div className="mt-8">
           {(editedCourse || isCreate) && (
-            <div className=" w-full justify-center items-center">
+            <div className="w-full justify-center items-center">
               <EditCourse
                 editedCourse={editedCourse}
                 close={() => {
@@ -81,27 +74,23 @@ const CourseManegement = () => {
               />
             </div>
           )}
-          <section className=" mt-14 w-full grid grid-cols-2 gap-3">
+          <section className="mt-14 w-full grid grid-cols-2 gap-3">
             {Array.isArray(courses) &&
-              courses?.map((course) => {
-                return (
-                  <AdminCourseCard
-                    course={course}
-                    setEditedCourse={setEditedCourse}
-                  />
-                );
-              })}
+              courses.map((course) => (
+                <AdminCourseCard
+                  key={course.id}
+                  course={course}
+                  setEditedCourse={setEditedCourse}
+                />
+              ))}
           </section>
         </div>
       )}
     </div>
   );
-}
+};
 
-
-
-
-function EditCourse({ editedCourse = {}, close , isCreate }: any) {
+function EditCourse({ editedCourse = {}, close, isCreate }: any) {
   const { UpdateCourse } = useCourseApi();
   const [isLoading, setIsLoading] = useState(false);
   const [courseInfo, setCourseInfo] = useState({
@@ -115,7 +104,7 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
     modulecount: editedCourse?.modulecount || "",
     lessoncount: editedCourse?.lessoncount || "",
     totalduration: editedCourse?.totalduration || "",
-    content: editedCourse?.content || [""], 
+    content: editedCourse?.content || [""],
   });
 
   const handleChange = (type: string, value: string, index?: number) => {
@@ -129,35 +118,27 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
   };
 
   const addContentReason = () => {
-    setCourseInfo({
-      ...courseInfo,
-      content : [...courseInfo.content , ""]
-    })
+    setCourseInfo({ ...courseInfo, content: [...courseInfo.content, ""] });
   };
 
   const removeContentReason = (index: number) => {
     setCourseInfo({
       ...courseInfo,
-      content : courseInfo.content.filter((_ : string ,i: number) => i !== index)
-    })
+      content: courseInfo.content.filter((_, i : number) => i !== index),
+    });
   };
 
-
   const handleImgChange = async (file: File | undefined) => {
-    if(!file) return 
+    if (!file) return;
     const ImgUrl = await uploadImageToCloudinary(file);
-    if(ImgUrl){
-      setCourseInfo({
-        ...courseInfo,
-        img_url: ImgUrl,
-      });
+    if (ImgUrl) {
+      setCourseInfo({ ...courseInfo, img_url: ImgUrl });
     }
-  }
+  };
 
   const handleSubmit = () => {
     const updateCourse = async () => {
       if (isCreate) {
-        console.log(courseInfo)
         if (
           !courseInfo.title ||
           !courseInfo.description ||
@@ -171,7 +152,6 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
             description: "All fields are required to create the course.",
             duration: 1000,
           });
-          console.error("Please fill all required fields");
           return;
         }
       }
@@ -189,31 +169,24 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
       setIsLoading(true);
       const response = await UpdateCourse(requestBody);
       setIsLoading(false);
-      
+
       if (response) {
-        console.log("Course updated successfully:", response);
         close();
-      } else {
-        console.error("Failed to update course");
       }
     };
     updateCourse();
   };
 
-
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 text-black dark:text-white">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>
-          {isCreate ? "Create New Course" : "Edit Course"}
-        </CardTitle>
+        <CardTitle>{isCreate ? "Create New Course" : "Edit Course"}</CardTitle>
         <Button variant="ghost" size="icon" onClick={close}>
           <X className="w-4 h-4" />
         </Button>
       </CardHeader>
       <CardContent>
-        <div>
-
+        <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Course Title</Label>
@@ -243,7 +216,7 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
               id="description"
               value={courseInfo.description}
               onChange={(e) => handleChange("description", e.target.value)}
-              className="w-full rounded-lg border border-gray-200 p-2"
+              className="w-full rounded-lg border border-gray-200 p-2 dark:bg-gray-700 dark:border-gray-600"
               placeholder="Describe what students will learn"
               rows={3}
               required
@@ -256,8 +229,7 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
               <select
                 value={courseInfo.level}
                 onChange={(e) => handleChange("difficulty", e.target.value)}
-                className="w-full px-3 py-2 bg-surface border border-border rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg dark:bg-gray-700 dark:border-gray-600"
               >
                 <option value="beginner">beginner</option>
                 <option value="intermediate">intermediate</option>
@@ -281,9 +253,7 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
               id="img"
               placeholder="https://example.com/image.jpg"
               type="file"
-              onChange={(e) => {
-                handleImgChange(e.target.files?.[0]);
-              }}
+              onChange={(e) => handleImgChange(e.target.files?.[0])}
             />
           </div>
 
@@ -331,9 +301,7 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
               {isLoading ? (
                 <LoadingSpinner size={20} />
               ) : (
-                <span>
-
-                  {isCreate ? "Create Course" : "Update Course"}</span>
+                <span>{isCreate ? "Create Course" : "Update Course"}</span>
               )}
             </Button>
           </div>
@@ -344,5 +312,4 @@ function EditCourse({ editedCourse = {}, close , isCreate }: any) {
   );
 }
 
-
-export default CourseManegement
+export default CourseManegement;

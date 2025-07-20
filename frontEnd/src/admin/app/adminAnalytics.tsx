@@ -1,12 +1,10 @@
 import LoadingSpinner from "@/components/ui/loading"
 import useAnalytic from "@/hook/useAnalytic"
-import { useState } from "react"
 import AdminActivity from "../components/analytics/AdminActivity"
 import { Book, Users } from "lucide-react"
 import CompletedLessonsChart from "../components/analytics/CompletedLessonsChart"
 
 const AdminAnalytics = () => {1
-  const [Metrics , setMetrics] = useState()
   const { loading , lessonAnalyticData , userAnalyticData , streakAnalyticData , chartData} = useAnalytic()
   return (
     <div className=" min-h-screen ">

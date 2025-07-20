@@ -153,11 +153,55 @@ async function updateLessonContent(req , res , next){
     next(err)
   }
 }
+async function updateOrAddLessonQuizz(req, res, next) {
+  try {
+    const {question, options, correct_option_index } = req.body;
+    const {lessonId } = req.params;
+    if (
+      !question ||
+      !options ||
+      correct_option_index === undefined ||
+      !lessonId
+    ) {
+      return res.status(400).json({
+        status: false,
+        message: "Bad request body: Missing required fields",
+      });
+    }
+
+    const result = await sql`
+      INSERT INTO quizzes (lesson_id, question, options, correct_option_index)
+      VALUES (${lessonId}, ${question}, ${options}, ${correct_option_index})
+      ON CONFLICT (lesson_id)
+      DO UPDATE SET
+        question = EXCLUDED.question,
+        options = EXCLUDED.options,
+        correct_option_index = EXCLUDED.correct_option_index
+      RETURNING *
+    `;
+
+    if (result.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "Failed to insert/update the quizz",
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      data: result[0],
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 
 module.exports = {
     createUpdateLesson , 
     getAllLessons ,
     updateLesson,
     updateOrderLesson,
-    updateLessonContent
+    updateLessonContent,
+    updateOrAddLessonQuizz
 }

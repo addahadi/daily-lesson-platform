@@ -85,13 +85,13 @@ export type EnrolledLessons = ({
   total_progressed_modules : string
 })[];
 
-export default interface QuizzProps {
+export interface QuizzProps {
   quizz_id : string
   options : string[]
   question : string 
   correct_option_index : number
-  selected_option_index : number
-  is_correct : boolean
+  selected_option_index? : number
+  is_correct? : boolean
 }
 
 

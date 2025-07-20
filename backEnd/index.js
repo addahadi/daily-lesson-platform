@@ -21,7 +21,7 @@ const requireAdmin = require("./middleware/admin.middleware");
 const adminCourseRouter = require("../backEnd/routes/admin/course.route");
 const lessonRoutesAdmin = require("../backEnd/routes/admin/lesson.route");
 const analyticsRouteAdmin = require("../backEnd/routes/admin/analytics.route")
-
+const notificationRouteAdmin = require("../backEnd/routes/admin/notification.route")
 
 
 app.use(
@@ -49,6 +49,8 @@ app.use("/admin/user" , requireAdmin() , adminUserRouter);
 app.use("/admin/course" , requireAdmin() , adminCourseRouter);
 app.use("/admin/lesson", requireAdmin(), lessonRoutesAdmin);
 app.use("/admin/analytics" , requireAdmin() , analyticsRouteAdmin)
+app.use("/admin/notifications" , requireAdmin() , notificationRouteAdmin);
+
 app.use(errorHandler);
 
 

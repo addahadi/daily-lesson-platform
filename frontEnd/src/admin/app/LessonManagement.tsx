@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Lesson, Module } from "@/lib/adminType";
-import { ArrowLeft, Clock, FileText, X } from "lucide-react";
+import {  Clock, FileText, X } from "lucide-react";
 import React, { useEffect, useState, type SetStateAction } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import {  useLocation, useParams } from "react-router-dom";
 import EditTitle from "../components/ui/EditTitle";
 import AdminLessonCard from "../components/lesson/AdminLessonCard";
 import {
