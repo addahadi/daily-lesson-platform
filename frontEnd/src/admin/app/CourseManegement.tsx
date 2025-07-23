@@ -31,39 +31,44 @@ const CourseManegement = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-6 text-black dark:text-white">
-      <div className="w-full flex justify-between">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 text-gray-900 dark:text-gray-100">
+      <div className="w-full flex justify-between items-start">
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-text-primary dark:text-white mb-2">
+          <h1 className="text-3xl font-semibold text-gray-900 dark:text-white mb-2">
             Course Management
           </h1>
-          <p className="text-text-secondary dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400">
             Manage your courses, modules, and lessons
           </p>
         </div>
         <Button
-          variant="destructive"
           onClick={() => setIsCreate(true)}
-          className="text-white bg-gray-900 hover:bg-gray-700"
+          className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
         >
-          <Plus className="w-5 h-5 text-white" />
-          <span>new course</span>
+          <Plus className="w-5 h-5" />
+          <span>New Course</span>
         </Button>
       </div>
+
       {loading ? (
         <div className="flex justify-center items-center h-[60vh]">
           <LoadingSpinner size={60} />
         </div>
       ) : courses.length === 0 ? (
         <div className="flex justify-center items-center h-[60vh]">
-          <p className="text-text-secondary text-lg dark:text-gray-400">
-            No courses found
-          </p>
+          <div className="text-center">
+            <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
+              No courses found
+            </p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">
+              Create your first course to get started
+            </p>
+          </div>
         </div>
       ) : (
         <div className="mt-8">
           {(editedCourse || isCreate) && (
-            <div className="w-full justify-center items-center">
+            <div className="w-full flex justify-center items-center mb-8">
               <EditCourse
                 editedCourse={editedCourse}
                 close={() => {
@@ -74,7 +79,7 @@ const CourseManegement = () => {
               />
             </div>
           )}
-          <section className="mt-14 w-full grid grid-cols-2 gap-3">
+          <section className="grid grid-cols-2  gap-6">
             {Array.isArray(courses) &&
               courses.map((course) => (
                 <AdminCourseCard
@@ -124,7 +129,7 @@ function EditCourse({ editedCourse = {}, close, isCreate }: any) {
   const removeContentReason = (index: number) => {
     setCourseInfo({
       ...courseInfo,
-      content: courseInfo.content.filter((_, i : number) => i !== index),
+      content: courseInfo.content.filter((_, i: number) => i !== index),
     });
   };
 
@@ -178,137 +183,171 @@ function EditCourse({ editedCourse = {}, close, isCreate }: any) {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 text-black dark:text-white">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{isCreate ? "Create New Course" : "Edit Course"}</CardTitle>
-        <Button variant="ghost" size="icon" onClick={close}>
-          <X className="w-4 h-4" />
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Course Title</Label>
-              <Input
-                id="title"
-                placeholder="Enter course title"
-                required
-                value={courseInfo.title}
-                onChange={(e) => handleChange("title", e.target.value)}
-              />
-            </div>
-            <div>
-              <Label>Category</Label>
-              <Input
-                id="category"
-                placeholder="e.g., Frontend Development"
-                value={courseInfo.category}
-                onChange={(e) => handleChange("category", e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label>Description</Label>
-            <textarea
-              id="description"
-              value={courseInfo.description}
-              onChange={(e) => handleChange("description", e.target.value)}
-              className="w-full rounded-lg border border-gray-200 p-2 dark:bg-gray-700 dark:border-gray-600"
-              placeholder="Describe what students will learn"
-              rows={3}
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Difficulty Level</Label>
-              <select
-                value={courseInfo.level}
-                onChange={(e) => handleChange("difficulty", e.target.value)}
-                className="w-full px-3 py-2 bg-surface border border-border rounded-lg dark:bg-gray-700 dark:border-gray-600"
-              >
-                <option value="beginner">beginner</option>
-                <option value="intermediate">intermediate</option>
-                <option value="hard">hard</option>
-              </select>
-            </div>
-            <div>
-              <Label>URL Slug</Label>
-              <Input
-                value={courseInfo.slug}
-                onChange={(e) => handleChange("slug", e.target.value)}
-                id="slug"
-                placeholder="course-url-slug (auto-generated)"
-              />
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <Label>Course Image URL</Label>
-            <Input
-              id="img"
-              placeholder="https://example.com/image.jpg"
-              type="file"
-              onChange={(e) => handleImgChange(e.target.files?.[0])}
-            />
-          </div>
-
-          <div className="mt-6 space-y-2">
-            <Label>Why Enroll in this Course?</Label>
-            {courseInfo.content.map((reason: string, index: number) => (
-              <div key={index} className="flex gap-2 items-center">
+    <div className="   w-[800px]">
+      <Card className="w-full max-w-2xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 shadow-xl">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
+          <CardTitle className="text-xl font-semibold">
+            {isCreate ? "Create New Course" : "Edit Course"}
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={close}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                  Course Title *
+                </Label>
                 <Input
-                  value={reason}
-                  onChange={(e) =>
-                    handleChange("content", e.target.value, index)
-                  }
-                  placeholder={`Reason #${index + 1}`}
-                  className="flex-1"
+                  id="title"
+                  placeholder="Enter course title"
+                  required
+                  value={courseInfo.title}
+                  onChange={(e) => handleChange("title", e.target.value)}
+                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                 />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => removeContentReason(index)}
-                  className="text-red-500"
-                >
-                  Remove
-                </Button>
               </div>
-            ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={addContentReason}
-              className="mt-2"
-            >
-              + Add Reason
-            </Button>
-          </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                  Category *
+                </Label>
+                <Input
+                  id="category"
+                  placeholder="e.g., Frontend Development"
+                  value={courseInfo.category}
+                  onChange={(e) => handleChange("category", e.target.value)}
+                  required
+                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                />
+              </div>
+            </div>
 
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={close}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              className="text-white bg-gray-900"
-              onClick={handleSubmit}
-            >
-              {isLoading ? (
-                <LoadingSpinner size={20} />
-              ) : (
-                <span>{isCreate ? "Create Course" : "Update Course"}</span>
-              )}
-            </Button>
+            <div>
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                Description *
+              </Label>
+              <textarea
+                id="description"
+                value={courseInfo.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                placeholder="Describe what students will learn"
+                rows={3}
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                  Difficulty Level *
+                </Label>
+                <select
+                  value={courseInfo.level}
+                  onChange={(e) => handleChange("level", e.target.value)}
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                >
+                  <option value="">Select difficulty</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="hard">Advanced</option>
+                </select>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                  URL Slug *
+                </Label>
+                <Input
+                  value={courseInfo.slug}
+                  onChange={(e) => handleChange("slug", e.target.value)}
+                  id="slug"
+                  placeholder="course-url-slug"
+                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                Course Image *
+              </Label>
+              <Input
+                id="img"
+                placeholder="Upload course image"
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImgChange(e.target.files?.[0])}
+                className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 dark:file:bg-blue-900/20 file:text-blue-700 dark:file:text-blue-300"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Why Enroll in this Course?
+              </Label>
+              {courseInfo.content.map((reason: string, index: number) => (
+                <div key={index} className="flex gap-2 items-center">
+                  <Input
+                    value={reason}
+                    onChange={(e) =>
+                      handleChange("content", e.target.value, index)
+                    }
+                    placeholder={`Reason #${index + 1}`}
+                    className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => removeContentReason(index)}
+                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addContentReason}
+                className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                + Add Reason
+              </Button>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={close}
+                className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
+              >
+                {isLoading ? (
+                  <LoadingSpinner size={20} />
+                ) : (
+                  <span>{isCreate ? "Create Course" : "Update Course"}</span>
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardContent>
+        </CardContent>
+      </Card>
       <Toaster />
-    </Card>
+    </div>
   );
 }
 

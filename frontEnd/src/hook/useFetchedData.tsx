@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { CourseApiController } from "@/students/Api/course.Api";
-import { userApiController } from "@/students/Api/user.Api";
+import useCourseApiController from "@/students/Api/course.Api";
+import useUserApiController from "@/students/Api/user.Api";
 import type { CourseProps } from "@/lib/type";
 
 export function useCourseAndEnrollment(
@@ -9,28 +9,29 @@ export function useCourseAndEnrollment(
 ) {
   const [CourseData, setCourseData] = useState<CourseProps | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
-  const [enrolled, setEnrolled] = useState(false);
+  const [buttonAction,setButtonAction] = useState("")
+  const [url, setUrl] = useState<{
+    lesson_id: string;
+    module_id: string;
+  }>();
+  const {getCourseBySlug} = useCourseApiController()
+  const {checkEnroll} = useUserApiController()
 
   useEffect(() => {
     async function fetchCourseAndCheckEnrollment() {
       if (!CourseId) return;
-
-      const courseResult = await CourseApiController().getCourseBySlug(
+      console.log(CourseId)
+      const courseResult = await getCourseBySlug(
         CourseId
       );
       if (courseResult) {
         setCourseData(courseResult);
         setSlug(courseResult.id);
-        console.log(courseResult);
 
         if (user) {
-          const enrollResult = await userApiController().checkEnroll(
-            courseResult.id,
-            user.id
-          );
-          if (enrollResult?.exists !== undefined) {
-            setEnrolled(enrollResult.exists);
-          }
+          const result = await checkEnroll(courseResult.id, user?.id);
+          if (result) setButtonAction(result.action);
+          else if (result.data) {setUrl(result.data)};
         }
       }
     }
@@ -38,5 +39,5 @@ export function useCourseAndEnrollment(
     fetchCourseAndCheckEnrollment();
   }, [CourseId, user]);
 
-  return { CourseData, enrolled, slug, setEnrolled };
+  return { CourseData, slug, setButtonAction , buttonAction , url , setUrl};
 }

@@ -4,6 +4,7 @@
 
 
 export interface CourseCardProps  {
+    id : string
     title : string
     category : string
     level : string 
@@ -34,7 +35,7 @@ export interface UserInfoProps {
 }
 
 
-export default interface notesProps {
+export  interface notesProps {
   note_title : string
   lesson_title : string
   content  : string

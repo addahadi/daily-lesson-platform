@@ -12,7 +12,7 @@ const navigationItems = [
   {
     name: "Overview",
     icon: LayoutDashboard,
-    path: "/admin/welocm",
+    path: "/admin/welcom",
   },
   {
     name: "Lesson Management",
@@ -38,7 +38,7 @@ const navigationItems = [
 
 const AdminSideBar = () => {
   return (
-    <div className="bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-600 flex flex-col h-screen w-[300px]">
+    <div className=" min-h-screen  sticky top-0 left-0  bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-600 flex flex-col h-screen w-[300px]">
       {/* Header Section */}
       <section className="border-b border-gray-200 dark:border-gray-700">
         <section className="py-6 px-6 flex gap-2 items-center">

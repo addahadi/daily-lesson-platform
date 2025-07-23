@@ -70,16 +70,40 @@ export const formatDuration = (minutes: number) => {
   return `${hours}h ${mins}m`;
 };
 
-
-export function getLevelColor(level : string | undefined) {
+export function getLevelColor(level: string | undefined) {
   switch (level) {
     case "beginner":
-      return "bg-green-100 text-green-800";
+      return "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800";
     case "intermediate":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800";
     case "advanced":
-      return "bg-red-100 text-red-800";
+      return "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-600";
   }
+}
+
+export const setCache = (key : string , data : any , ttl : number) => {
+  const now = Date.now()
+  const item = {
+    data,
+    expiry : now  + ttl,
+  }
+
+  localStorage.setItem(key , JSON.stringify(item))
+}
+
+
+export const getCach = (key : string) => {
+  const itemStr = localStorage.getItem(key)
+  if(!itemStr) return null 
+
+  const item = JSON.parse(itemStr)
+  const now = Date.now()
+
+  if(now > item.expiry){
+    localStorage.removeItem(key)
+    return null
+  }
+  return item.data
 }

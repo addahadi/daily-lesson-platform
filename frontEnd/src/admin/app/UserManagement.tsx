@@ -6,8 +6,8 @@ import {
   TableRow,
   Table,
 } from "@/components/ui/table";
-import {  Edit, Eye, Search, Trash2, Trash2Icon, X} from "lucide-react";
-import { useEffect, useState} from "react";
+import { Edit, Eye, Search, Trash2, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import useUserApi from "../api/user.api";
 import type { UserInfo } from "@/lib/adminType";
 
@@ -40,14 +40,14 @@ const UserManagement = () => {
   );
 
   return (
-    <div className="min-h-screen  bg-white  p-6">
-      <div className=" w-full">
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-6">
+      <div className="w-full">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-text-primary mb-2">
+          <h1 className="text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
             User Management
           </h1>
-          <p className="text-text-secondary">
+          <p className="text-gray-600 dark:text-gray-300">
             Manage and monitor platform users
           </p>
         </div>
@@ -55,11 +55,11 @@ const UserManagement = () => {
         {/* Search */}
         <div className="mb-6">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-tertiary" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <input
-              className="w-full pl-10 pr-4 py-2.5 bg-surface border border-border rounded-lg 
-                         text-text-primary placeholder:text-text-tertiary
-                         focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg 
+                         text-gray-800 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent
                          transition-colors"
               placeholder="Search users..."
               value={searchQuery}
@@ -69,42 +69,42 @@ const UserManagement = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-surface border border-border rounded-lg overflow-hidden shadow-subtle">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm dark:shadow-lg dark:shadow-gray-900/25">
           <Table>
             <TableHeader>
-              <TableRow className="border-border">
-                <TableHead className="text-text-secondary font-medium py-3">
+              <TableRow className="border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                <TableHead className="text-gray-600 dark:text-gray-300 font-medium py-3">
                   User
                 </TableHead>
-                <TableHead className="text-text-secondary font-medium py-3">
+                <TableHead className="text-gray-600 dark:text-gray-300 font-medium py-3">
                   Role
                 </TableHead>
-                <TableHead className="text-text-secondary font-medium py-3">
+                <TableHead className="text-gray-600 dark:text-gray-300 font-medium py-3">
                   Status
                 </TableHead>
-                <TableHead className="text-text-secondary font-medium py-3">
+                <TableHead className="text-gray-600 dark:text-gray-300 font-medium py-3">
                   Join Date
                 </TableHead>
-                <TableHead className="text-text-secondary font-medium py-3">
+                <TableHead className="text-gray-600 dark:text-gray-300 font-medium py-3">
                   Last Action
                 </TableHead>
-                <TableHead className="text-text-secondary font-medium py-3 text-right">
+                <TableHead className="text-gray-600 dark:text-gray-300 font-medium py-3 text-right">
                   Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.map((user, index) => (
+              {filteredUsers.map((user) => (
                 <TableRow
                   key={user.id}
-                  className="border-border hover:bg-surface-hover transition-colors"
+                  className="border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
                   <TableCell className="py-4">
                     <div className="flex flex-col">
-                      <span className="font-medium text-text-primary">
+                      <span className="font-medium text-gray-800 dark:text-gray-100">
                         {user.name}
                       </span>
-                      <span className="text-sm text-text-secondary">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
                         {user.email}
                       </span>
                     </div>
@@ -114,8 +114,8 @@ const UserManagement = () => {
                       variant={user.role === "admin" ? "default" : "secondary"}
                       className={
                         user.role === "admin"
-                          ? "bg-blue-subtle text-blue-primary border-blue-primary/20"
-                          : "bg-surface-subtle text-text-secondary"
+                          ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700/50"
+                          : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600"
                       }
                     >
                       {user.role}
@@ -126,17 +126,17 @@ const UserManagement = () => {
                       variant="secondary"
                       className={
                         user.status === "active"
-                          ? "bg-green-subtle text-green-primary border-green-primary/20"
-                          : "bg-red-subtle text-red-primary border-red-primary/20"
+                          ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700/50"
+                          : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700/50"
                       }
                     >
                       {user.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-text-secondary">
+                  <TableCell className="text-gray-600 dark:text-gray-400">
                     {user.created_at?.split("T")[0]}
                   </TableCell>
-                  <TableCell className="text-text-secondary">
+                  <TableCell className="text-gray-600 dark:text-gray-400">
                     27/11/2025
                   </TableCell>
                   <TableCell>
@@ -145,7 +145,7 @@ const UserManagement = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => setSelectedUser(user)}
-                        className="h-8 w-8 p-0 text-text-tertiary hover:text-text-primary hover:bg-surface-hover"
+                        className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -153,7 +153,7 @@ const UserManagement = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingUserId(user.clerk_id)}
-                        className="h-8 w-8 p-0 text-text-tertiary hover:text-blue-primary hover:bg-blue-subtle"
+                        className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -161,7 +161,7 @@ const UserManagement = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => setDeletingUserId(user.clerk_id)}
-                        className="h-8 w-8 p-0 text-text-tertiary hover:text-red-primary hover:bg-red-subtle"
+                        className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -210,7 +210,7 @@ const ModalBackdrop = ({
   onClose: () => void;
 }) => (
   <div
-    className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+    className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4"
     onClick={onClose}
   >
     <div onClick={(e) => e.stopPropagation()}>{children}</div>
@@ -246,15 +246,17 @@ const EditModal = ({
 
   return (
     <ModalBackdrop onClose={onClose}>
-      <div className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm shadow-medium">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full max-w-sm shadow-lg dark:shadow-xl dark:shadow-gray-900/50">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-text-primary">Edit User</h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+            Edit User
+          </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="h-8 w-8 p-0 text-text-tertiary hover:text-text-primary hover:bg-surface-hover"
+            className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -265,7 +267,7 @@ const EditModal = ({
           <div>
             <label
               htmlFor="status"
-              className="block text-sm font-medium text-text-primary mb-2"
+              className="block text-sm font-medium text-gray-800 dark:text-gray-100 mb-2"
             >
               Status
             </label>
@@ -273,8 +275,8 @@ const EditModal = ({
               id="status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-text-primary
-                         focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-800 dark:text-gray-100
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
@@ -284,7 +286,7 @@ const EditModal = ({
           <div>
             <label
               htmlFor="role"
-              className="block text-sm font-medium text-text-primary mb-2"
+              className="block text-sm font-medium text-gray-800 dark:text-gray-100 mb-2"
             >
               Role
             </label>
@@ -292,8 +294,8 @@ const EditModal = ({
               id="role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-text-primary
-                         focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-800 dark:text-gray-100
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
             >
               <option value="admin">Admin</option>
               <option value="student">Student</option>
@@ -324,17 +326,17 @@ const UserViewModal = ({
   onClose: () => void;
 }) => (
   <ModalBackdrop onClose={onClose}>
-    <div className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm shadow-medium">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full max-w-sm shadow-lg dark:shadow-xl dark:shadow-gray-900/50">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-text-primary">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           User Details
         </h2>
         <Button
           variant="ghost"
           size="sm"
           onClick={onClose}
-          className="h-8 w-8 p-0 text-text-tertiary hover:text-text-primary hover:bg-surface-hover"
+          className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           <X className="h-4 w-4" />
         </Button>
@@ -354,8 +356,10 @@ const UserViewModal = ({
           { label: "Level", value: user.level },
         ].map((item) => (
           <div key={item.label} className="flex justify-between">
-            <span className="text-sm text-text-secondary">{item.label}:</span>
-            <span className="text-sm text-text-primary font-medium">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {item.label}:
+            </span>
+            <span className="text-sm text-gray-800 dark:text-gray-100 font-medium">
               {item.value}
             </span>
           </div>
@@ -393,24 +397,24 @@ const DeleteModal = ({
 
   return (
     <ModalBackdrop onClose={onClose}>
-      <div className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm shadow-medium">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full max-w-sm shadow-lg dark:shadow-xl dark:shadow-gray-900/50">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-text-primary">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             Delete User
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="h-8 w-8 p-0 text-text-tertiary hover:text-text-primary hover:bg-surface-hover"
+            className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <X className="h-4 w-4" />
           </Button>
         </div>
 
         {/* Content */}
-        <p className="text-text-secondary mb-6">
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
           Are you sure you want to delete this user? This action cannot be
           undone.
         </p>

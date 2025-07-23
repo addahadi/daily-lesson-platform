@@ -1,4 +1,4 @@
-const express = require("express")
+const express = require("express");
 const {
   getEnrolledCourses,
   getNextLesson,
@@ -6,13 +6,45 @@ const {
   getTotalLessons,
   getDailyStreak,
 } = require("../../controller/students/home.controller");
-const router = express.Router()
 
+const { validate } = require("../../middleware/validate");
 
-router.get("/enrolled-courses/:userId",getEnrolledCourses)
-router.get("/next-lessons" , getNextLesson)
-router.get("/total-enrolled-courses/:userId" , getEnrolledCoursesNumber)
-router.get("/total-lessons/:userId" , getTotalLessons)
-router.get("/streak-days/:userId" , getDailyStreak)
+const router = express.Router();
 
-module.exports = router
+router.get(
+  "/enrolled-courses/:userId",
+  validate({ userId: "string" }, "params"),
+  getEnrolledCourses
+);
+
+router.get(
+  "/next-lessons",
+  validate(
+    {
+      courseId: "string", 
+      enrollmentId: "string",
+    },
+    "query"
+  ),
+  getNextLesson
+);
+
+router.get(
+  "/total-enrolled-courses/:userId",
+  validate({ userId: "string" }, "params"),
+  getEnrolledCoursesNumber
+);
+
+router.get(
+  "/total-lessons/:userId",
+  validate({ userId: "string" }, "params"),
+  getTotalLessons
+);
+
+router.get(
+  "/streak-days/:userId",
+  validate({ userId: "string" }, "params"),
+  getDailyStreak
+);
+
+module.exports = router;

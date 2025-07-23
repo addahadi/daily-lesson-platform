@@ -98,32 +98,38 @@ const ModuleManagement = () => {
   };
 
   return (
-    <div className="p-6 min-h-screen">
+    <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <BackTo title="Back to Courses" URL="/admin/course-management" />
-      <Card className="mb-14">
-        <CardContent className="flex flex-row gap-4 p-6">
-          <div className="w-[200px] h-full">
+
+      <Card className="mb-8 border border-gray-200 dark:border-gray-700 shadow-sm">
+        <CardContent className="flex flex-col md:flex-row gap-6 p-6 bg-white dark:bg-gray-800">
+          <div className="w-full md:w-[200px] h-[120px] md:h-[140px]">
             <img
               src={course?.img_url}
-              className="w-full h-full object-cover rounded-lg"
+              className="w-full h-full object-cover rounded-lg shadow-sm"
               alt="Course"
             />
           </div>
           <div className="flex-1 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold text-gray-900">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-50">
               {course?.title}
             </h1>
-            <div className="flex flex-row gap-3">
-              <Badge variant="outline">{course?.category}</Badge>
+            <div className="flex flex-row gap-3 flex-wrap">
               <Badge
-                variant="destructive"
-                className={`${getLevelColor(course?.level)}`}
+                variant="outline"
+                className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700"
+              >
+                {course?.category}
+              </Badge>
+              <Badge
+                variant="outline"
+                className={`${getLevelColor(course?.level)} border-current`}
               >
                 {course?.level}
               </Badge>
             </div>
-            <div className="text-gray-500 text-sm">
-              {course?.description.slice(0, 100)}...
+            <div className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+              {course?.description.slice(0, 150)}...
             </div>
           </div>
         </CardContent>
@@ -139,13 +145,18 @@ const ModuleManagement = () => {
 
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <LoadingSpinner size={40} color="gray" />
+          <div className="text-center">
+            <LoadingSpinner size={40} color="gray" />
+            <p className="mt-4 text-gray-500 dark:text-gray-400">
+              Loading modules...
+            </p>
+          </div>
         </div>
       ) : (
         <div>
-          <div className=" w-full">
-            <div className="mb-12 w-full flex justify-center items-center">
-              {(editModule || isCreate) && (
+          <div className="w-full">
+            {(editModule || isCreate) && (
+              <div className="mb-8 w-full flex justify-center items-center">
                 <EditModule
                   module={editModule}
                   setModules={setModules}
@@ -156,8 +167,9 @@ const ModuleManagement = () => {
                   }}
                   isCreate={isCreate}
                 />
-              )}
-            </div>
+              </div>
+            )}
+
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -190,19 +202,20 @@ const ModuleManagement = () => {
             </DndContext>
 
             {modules.length > 0 && (
-              <div className="mt-4 text-sm text-gray-500">
-                Drag and drop to reorder modules
-              </div>
-            )}
-            {!noModules && (
-              <div className="mt-6 flex justify-end">
-                <Button onClick={handleSaveOrder}>
-                  {isSaving ? (
-                    <LoadingSpinner size={20} color="white" />
-                  ) : (
-                    "Save Order"
-                  )}
-                </Button>
+              <div className="mt-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+                  Drag and drop to reorder modules
+                </div>
+                {!noModules && (
+                  <Button
+                    onClick={handleSaveOrder}
+                    disabled={isSaving}
+                    className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
+                  >
+                    {isSaving ? <LoadingSpinner size={20} /> : "Save Order"}
+                  </Button>
+                )}
               </div>
             )}
           </div>
@@ -210,14 +223,23 @@ const ModuleManagement = () => {
       )}
 
       {noModules && !isCreate && !editModule && (
-        <div className="text-center py-12">
-          <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <div className="text-center py-16">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+            <BookOpen className="w-10 h-10 text-gray-400 dark:text-gray-500" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
             No modules yet
           </h3>
-          <p className="text-gray-600 mb-4">
-            Get started by creating your first module
+          <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            Get started by creating your first module to organize your course
+            content
           </p>
+          <Button
+            onClick={() => setIsCreate(true)}
+            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white"
+          >
+            Create First Module
+          </Button>
         </div>
       )}
 
@@ -227,10 +249,6 @@ const ModuleManagement = () => {
 };
 
 export default ModuleManagement;
-
-// ------------------------
-// EditModule Component
-// ------------------------
 
 const EditModule = ({
   module,
@@ -243,7 +261,6 @@ const EditModule = ({
   setModules: React.Dispatch<React.SetStateAction<Module[]>>;
   setNoModules: React.Dispatch<React.SetStateAction<boolean>>;
   close: () => void;
-
   isCreate: boolean;
 }) => {
   const [newModule, setNewModule] = useState({
@@ -253,6 +270,7 @@ const EditModule = ({
     lessoncount: module?.lessoncount || 0,
     totalduration: module?.totalduration || 0,
   });
+  const [isLoading, setIsLoading] = useState(false);
   const { createModule, updateModule } = useModuleApi();
   const { courseId } = useParams();
 
@@ -265,11 +283,14 @@ const EditModule = ({
   };
 
   const handleSave = async () => {
-    if (!newModule.title) {
+    if (!newModule.title.trim()) {
       toast.error("Module title is required");
       return;
     }
     if (!courseId) return;
+
+    setIsLoading(true);
+
     if (isCreate) {
       const response = await createModule(courseId, newModule.title.trim());
       if (response) {
@@ -298,39 +319,65 @@ const EditModule = ({
         close();
       }
     }
+
+    setIsLoading(false);
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex flex-row items-center justify-between">
-          <span>{isCreate ? "Create Module" : "Edit Module"}</span>
-          <div>
-            <X
-              onClick={close}
-              className="w-4 h-4 cursor-pointer text-gray-500 hover:text-gray-900"
-            />
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <Input
-            type="text"
-            name="title"
-            value={newModule.title}
-            onChange={handleChange}
-            placeholder="Module Title"
-            className="w-full"
-          />
+      <Card className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
+          <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {isCreate ? "Create Module" : "Edit Module"}
+          </CardTitle>
           <Button
-            onClick={handleSave}
-            className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-600"
+            variant="ghost"
+            size="icon"
+            onClick={close}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            Save Changes
+            <X className="w-4 h-4" />
           </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            <div>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                Module Title *
+              </label>
+              <Input
+                type="text"
+                name="title"
+                value={newModule.title}
+                onChange={handleChange}
+                placeholder="Enter module title"
+                className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={close}
+                disabled={isLoading}
+                className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSave}
+                disabled={isLoading || !newModule.title.trim()}
+                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
+              >
+                {isLoading ? (
+                  <LoadingSpinner size={20} />
+                ) : (
+                  <span>{isCreate ? "Create Module" : "Save Changes"}</span>
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
   );
 };

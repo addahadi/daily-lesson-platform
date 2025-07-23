@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import useEnroll from "@/hook/useEnroll";
-import { lessonApiController } from "@/students/Api/lesson.Api";
-import type QuizzProps from "@/lib/type";
+import useLessonApiController from "@/students/Api/lesson.Api";
+import type {QuizzProps} from "@/lib/type";
 import type { LessonSectionProps } from "@/lib/type";
 
 export function useLessonDetails() {
@@ -18,7 +18,7 @@ export function useLessonDetails() {
   const [completed, setCompleted] = useState<boolean | undefined>(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const {getLessonDetails , startLesson , getNextLesson} = useLessonApiController()
   useEffect(() => {
     async function fetchLessonDetails() {
       if (!lessonId || !user?.id) return;
@@ -30,7 +30,7 @@ export function useLessonDetails() {
       setLoading(true);
 
       try {
-        const { "0": data } = await lessonApiController().getLessonDetails(
+        const { "0": data } = await getLessonDetails(
           lessonId,
           user.id
         );
@@ -71,7 +71,7 @@ export function useLessonDetails() {
       if (!(lessonId && moduleId && enrollmentId)) return;
 
       try {
-        const response = await lessonApiController().startLesson(
+        const response = await startLesson(
           enrollmentId,
           moduleId,
           lessonId
@@ -88,7 +88,7 @@ export function useLessonDetails() {
   const handlePrevious = async () => {
     if (!lessonDetail || !courseId) return;
     try {
-      const { result } = await lessonApiController().getNextLesson(
+      const { result } = await getNextLesson(
         lessonDetail.order_index - 1,
         courseId
       );
@@ -103,7 +103,7 @@ export function useLessonDetails() {
   const handleNext = async () => {
     if (!lessonDetail || !courseId) return;
     try {
-      const { result } = await lessonApiController().getNextLesson(
+      const { result } = await getNextLesson(
         lessonDetail.order_index + 1,
         courseId
       );

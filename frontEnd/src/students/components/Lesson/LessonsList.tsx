@@ -1,4 +1,4 @@
-import { lessonApiController } from "@/students/Api/lesson.Api";
+import useLessonApiController from "@/students/Api/lesson.Api";
 import type { ModuleCardProps, Lesson } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
 import {
@@ -25,12 +25,13 @@ const LessonsList = ({
   );
   const [loading, setLoading] = useState(true);
 
+  const {checkValidLesson} = useLessonApiController()
   useEffect(() => {
     async function fetchData() {
       if (!(courseId && user?.id && module.module_id)) return;
 
       try {
-        const result = await lessonApiController().checkValidLesson(
+        const result = await checkValidLesson(
           courseId,
           module.module_id,
           user.id

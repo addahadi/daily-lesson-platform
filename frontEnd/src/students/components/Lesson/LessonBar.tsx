@@ -1,4 +1,4 @@
-import { lessonApiController } from "@/students/Api/lesson.Api";
+import useLessonApiController from "@/students/Api/lesson.Api";
 import type { LessonBarProps } from "@/lib/type";
 
 import { useEffect, useState } from "react";
@@ -12,12 +12,12 @@ const LessonBar = ({
   enrollmentId: string | undefined;
 }) => {
   const [CML, setCML] = useState<LessonBarProps>();
-
+  const {getLessonsDetails} = useLessonApiController()
   useEffect(() => {
     async function fetchData() {
       console.log(courseId, enrollmentId);
       if (!courseId || !enrollmentId) return;
-      const data = await lessonApiController().getLessonsDetails(
+      const data = await getLessonsDetails(
         courseId,
         enrollmentId
       );

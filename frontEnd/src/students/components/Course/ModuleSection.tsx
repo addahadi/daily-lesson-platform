@@ -1,14 +1,16 @@
-import { CourseApiController } from "@/students/Api/course.Api";
+
 import type { ModuleCardProps } from "@/lib/type";
 import { useEffect, useState } from "react";
 import Modules from "./Module";
+import useCourseApiController from "@/students/Api/course.Api";
 
 const ModuleSection = ({ Course_Id }: { Course_Id: string }) => {
   const [modules, setModules] = useState<ModuleCardProps[]>([]);
+  const {getCourseModules} = useCourseApiController()
   useEffect(() => {
     async function fetchModules() {
       if (Course_Id) {
-        const result = await CourseApiController().getCourseModules(Course_Id);
+        const result = await getCourseModules(Course_Id);
         if (result) {
           console.log(result);
           setModules(result);

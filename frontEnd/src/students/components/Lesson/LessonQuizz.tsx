@@ -1,8 +1,8 @@
-import { lessonApiController } from "@/students/Api/lesson.Api";
 import { Button } from "@/components/ui/button";
 import { Toast } from "@/components/ui/Toast";
 import type { ToastProps } from "@/lib/type";
-import type QuizzProps from "@/lib/type";
+import type {QuizzProps} from "@/lib/type";
+import useLessonApiController from "@/students/Api/lesson.Api";
 import { useUser } from "@clerk/clerk-react";
 import { Trophy } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -15,14 +15,16 @@ const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastProps>();
+  const {SubmitQuizzAnswer} = useLessonApiController()
+  
   useEffect(() => {
-    if (quizz) {
-      setSelectedAnswer(quizz.selected_option_index);
+    if (quizz &&  quizz?.selected_option_index && quizz?.is_correct) {
+      setSelectedAnswer(quizz.selected_option_index );
       const isAlreadySubmitted =
         quizz.selected_option_index !== null &&
         quizz.selected_option_index !== undefined;
       setIsSubmitted(isAlreadySubmitted);
-      setIsCorrect(quizz.is_correct);
+      setIsCorrect(quizz.is_correct );
     }
   }, [quizz]);
 
@@ -42,7 +44,7 @@ const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
         selectedAnswer,
         quizz.correct_option_index
       );
-      await lessonApiController().SubmitQuizzAnswer(
+      await SubmitQuizzAnswer(
         quizz.quizz_id,
         user?.id,
         lessonId,

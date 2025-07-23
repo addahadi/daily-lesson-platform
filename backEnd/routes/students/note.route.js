@@ -8,15 +8,44 @@ const {
   getAllNotes,
 } = require("../../controller/students/note.controller");
 
-router.get("/lesson-note/:lessonId/:userId", getLessonNote);
-router.post("/add-note", addNote);
-router.delete("/delete-note", deleteNote);
-router.get("/all-notes" , (req ,res) => {
-    console.log("✅ /note/all-notes hit");
-    console.log("Auth:", req.auth);
-    getAllNotes(req , res)
-});
+const { validate } = require("../../middleware/validate");
 
+const addNoteSchema = {
+  title: "string",
+  content: "string",
+  lessonId: "string", // slug
+  userId: "string",
+};
 
+const lessonNoteParamsSchema = {
+  lessonId: "string",
+  userId: "string",
+};
+
+const getAllNotesQuerySchema = {
+  userId: "string",
+  page: "number",
+};
+
+const deleteNoteSchema = {
+  userId: "string",
+  lessonId: "string",
+};
+
+router.get(
+  "/lesson-note/:lessonId/:userId",
+  validate(lessonNoteParamsSchema, "params"),
+  getLessonNote
+);
+
+router.post("/add-note", validate(addNoteSchema, "body"), addNote);
+
+router.get(
+  "/all-notes",
+  validate(getAllNotesQuerySchema, "query"),
+  getAllNotes
+);
+
+router.delete("/delete-note", validate(deleteNoteSchema, "query"), deleteNote);
 
 module.exports = router;

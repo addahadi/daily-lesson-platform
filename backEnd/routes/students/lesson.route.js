@@ -1,4 +1,4 @@
-const express = require("express")
+const express = require("express");
 const {
   getLessonDetails,
   getLessonsDetails,
@@ -9,49 +9,81 @@ const {
   getNextLesson,
   MarkAsComplete,
 } = require("../../controller/students/lesson.controller");
-const router = express.Router()
 
+const { validate } = require("../../middleware/validate");
 
-router.get("/get/" , (req , res) => {
-    getLessonDetails(req  , res)
-})
-
-
-router.get("/getfirstlesson/:courseId" , (req , res) => {
-    getFirstLesson(req , res)
-})
-
-
-router.post("/checklesson" , (req ,res) => {
-    isLessonAccessible(req ,res)
-})
-
-router.post("/startlesson" , (req ,res) => {
-    startLesson(req , res)
-})
-
-router.get("/submitanswer" , (req , res) => {
-    SubmitQuizzAnswer(req , res)
-})
-
+const router = express.Router();
 
 router.get(
-  "/nextlesson/:courseId/:orderIndex",
-  (req, res) => {
-    getNextLesson(req, res);
-  }
+  "/get",
+  validate({ lessonId: "string", userId: "string" }, "query"),
+  getLessonDetails
 );
 
+router.get("/getfirstlesson/:courseId", getFirstLesson);
 
-router.get("/getLessons" , (req , res) => {
-    getLessonsDetails(req , res)
-})
+router.post(
+  "/checklesson",
+  validate(
+    {
+      userId: "string",
+      courseId: "string",
+      moduleId: "number",
+    },
+    "body"
+  ),
+  isLessonAccessible
+);
 
+router.post(
+  "/startlesson",
+  validate(
+    {
+      enrollmentId: "number",
+      moduleId: "number",
+      lessonId: "string", // it's slug
+    },
+    "body"
+  ),
+  startLesson
+);
 
-router.post("/markascomplete" , (req , res) => {
-    MarkAsComplete(req , res)
-})
+router.get(
+  "/submitanswer",
+  validate(
+    {
+      quizz_id: "number",
+      lesson_id: "string", // slug
+      user_id: "string",
+      selected_option: "number",
+      correct: "boolean",
+      module_id: "number",
+    },
+    "query"
+  ),
+  SubmitQuizzAnswer
+);
 
+router.get("/nextlesson/:courseId/:orderIndex", getNextLesson);
 
+router.get(
+  "/getLessons",
+  validate({ courseId: "string", enrollmentId: "number" }, "query"),
+  getLessonsDetails
+);
 
-module.exports = router
+router.post(
+  "/markascomplete",
+  validate(
+    {
+      lessonSlug: "string",
+      enrollmentId: "number",
+      moduleId: "number",
+      userId: "string",
+    },
+    "body"
+  ),
+  MarkAsComplete
+);
+
+module.exports = router;

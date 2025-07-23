@@ -1,6 +1,8 @@
 const sql = require("../../db");
 const { addXp, checkAchievements } = require("./xp.controller");
 
+
+
 async function getLessonDetails(req, res, next) {
   const { lessonId, userId } = req.query;
   try {
@@ -92,10 +94,10 @@ async function getLessonsDetails(req, res, next) {
   }
 }
 
-async function getFirstLesson(req, res, next) {
+async function getFirstLesson(client , req ,  res) {
   const { courseId } = req.params;
-  try {
-    const firstLesson = await sql`
+
+    const firstLesson = await client`
       SELECT l.slug AS lesson_id, m.id AS module_id
       FROM courses c
       JOIN modules m ON c.id = m.course_id
@@ -105,12 +107,13 @@ async function getFirstLesson(req, res, next) {
     if (firstLesson.length === 0) {
       return res
         .status(404)
-        .json({ status: false, error: "Lesson was not found." });
+        .json({ status: false, message: "Lesson was not found" });
     }
-    res.status(200).json({ status: true, data: firstLesson });
-  } catch (err) {
-    next(err);
-  }
+    res.status(200).json({ 
+      status: true, 
+      data: firstLesson[0], 
+      action : "start the first lesson"
+    });
 }
 
 async function isLessonAccessible(req, res, next) {

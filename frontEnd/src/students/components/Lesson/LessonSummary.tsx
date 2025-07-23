@@ -1,4 +1,4 @@
-import { lessonApiController } from "@/students/Api/lesson.Api";
+import useLessonApiController  from "@/students/Api/lesson.Api";
 import { Toast } from "@/components/ui/Toast";
 import type { ToastProps } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
@@ -22,12 +22,11 @@ const LessonSummary = ({
   const { moduleId, lessonId } = useParams();
   const { user } = useUser();
   const [toast, setToast] = useState<ToastProps>();
-
+  const {markAsComplete} = useLessonApiController()
   async function handleComplete() {
     if (!enrollementId || !moduleId || !lessonId || !user?.id) return;
 
-    await lessonApiController()
-      .markAsComplete(enrollementId, moduleId, lessonId, user.id)
+    await markAsComplete(enrollementId, moduleId, lessonId, user.id)
       .then(() => {
         setCompleted(true);
         setToast({

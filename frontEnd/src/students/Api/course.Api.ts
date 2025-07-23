@@ -1,96 +1,148 @@
+import { useAuth } from "@clerk/clerk-react";
+import { useCallback } from "react";
 import type { CourseCardProps, CourseProps } from "@/lib/type";
+import { toast } from "sonner";
 
-export function CourseApiController() {
-  async function getAllCourses() {
+const useCourseApiController = () => {
+  const { getToken } = useAuth();
+
+  const getAuthHeader = useCallback(async () => {
+    const token = await getToken();
+    return {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+  }, [getToken]);
+
+  const getAllCourses = useCallback(async () => {
     try {
+      const headers = await getAuthHeader();
       const response = await fetch("http://localhost:8090/course/getall", {
         method: "GET",
+        headers,
       });
 
       if (response.ok) {
-        const result = await response.json();
-        const { data } = result;
+        const { data } = await response.json();
         return data as CourseCardProps[];
       } else if (response.status === 404) {
         return null;
       }
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching all courses:", err);
     }
-  }
-  async function getFilteredCourses(filter: URLSearchParams) {
-    try {
-      const response = await fetch(
-        `http://localhost:8090/course/filtered-courses?${filter}`,
-        {
-          method: "GET",
+  }, [getAuthHeader]);
+
+  const getFilteredCourses = useCallback(
+    async (filter: URLSearchParams) => {
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(
+          `http://localhost:8090/course/filtered-courses?${filter}`,
+          {
+            method: "GET",
+            headers,
+          }
+        );
+
+        if (response.ok) {
+          const { data } = await response.json();
+          return data as CourseCardProps[];
+        } else if (response.status === 404) {
+          return null;
         }
-      );
+      } catch (err) {
+        console.error("Error fetching filtered courses:", err);
+      }
+    },
+    [getAuthHeader]
+  );
 
-      if (response.ok) {
-        const result = await response.json();
-        const { data } = result;
-        return data as CourseCardProps[];
-      } else if (response.status === 404) {
-        return null;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  async function getCourseModules(id: string) {
-    const URL = `http://localhost:8090/course/getmodules/${id}`;
-    try {
-      const response = await fetch(URL, {
-        method: "GET",
-      });
-      if (response.ok) {
-        const result = await response.json();
-        const { data } = result;
-        return data as CourseCardProps[];
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  async function getCourseBySlug(slug: string) {
-    const URL = `http://localhost:8090/course/getbyslug?slug=${slug}`;
-    try {
-      const response = await fetch(URL, {
-        method: "GET",
-      });
+  const getCourseModules = useCallback(
+    async (id: string) => {
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(
+          `http://localhost:8090/course/getmodules/${id}`,
+          {
+            method: "GET",
+            headers,
+          }
+        );
 
-      if (response.ok) {
-        const result = await response.json();
-        const { data } = result;
-        console.log(data);
-        return data as CourseProps;
+        if (response.ok) {
+          const { data } = await response.json();
+          return data
+        }
+      } catch (err) {
+        console.error("Error fetching course modules:", err);
       }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  async function getModuleLesson(id: string) {
-    const URL = `http://localhost:8090/course/getlessons/${id}`;
-    try {
-      const response = await fetch(URL, {
-        method: "GET",
-      });
-      if (response.ok) {
-        const result = await response.json();
-        const { data } = result;
-        return data;
+    },
+    [getAuthHeader]
+  );
+
+  const getCourseBySlug = useCallback(
+    async (slug: string) => {
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(
+          `http://localhost:8090/course/getbyslug?slug=${slug}`,
+          {
+            method: "GET",
+            headers,
+          }
+          
+        );
+
+        if (response.ok) {
+          const { data } = await response.json();
+          return data as CourseProps;
+        }
+        else if (response.status === 404) {
+          toast("no such a course")
+        }        
+        else {
+          throw new Error("Error status : " + response.status)
+        }
+      } catch (err) {
+        console.error("Error fetching course by slug:", err);
+        toast("something went wrong")
+        return null
       }
-    } catch (err) {
-      console.log(err);
-    }
-  }
+    },
+    [getAuthHeader]
+  );
+
+  const getModuleLesson = useCallback(
+    async (id: string) => {
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(
+          `http://localhost:8090/course/getlessons/${id}`,
+          {
+            method: "GET",
+            headers,
+          }
+        );
+
+        if (response.ok) {
+          const { data } = await response.json();
+          return data;
+        }
+      } catch (err) {
+        console.error("Error fetching module lessons:", err);
+      }
+    },
+    [getAuthHeader]
+  );
 
   return {
     getAllCourses,
-    getCourseBySlug,
-    getCourseModules,
-    getModuleLesson,
     getFilteredCourses,
+    getCourseModules,
+    getCourseBySlug,
+    getModuleLesson,
   };
-}
+};
+
+export default useCourseApiController;

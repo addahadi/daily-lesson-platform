@@ -1,96 +1,112 @@
 import { useAuth } from "@clerk/clerk-react";
+import { useCallback } from "react";
 
 const useHomeApi = () => {
   const { getToken } = useAuth();
 
-  const getAuthHeader = async () => {
+  const getAuthHeader = useCallback(async () => {
     const token = await getToken();
     return {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     };
-  };
+  }, [getToken]);
 
-  const getEnrolledCourses = async (userId: string) => {
-    const URL = `http://localhost:8090/home/enrolled-courses/${userId}`;
-    try {
-      const headers = await getAuthHeader();
-      const response = await fetch(URL, { method: "GET", headers });
+  const getEnrolledCourses = useCallback(
+    async (userId: string) => {
+      const URL = `http://localhost:8090/home/enrolled-courses/${userId}`;
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(URL, { method: "GET", headers });
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
-      } else if (response.status === 404) {
-        console.warn(`No Course found`);
-        return null;
+        if (response.ok) {
+          const result = await response.json();
+          return result.data;
+        } else if (response.status === 404) {
+          console.warn(`No Course found`);
+          return null;
+        }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    },
+    [getAuthHeader]
+  );
 
-  const getEnrolledCoursesNumber = async (userId: string) => {
-    const URL = `http://localhost:8090/home/total-enrolled-courses/${userId}`;
-    try {
-      const headers = await getAuthHeader();
-      const response = await fetch(URL, { method: "GET", headers });
+  const getEnrolledCoursesNumber = useCallback(
+    async (userId: string) => {
+      const URL = `http://localhost:8090/home/total-enrolled-courses/${userId}`;
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(URL, { method: "GET", headers });
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
+        if (response.ok) {
+          const result = await response.json();
+          return result.data;
+        }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    },
+    [getAuthHeader]
+  );
 
-  const getNextLesson = async (courseId: string, enrollmentId: string) => {
-    const URL = `http://localhost:8090/home/next-lessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
-    try {
-      const headers = await getAuthHeader();
-      const response = await fetch(URL, { method: "GET", headers });
+  const getNextLesson = useCallback(
+    async (courseId: string, enrollmentId: string) => {
+      const URL = `http://localhost:8090/home/next-lessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(URL, { method: "GET", headers });
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
-      } else if (response.status === 404) {
-        console.warn(`No next lesson found for course ${courseId}`);
-        return null;
+        if (response.ok) {
+          const result = await response.json();
+          return result.data;
+        } else if (response.status === 404) {
+          console.warn(`No next lesson found for course ${courseId}`);
+          return null;
+        }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    },
+    [getAuthHeader]
+  );
 
-  const getTotalLessons = async (userId: string) => {
-    const URL = `http://localhost:8090/home/total-lessons/${userId}`;
-    try {
-      const headers = await getAuthHeader();
-      const response = await fetch(URL, { method: "GET", headers });
+  const getTotalLessons = useCallback(
+    async (userId: string) => {
+      const URL = `http://localhost:8090/home/total-lessons/${userId}`;
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(URL, { method: "GET", headers });
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
+        if (response.ok) {
+          const result = await response.json();
+          return result.data;
+        }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    },
+    [getAuthHeader]
+  );
 
-  const getDailyStreak = async (userId: string) => {
-    const URL = `http://localhost:8090/home/streak-days/${userId}`;
-    try {
-      const headers = await getAuthHeader();
-      const response = await fetch(URL, { method: "GET", headers });
+  const getDailyStreak = useCallback(
+    async (userId: string) => {
+      const URL = `http://localhost:8090/home/streak-days/${userId}`;
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(URL, { method: "GET", headers });
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
+        if (response.ok) {
+          const result = await response.json();
+          return result.data;
+        }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    },
+    [getAuthHeader]
+  );
 
   return {
     getEnrolledCourses,

@@ -34,7 +34,7 @@ async function getCourseBySlug(req , res , next){
     WHERE c.slug =  ${slug}
     `;
     if(response.length === 0){
-      response.status(404).json({
+      return res.status(404).json({
         status : false , 
         message : "no such course"
       })
@@ -127,7 +127,7 @@ async function getModuleLessons(req , res){
       topic_id = ${moduleId} 
   `;
   if (response.length === 0) {
-    res.status(404).json({
+    return res.status(404).json({
       status: false,
       message: "no lessons available in this course",
     });

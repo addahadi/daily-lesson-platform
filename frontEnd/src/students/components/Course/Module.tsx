@@ -1,5 +1,5 @@
-import { CourseApiController } from "@/students/Api/course.Api";
 import type { LessonCardProps, ModuleCardProps } from "@/lib/type";
+import useCourseApiController from "@/students/Api/course.Api";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -14,10 +14,11 @@ const Modules = ({
 
   const [Lessons, setLessons] = useState<LessonCardProps[]>();
   const [open, setOpen] = useState<boolean>(false);
+  const {getModuleLesson} = useCourseApiController()
   useEffect(() => {
     async function fetchModules() {
       if (module_id) {
-        const result = await CourseApiController().getModuleLesson(module_id);
+        const result = await getModuleLesson(module_id);
         if (result) {
           console.log(result);
           setLessons(result);

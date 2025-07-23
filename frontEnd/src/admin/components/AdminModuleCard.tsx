@@ -29,7 +29,7 @@ const AdminModuleCard = ({
       handleEditModule={handleEditModule}
       handleDeleteModule={handleDeleteModule}
     >
-      <div className="flex items-center gap-6 text-sm text-gray-500">
+      <div className="flex items-center gap-6 text-sm text-gray-500 ">
         <div className="flex items-center gap-1">
           <FileText className="w-4 h-4" />
           <span>{module.lessoncount} lessons</span>

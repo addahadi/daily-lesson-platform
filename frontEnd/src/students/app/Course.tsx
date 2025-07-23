@@ -1,60 +1,51 @@
 import { Award, BookCheck, BookOpen, Clock, Globe } from "lucide-react";
-import { useState } from "react";
+import {  useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ModuleSection from "@/students/components/Course/ModuleSection";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/clerk-react";
-import { userApiController } from "@/students/Api/user.Api";
-import { Toast } from "@/components/ui/Toast";
+import useUserApiController from "@/students/Api/user.Api";
 import { useCourseAndEnrollment } from "@/hook/useFetchedData";
-import type { ToastProps } from "@/lib/type";
-import { lessonApiController } from "@/students/Api/lesson.Api";
-import { LoaderIcon } from "lucide-react";
+import { Toaster } from "@/components/ui/sonner";
+import LoadingSpinner from "@/components/ui/loading";
+
+
 const Course = () => {
   const { user } = useUser();
   const { CourseId } = useParams();
-  const { CourseData, enrolled, setEnrolled, slug } = useCourseAndEnrollment(
+  const { CourseData, slug  , buttonAction , setButtonAction , url , setUrl} = useCourseAndEnrollment(
     CourseId,
     user
   );
-  const [toast, setToast] = useState<ToastProps>();
-  const [ids, setIds] = useState<string[]>([]);
+
+  const {EnrollToCourse} = useUserApiController()
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  async function Enroll() {
-    if (slug && user) {
-      await userApiController()
-        .EnrollToCourse(slug, user.id)
-        .then((response) => {
-          setToast({ type: "success", message: response.message });
-          setEnrolled(true);
-        })
-        .catch((error) => {
-          setToast({ type: "error", message: error.message });
-        });
-    }
-  }
+ 
 
-  async function redirectToFirstLesson() {
-    if (CourseId) {
-      await lessonApiController()
-        .getFirstLessonId(CourseId)
-        .then((response) => {
-          setLoading(true);
-          const { "0": result } = response;
-          setIds(result);
-          console.log(result);
-          navigate(
-            `/dashboard/course/${CourseId}/module/${result.module_id}/lesson/${result.lesson_id}`
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-          setLoading(false);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+  async function Enroll() {
+    switch (buttonAction) {
+      case "Enroll":
+        if (!slug || !user?.id) return;
+        setLoading(true)
+        console.log(user.id)
+        const result = await EnrollToCourse(slug, user?.id);
+        setLoading(false)
+        if (result) {
+          setButtonAction(result.action);
+          setUrl(result.data)
+        }
+        break;
+      case "Continue learning":
+        navigate(
+          `/course/${CourseId}/module/${url?.module_id}/lesson/${url?.lesson_id}`
+        );
+        break;
+      case "Start the first lesson":
+        navigate(
+          `/course/${CourseId}/module/${url?.module_id}/lesson/${url?.lesson_id}`
+        );
+        break;
     }
   }
   return (
@@ -156,37 +147,19 @@ const Course = () => {
       </section>
       <ModuleSection Course_Id={slug ? slug : ""} />
       <div className="w-full p-3  fixed bottom-0 left-0 bg-white shadow-lg flex justify-end">
-        {!enrolled ? (
-          <Button
-            type="button"
-            variant="destructive"
-            className="w-fit text-white"
-            onClick={Enroll}
-          >
-            Enroll me
-          </Button>
-        ) : (
-          <Button
-            type="button"
-            variant="outline"
-            className="w-fit"
-            onClick={redirectToFirstLesson}
-          >
-            {!loading ? (
-              <span>Start with the first lesson</span>
-            ) : (
-              <LoaderIcon className=" w-5 h-5 text-black-1" />
-            )}
-          </Button>
-        )}
+        <Button
+        value="destructive"
+        onClick={Enroll}
+        disabled={loading}
+        >
+          {
+            loading 
+            ? <LoadingSpinner  size={20}/>
+            : <span>{buttonAction}</span>
+          }
+        </Button>
       </div>
-      {toast && (
-        <Toast
-          type={toast ? toast.type : "success"}
-          message={toast ? toast.message : ""}
-          onClose={() => setToast(undefined)}
-        />
-      )}
+      <Toaster />
     </div>
   );
 };

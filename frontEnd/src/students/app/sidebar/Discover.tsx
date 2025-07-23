@@ -1,4 +1,4 @@
-import { CourseApiController } from "@/students/Api/course.Api";
+import useCourseApiController from "@/students/Api/course.Api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { CourseCardProps } from "@/lib/type";
@@ -12,8 +12,12 @@ import {
 import { Filter } from "lucide-react";
 import { useEffect, useState } from "react";
 import CourseCard from "@/students/components/Discover/CourseCard";
-import EmptyCase from "@/students/components/empty/EmptyCase";
 import EmptySearch from "@/students/components/empty/EmptySearch";
+import LoadingSpinner from "@/components/ui/loading";
+import { getCach, setCache } from "@/lib/utils";
+
+const TTL = 1000*60*60
+const CACHE_KEY = "discover_courses"
 
 const Discover = () => {
   const [CourseCardData, setCourseCardData] = useState<CourseCardProps[]>([]);
@@ -22,16 +26,31 @@ const Discover = () => {
   const [difficulty, setDifficulty] = useState("");
   const [loading, setLoading] = useState(false);
   const [noCourses, setNoCourses] = useState(false);
+  const {getAllCourses , getFilteredCourses} = useCourseApiController()
+  
   useEffect(() => {
     async function fetchCourses() {
       setLoading(true);
-      const result = await CourseApiController().getAllCourses();
-      setLoading(false);
+
+      const cached = getCach(CACHE_KEY)
+      if(cached){
+        setCourseCardData(cached)
+        setLoading(false)
+        return 
+      }
+      const result = await getAllCourses();
       if (result === null || result === undefined) setNoCourses(true);
-      else setCourseCardData(result);
+      else {
+        setCache(CACHE_KEY , result , TTL)  
+        setCourseCardData(result)
+      }
+      
+      setLoading(false);
     }
     fetchCourses();
   }, []);
+
+
 
   useEffect(() => {
     if (!category && !difficulty) return;
@@ -43,7 +62,7 @@ const Discover = () => {
         category,
       });
       setLoading(true);
-      const result = await CourseApiController().getFilteredCourses(query);
+      const result = await getFilteredCourses(query);
       setLoading(false);
       if (result === null || result === undefined) {
         setNoCourses(true);
@@ -118,17 +137,24 @@ const Discover = () => {
           </div>
         )}
       </section>
-      <section className=" p-6 flex flex-col gap-8">
-        <h1 className=" font-semibold text-2xl">
-          {CourseCardData.length} Courses Found
+      <section className="p-6 flex flex-col gap-8">
+        <h1 className="font-semibold text-2xl">
+          {loading
+            ? "Loading Courses..."
+            : `${CourseCardData.length} Courses Found`}
         </h1>
-        {noCourses ? (
+
+        {loading ? (
+          <div className="flex justify-center items-center h-32">
+            <LoadingSpinner  size={40} />
+          </div>
+        ) : noCourses ? (
           <EmptySearch />
         ) : (
-          <div className=" grid  grid-cols-2 gap-3">
-            {CourseCardData.map((course) => {
-              return <CourseCard {...course} />;
-            })}
+          <div className="grid grid-cols-2 gap-3">
+            {CourseCardData.map((course) => (
+              <CourseCard key={course.id} {...course} />
+            ))}
           </div>
         )}
       </section>

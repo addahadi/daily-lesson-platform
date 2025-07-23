@@ -1,16 +1,21 @@
 const sql = require("../../db");
 
-function deleteNote(req, res) {}
+
+async function deleteNote(req, res, next) {
+  try {
+    const { userId, lessonId } = req.query;
+    await sql`DELETE FROM notes WHERE user_id = ${userId} AND lesson_slug = ${lessonId}`;
+    res.status(200).json({ status: true, message: "Note deleted" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
 
 async function addNote(req, res) {
   try {
     const { title, content, lessonId, userId } = req.body;
-    console.log(content, lessonId, title, userId);
-    if (!content || !lessonId || !userId) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Missing required fields" });
-    }
     await sql`INSERT INTO notes (title, content, lesson_slug, user_id)
             VALUES (${title}, ${content}, ${lessonId},  ${userId})
             ON CONFLICT (user_id, lesson_slug)
@@ -24,7 +29,7 @@ async function addNote(req, res) {
       message: "succesfull inserting",
     });
   } catch (err) {
-    next();
+    next(err);
   }
 }
 

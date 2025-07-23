@@ -1,5 +1,6 @@
 const { request } = require("express");
 const sql = require("../../db");
+const { getFirstLesson } = require("./lesson.controller");
 
 
 async function SignUp(requestBody) {
@@ -13,33 +14,81 @@ async function SignUp(requestBody) {
 }
 
 
-async function enrollToCourse(req, res , next) {
-  const { userId, courseId } = req.body;
+
+async function enrollToCourse(req , res , next) {
+  const userId = req.auth.userId;
+  console.log(userId)
+  const { courseId } = req.body;
   try {
-    const response = await sql`
-      INSERT INTO enrollments (user_id, course_id) VALUES (${userId}, ${courseId}) 
-    `
-    res.status(201).json({
-      message: "User enrolled to course",
-    });
-  }
-  catch (err) {
-    next()
-  }
-}
-
-
-
-async function checkEnroll(req ,res , next){
-  const {courseId , userId} = req.query
-  try {
-    const response = await sql`SELECT EXISTS (SELECT 1 FROM enrollments WHERE course_id = ${courseId} AND user_id = ${userId})`
-    res.status(200).send(response[0])
+    if(!courseId || !userId){
+      return res.status(400).json({
+        status: false , 
+        message : "bad request"
+      })
+    }
+    await sql.begin(async (client) => {
+      await client`
+            INSERT INTO enrollments (user_id, course_id) 
+            VALUES (${userId}, ${courseId})
+          `;
+      await getFirstLesson(client, courseId, res);
+    })
   }
   catch(err){
-    next()
+    next(err)
   }
 }
+
+
+async function checkEnroll(req, res, next) {
+  const { courseId, userId } = req.query;
+  try {
+    await sql.begin(async (client) => {
+      const checkEnroll = await client`
+        SELECT id as enrollment_id 
+        FROM enrollments 
+        WHERE course_id = ${courseId} AND user_id = ${userId}
+      `;
+
+      if (checkEnroll.length === 0) {
+        return res.status(200).json({
+          status : false , 
+          action : "Enroll"
+        })
+      }
+
+      const enrollment_id = checkEnroll[0].enrollment_id;
+
+      const Continue = await client`
+        SELECT l.slug as lesson_id, l.topic_id as module_id 
+        FROM lessons l
+        LEFT JOIN lesson_progress p ON p.lesson_id = l.id
+        WHERE p.enrollment_id = ${enrollment_id} 
+        ORDER BY p.started_at DESC
+        LIMIT 1
+      `;
+
+      if (Continue.length === 0) {  
+        return await getFirstLesson(client, courseId, res);
+      }
+
+      return res.status(200).json({
+        status: true,
+        data: Continue[0],
+        action: "Continue learning",
+      });
+
+    });
+  } catch (err) {
+    console.error("Error in enrollToCourse:", err);
+    next(err);
+  }
+}
+
+
+
+
+
 async function getEnroll(req, res , next) {
   const { courseId, userId } = req.query;
 
@@ -122,4 +171,4 @@ async function getUserInfo(req ,res , next){
 }
 
 
-module.exports = { SignUp , enrollToCourse , checkEnroll , getEnroll , getUserInfo , getUserAchievments};
+module.exports = { SignUp , enrollToCourse  , getEnroll , getUserInfo , getUserAchievments , checkEnroll};

@@ -1,21 +1,15 @@
-
-import type { Course } from '@/lib/adminType'
+import type { Course } from "@/lib/adminType";
 import {
   Card,
-  CardContent,
   CardDescription,
-  CardFooter,
-  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { formatDuration, getLevelColor } from '@/lib/utils';
-import { BookOpen, Clock, Edit, Trash2, Users } from 'lucide-react';
-import type { SetStateAction } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { formatDuration, getLevelColor } from "@/lib/utils";
+import { BookOpen, Clock, Edit, Trash2, Users } from "lucide-react";
+import type { SetStateAction } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AdminCourseCard = ({
   course,
@@ -24,80 +18,94 @@ const AdminCourseCard = ({
   course: Course;
   setEditedCourse: React.Dispatch<SetStateAction<Course | null>>;
 }) => {
-  const navigate = useNavigate()
-  function handleEditCourse() {
-    setEditedCourse(course)
-  }
-  function handleDeleteCourse() {}
+  const navigate = useNavigate();
+
+  const handleEditCourse = () => {
+    setEditedCourse(course);
+  };
+
+  const handleDeleteCourse = () => {
+    // TODO: Add confirmation or modal logic here
+  };
+
   return (
-    <Card className="w-full shadow-md">
-      <CardHeader className=" flex flex-row gap-2">
-        <div className=" object-cover w-[200px]  h-full">
-          <img
-            src={course.img_url}
-            className=" w-full h-[80px] rounded-lg"
-            alt="course-img"
-          />
+    <Card className="flex flex-col w-full h-full bg-white dark:bg-gray-800 text-black dark:text-white shadow-sm border dark:border-gray-700">
+  <div className="grid grid-cols-[180px_1fr] gap-4 p-4 h-full">
+    {/* Left: Image */}
+    <div className="w-full h-full">
+      <img
+        src={course.img_url}
+        alt="Course"
+        className="w-full h-full object-cover rounded-md"
+      />
+    </div>
+
+    {/* Right: Content */}
+    <div className="flex flex-col h-full">
+      <div className="flex justify-between items-start">
+        <div>
+          <CardTitle className="text-lg">{course.title}</CardTitle>
+          <CardDescription className="flex gap-2 mt-1">
+            <Badge variant="outline">{course.category}</Badge>
+            <Badge className={getLevelColor(course.level)}>{course.level}</Badge>
+          </CardDescription>
         </div>
-        <div className=" flex-1 flex justify-between w-full items-center">
-          <div className="flex flex-col gap-2">
-            <CardTitle className=" text-lg">{course.title}</CardTitle>
-            <CardDescription className=" flex flex-row gap-2">
-              <Badge variant="secondary">{course.category}</Badge>
-              <Badge className={getLevelColor(course.level)}>
-                {course.level}
-              </Badge>
-            </CardDescription>
-          </div>
-          <div className="flex flex-row gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handleEditCourse()}
-            >
-              <Edit className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handleDeleteCourse()}
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className=" flex flex-row">
-        <div className="w-[200px]"></div>
-        <div className=" p-5 w-full">
-          <p className=" flex-1 text-sm text-gray-600 ">{course.description.slice(0,60)}...</p>
-          <div className="flex items-center justify-between text-xs text-gray-500 mb-3 mt-4">
-            <div className="flex items-center gap-1">
-              <BookOpen className="w-3 h-3" />
-              <span>{course.modulecount}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Users className="w-3 h-3" />
-              <span>{course.lessoncount}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              <span>{formatDuration(course.totalduration)}</span>
-            </div>
-          </div>
-          <Button variant="outline" className=" w-full"
-           onClick={() => 
-            navigate(`/admin/course/${course.id}`, {
-              state: { course: course },
-            })
-           }
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleEditCourse}
+            className="dark:bg-gray-700 dark:border-gray-600 hover:dark:bg-gray-600"
           >
-            Manage the course
+            <Edit className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleDeleteCourse}
+            className="dark:bg-gray-700 dark:border-gray-600 hover:dark:bg-gray-600"
+          >
+            <Trash2 className="w-4 h-4" />
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-2">
+        {course.description}
+      </p>
+
+      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mt-3">
+        <div className="flex items-center gap-1">
+          <BookOpen className="w-4 h-4" />
+          <span>{course.modulecount} Modules</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Users className="w-4 h-4" />
+          <span>{course.lessoncount} Lessons</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Clock className="w-4 h-4" />
+          <span>{formatDuration(course.totalduration)}</span>
+        </div>
+      </div>
+
+      {/* This pushes the button to the bottom */}
+      <div className="mt-auto pt-4">
+        <Button
+          variant="outline"
+          className="w-full dark:bg-gray-700 dark:border-gray-600 hover:dark:bg-gray-600"
+          onClick={() =>
+            navigate(`/admin/course/${course.id}`, { state: { course } })
+          }
+        >
+          Manage the course
+        </Button>
+      </div>
+    </div>
+  </div>
+</Card>
+
   );
 };
 
-export default AdminCourseCard
+export default AdminCourseCard;

@@ -20,6 +20,7 @@ import LessonContent from "./admin/app/LessonContent";
 import AdminAnalytics from "./admin/app/adminAnalytics";
 import Notification from "./admin/app/Notification";
 import { useEffect } from "react";
+import AdminWelcom from "./admin/app/AdminWelcom";
 
 function App() {
   useEffect(() => {
@@ -50,6 +51,7 @@ function App() {
           />
         </Route>
         <Route path="/admin" element={<Private />}>
+          <Route path="welcom" element={<AdminWelcom />} />
           <Route path="user-management" element={<UserManagement />} />
           <Route path="course-management" element={<CourseManegement />} />
           <Route path="course/:courseId" element={<ModuleManagement />} />

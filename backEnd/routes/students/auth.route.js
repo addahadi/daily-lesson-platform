@@ -1,31 +1,53 @@
 const express = require("express");
 const router = express.Router();
-const {SignUp , enrollToCourse , checkEnroll , getEnroll, getUserInfo, getUserAchievments} = require("../../controller/students/auth.controller");
-const { getXpLogs } = require("../../controller/students/xp.controller")
+const {
+  SignUp,
+  enrollToCourse,
+  getEnroll,
+  getUserInfo,
+  getUserAchievments,
+  checkEnroll,
+} = require("../../controller/students/auth.controller");
 
+const { getXpLogs } = require("../../controller/students/xp.controller");
+const { validate } = require("../../middleware/validate");
 
-router.post("/signup" , (req , res) => {
-    SignUp(req , res)
-})
+router.post("/signup", SignUp);
 
-router.post("/enroll" , (req ,res) => {
-    enrollToCourse(req , res)    
-})
+router.post(
+  "/enroll",
+  validate({ courseId: "string" }, "body"),
+  enrollToCourse
+);
 
-router.get("/checkenroll" , (req , res) => {
-    checkEnroll(req , res)
-})
+router.get(
+  "/is-enroll",
+  validate({ courseId: "string", userId: "string" }, "query"),
+  checkEnroll
+);
 
-router.get("/getenroll", (req, res) => {
-  getEnroll(req, res);
-});
- 
-router.get("/user-info/:userId" , (req , res) => {
-    getUserInfo(req ,res)
-})
+router.get(
+  "/getenroll",
+  validate({ courseId: "string", userId: "string" }, "query"),
+  getEnroll
+);
 
-router.get("/user-achievements/:userId" , getUserAchievments)
+router.get(
+  "/user-info/:userId",
+  validate({ userId: "string" }, "params"),
+  getUserInfo
+);
 
-router.get("/xp-logs/:userId" , getXpLogs)
+router.get(
+  "/user-achievements/:userId",
+  validate({ userId: "string" }, "params"),
+  getUserAchievments
+);
 
-module.exports = router
+router.get(
+  "/xp-logs/:userId",
+  validate({ userId: "string" }, "params"),
+  getXpLogs
+);
+
+module.exports = router;

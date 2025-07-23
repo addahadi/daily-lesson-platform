@@ -1,27 +1,37 @@
-import LoadingSpinner from "@/components/ui/loading"
-import useAnalytic from "@/hook/useAnalytic"
-import AdminActivity from "../components/analytics/AdminActivity"
-import { Book, Users } from "lucide-react"
-import CompletedLessonsChart from "../components/analytics/CompletedLessonsChart"
+import LoadingSpinner from "@/components/ui/loading";
+import useAnalytic from "@/hook/useAnalytic";
+import AdminActivity from "../components/analytics/AdminActivity";
+import { Book, Users } from "lucide-react";
+import CompletedLessonsChart from "../components/analytics/CompletedLessonsChart";
 
-const AdminAnalytics = () => {1
-  const { loading , lessonAnalyticData , userAnalyticData , streakAnalyticData , chartData} = useAnalytic()
+const AdminAnalytics = () => {
+  const {
+    loading,
+    lessonAnalyticData,
+    userAnalyticData,
+    streakAnalyticData,
+    chartData,
+  } = useAnalytic();
+
   return (
-    <div className=" min-h-screen ">
-      <div className=" p-6 bg-white">
-        <section className=" flex flex-col gap-2 w-full">
-          <h1 className=" text-3xl font-semibold text-gray-800">Analytics</h1>
-          <div className=" text-gray-400 font-semibold text-lg">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="p-6 bg-white dark:bg-gray-800">
+        <section className="flex flex-col gap-2 w-full">
+          <h1 className="text-3xl font-semibold text-gray-800 dark:text-gray-100">
+            Analytics
+          </h1>
+          <div className="text-gray-400 dark:text-gray-300 font-semibold text-lg">
             Daily Lesson Platform Admin Overview
           </div>
         </section>
-        <section className=" mt-3">
+
+        <section className="mt-3">
           {loading ? (
-            <div className=" flex justify-center items-center h-36 w-full">
+            <div className="flex justify-center items-center h-36 w-full">
               <LoadingSpinner size={30} />
             </div>
           ) : (
-            <div className=" grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               {lessonAnalyticData && (
                 <AdminActivity
                   header="Total Completed Lessons"
@@ -52,11 +62,14 @@ const AdminAnalytics = () => {1
           )}
         </section>
       </div>
-      <div>
-        <CompletedLessonsChart  chartData = {chartData as Record<string , number>[]} />
+
+      <div className="bg-gray-50 dark:bg-gray-900">
+        <CompletedLessonsChart
+          chartData={chartData as Record<string, number>[]}
+        />
       </div>
     </div>
   );
-}
+};
 
-export default AdminAnalytics
+export default AdminAnalytics;

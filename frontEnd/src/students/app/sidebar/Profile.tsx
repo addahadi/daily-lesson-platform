@@ -1,4 +1,3 @@
-import profileApiController from "@/students/Api/profile.Api";
 import AchievementBadges from "@/students/components/profile/AcheivmentBadges";
 import StreakCounter from "@/students/components/profile/streakCounter";
 import UserInfo from "@/students/components/profile/UserInfo";
@@ -7,15 +6,17 @@ import type { UserInfoProps } from "@/lib/type";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 
+import useProfileApiController from "@/students/Api/profile.Api";
+
 const Profile = () => {
   const [userData, setUserData] = useState<UserInfoProps>();
   const [currentStreak, setCurrentStreak] = useState<number>();
   const { user } = useUser();
-
+  const {getUserInfo} = useProfileApiController()
   useEffect(() => {
     if (!user?.id) return;
     const fetchData = async () => {
-      const result = await profileApiController().getUserInfo(user?.id);
+      const result = await getUserInfo(user?.id);
       setUserData(result[0]);
       setCurrentStreak(result[0].streak_count);
     };
