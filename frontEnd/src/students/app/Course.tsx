@@ -25,25 +25,25 @@ const Course = () => {
 
   async function Enroll() {
     switch (buttonAction) {
-      case "Enroll":
+      case "enroll":
         if (!slug || !user?.id) return;
-        setLoading(true)
-        console.log(user.id)
+        setLoading(true);
+        console.log(user.id);
         const result = await EnrollToCourse(slug, user?.id);
-        setLoading(false)
+        setLoading(false);
         if (result) {
           setButtonAction(result.action);
-          setUrl(result.data)
+          setUrl(result.data);
         }
         break;
-      case "Continue learning":
+      case "continue learning":
         navigate(
-          `/course/${CourseId}/module/${url?.module_id}/lesson/${url?.lesson_id}`
+          `/dashboard/course/${CourseId}/module/${url?.module_id}/lesson/${url?.lesson_id}`
         );
         break;
-      case "Start the first lesson":
+      case "start the first lesson":
         navigate(
-          `/course/${CourseId}/module/${url?.module_id}/lesson/${url?.lesson_id}`
+          `/dashboard/course/${CourseId}/module/${url?.module_id}/lesson/${url?.lesson_id}`
         );
         break;
     }

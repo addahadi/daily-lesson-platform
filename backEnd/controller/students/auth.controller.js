@@ -17,15 +17,8 @@ async function SignUp(requestBody) {
 
 async function enrollToCourse(req , res , next) {
   const userId = req.auth.userId;
-  console.log(userId)
   const { courseId } = req.body;
   try {
-    if(!courseId || !userId){
-      return res.status(400).json({
-        status: false , 
-        message : "bad request"
-      })
-    }
     await sql.begin(async (client) => {
       await client`
             INSERT INTO enrollments (user_id, course_id) 
@@ -41,7 +34,9 @@ async function enrollToCourse(req , res , next) {
 
 
 async function checkEnroll(req, res, next) {
-  const { courseId, userId } = req.query;
+  const { courseId } = req.query;
+  const userId = req.auth.userId;
+  console.log(courseId)
   try {
     await sql.begin(async (client) => {
       const checkEnroll = await client`
@@ -67,7 +62,7 @@ async function checkEnroll(req, res, next) {
         ORDER BY p.started_at DESC
         LIMIT 1
       `;
-
+      console.log(Continue)
       if (Continue.length === 0) {  
         return await getFirstLesson(client, courseId, res);
       }

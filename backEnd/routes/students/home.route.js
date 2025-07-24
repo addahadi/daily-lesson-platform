@@ -7,7 +7,7 @@ const {
   getDailyStreak,
 } = require("../../controller/students/home.controller");
 
-const { validate } = require("../../middleware/validate");
+const { validate } = require("../../middleware/validate.middleware");
 
 const router = express.Router();
 

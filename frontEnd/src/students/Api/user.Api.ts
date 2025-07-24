@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useAuth } from "@clerk/clerk-react";
-import { toast } from "sonner";
+import { handleResponse, toastOnce } from "@/lib/utils";
 
 const useUserApiController = () => {
   const { getToken } = useAuth();
@@ -25,24 +25,20 @@ const useUserApiController = () => {
           body: JSON.stringify(requestBody),
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          return data;
-        } else if (response.status === 404) {
-          toast("Failed to enroll to the course");
+        const data = await handleResponse<{ data: any }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
           return null;
-        } else {
-          throw new Error(`Enroll failed with status: ${response.status}`);
         }
-      } catch (error) {
-        console.error("Error enrolling to course:", error);
-        toast("Something went wrong");
+
+        return data;
+      } catch (error: any) {
+        toastOnce(error.message || "Something went wrong");
         return null;
       }
     },
     [getAuthHeader]
   );
-
 
   const checkEnroll = useCallback(
     async (courseId: string, userId: string) => {
@@ -55,17 +51,19 @@ const useUserApiController = () => {
             headers,
           }
         );
-        if (response.ok) {
-          const data = await response.json();
-          return data;
+
+        const data = await handleResponse<{ data: any }>(response);
+        if (typeof data === "string") {
+          console.log(data)
+          toastOnce(data);
+          return null;
         }
-        else {
-            throw new Error(`checking failed with status: ${response.status}`);
-        }
-      } catch (error) {
-        console.error("Error checking enrollment:", error);
-        toast("something went wrong")
-        return null
+        return data;
+      } catch (error: any) {
+        toastOnce(
+          error.message || "Something went wrong while checking enrollment"
+        );
+        return null;
       }
     },
     [getAuthHeader]
@@ -83,12 +81,18 @@ const useUserApiController = () => {
           }
         );
 
-        if (response.ok) {
-          const { data } = await response.json();
-          return data;
+        const data = await handleResponse<{ data: any }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (error) {
-        console.error("Error getting enrollment info:", error);
+
+        return data.data;
+      } catch (error: any) {
+        toastOnce(
+          error.message || "Something went wrong while getting enrollment info"
+        );
+        return null;
       }
     },
     [getAuthHeader]

@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -107,3 +108,58 @@ export const getCach = (key : string) => {
   }
   return item.data
 }
+
+
+
+
+
+type ApiResponse<T> = T | string;
+
+export const handleResponse = async <T = any>(
+  response: Response
+): Promise<ApiResponse<T>> => {
+  const contentType = response.headers.get("content-type");
+
+  if (response.ok) {
+    if (contentType?.includes("application/json")) {
+      return await response.json();
+    } else {
+      return await response.text();
+    }
+  }
+
+  const errorMsg = "unexpected error occur"
+  switch (response.status) {
+    case 400:
+      throw new Error("Bad Request");
+    case 401:
+      throw new Error("Unauthorized");
+    case 403:
+      throw new Error("Forbidden");
+    case 404:
+      throw new Error("Not Found");
+    case 500:
+      throw new Error("Internal Server Error");
+    default:
+      throw new Error(errorMsg);
+  }
+};
+
+
+const shownErrors = new Set<string>();
+
+export const toastOnce = (message: string) => {
+  if (shownErrors.has(message)) return;
+  shownErrors.add(message);
+  setTimeout(() => shownErrors.delete(message), 3000);
+  toast.error(message);
+};
+
+
+
+
+
+
+
+
+

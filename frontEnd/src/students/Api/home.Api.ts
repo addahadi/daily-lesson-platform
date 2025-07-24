@@ -1,5 +1,6 @@
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
+import { handleResponse, toastOnce } from "@/lib/utils"; 
 
 const useHomeApi = () => {
   const { getToken } = useAuth();
@@ -19,15 +20,15 @@ const useHomeApi = () => {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
-        } else if (response.status === 404) {
-          console.warn(`No Course found`);
+        const data = await handleResponse<{ data: any[] }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
           return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getAuthHeader]
@@ -40,12 +41,15 @@ const useHomeApi = () => {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
+        const data = await handleResponse<{ data: number }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getAuthHeader]
@@ -58,15 +62,15 @@ const useHomeApi = () => {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
-        } else if (response.status === 404) {
-          console.warn(`No next lesson found for course ${courseId}`);
+        const data = await handleResponse<{ data: any }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
           return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getAuthHeader]
@@ -79,12 +83,15 @@ const useHomeApi = () => {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
+        const data = await handleResponse<{ data: number }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getAuthHeader]
@@ -97,12 +104,15 @@ const useHomeApi = () => {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
+        const data = await handleResponse<{ data: number }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getAuthHeader]

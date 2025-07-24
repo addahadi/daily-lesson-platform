@@ -34,6 +34,20 @@ export interface UserInfoProps {
   name : string
 }
 
+export type FolderType = {
+  id: string;
+  title: string;
+  created_at: string;
+};
+
+export type CourseSave = {
+  id: string;
+  course_id: string;
+  folder_id: string;
+  saved_at: string;
+};
+
+
 
 export  interface notesProps {
   note_title : string

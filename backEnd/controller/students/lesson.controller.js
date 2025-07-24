@@ -94,16 +94,16 @@ async function getLessonsDetails(req, res, next) {
   }
 }
 
-async function getFirstLesson(client , req ,  res) {
-  const { courseId } = req.params;
+async function getFirstLesson(client , courseId ,  res) {
 
     const firstLesson = await client`
       SELECT l.slug AS lesson_id, m.id AS module_id
       FROM courses c
       JOIN modules m ON c.id = m.course_id
       JOIN lessons l ON m.id = l.topic_id
-      WHERE c.slug = ${courseId} AND m.order_index = 1 AND l.order_index = 1
+      WHERE c.id = ${courseId} AND m.order_index = 1 AND l.order_index = 1
     `;
+    console.log(firstLesson)
     if (firstLesson.length === 0) {
       return res
         .status(404)

@@ -10,7 +10,7 @@ const {
   MarkAsComplete,
 } = require("../../controller/students/lesson.controller");
 
-const { validate } = require("../../middleware/validate");
+const { validate } = require("../../middleware/validate.middleware");
 
 const router = express.Router();
 

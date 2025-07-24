@@ -10,7 +10,7 @@ const {
 } = require("../../controller/students/auth.controller");
 
 const { getXpLogs } = require("../../controller/students/xp.controller");
-const { validate } = require("../../middleware/validate");
+const { validate } = require("../../middleware/validate.middleware");
 
 router.post("/signup", SignUp);
 
@@ -22,7 +22,7 @@ router.post(
 
 router.get(
   "/is-enroll",
-  validate({ courseId: "string", userId: "string" }, "query"),
+  validate({ courseId: "string"}, "query"),
   checkEnroll
 );
 

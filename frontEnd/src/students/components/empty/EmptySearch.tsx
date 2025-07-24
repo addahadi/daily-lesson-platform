@@ -1,5 +1,4 @@
 import { BookOpen } from 'lucide-react'
-import React from 'react'
 
 const EmptySearch = () => {
   return (

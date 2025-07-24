@@ -1,80 +1,70 @@
-import { BookOpen, Search, Star, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
-const EmptyCase = () => {
+type EmptyCaseProps = {
+  icon: React.ReactNode;
+  title: string;
+  description?: string;
+  primaryAction?: {
+    label: string;
+    onClick: () => void;
+    icon?: React.ReactNode;
+  };
+  secondaryAction?: {
+    label: string;
+    onClick: () => void;
+    icon?: React.ReactNode;
+  };
+};
+
+const EmptyCase = ({
+  icon,
+  title,
+  description,
+  primaryAction,
+  secondaryAction,
+}: EmptyCaseProps) => {
   return (
-    <div className="flex flex-col items-center justify-center py-20 px-4">
-      {/* Icon */}
-      <div className="bg-orange-50 rounded-full p-8 mb-8">
-        <BookOpen className="w-16 h-16 text-orange-500" />
+    <div className="w-full flex flex-col items-center justify-center py-16 px-4 text-center text-gray-600 dark:text-gray-400">
+      {/* Icon inside circle */}
+      <div className="bg-orange-100 dark:bg-orange-300/10 p-4 rounded-full mb-4">
+        <div className="text-orange-500 w-8 h-8">{icon}</div>
       </div>
 
-      {/* Main Content */}
-      <div className="text-center max-w-md mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Start Your Learning Journey
-        </h2>
-        <p className="text-gray-600 text-lg leading-relaxed">
-          Discover amazing courses and expand your knowledge. Browse our
-          collection of expertly crafted courses to begin learning something new
-          today.
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+        {title}
+      </h2>
+
+      {description && (
+        <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
+          {description}
         </p>
-      </div>
+      )}
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-12">
-        <Link
-          to="/dashboard/discover"
-          className="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
-        >
-          <Search className="w-5 h-5" />
-          Browse Courses
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-        <Link
-          to="/dashboard/discover?filter=popular"
-          className="inline-flex items-center gap-2 px-8 py-4 border-2 border-orange-500 hover:bg-orange-50 text-orange-600 rounded-lg font-semibold transition-colors"
-        >
-          <Star className="w-5 h-5" />
-          Popular Courses
-        </Link>
-      </div>
+      <div className="mt-6 flex flex-wrap gap-4 justify-center">
+        {primaryAction && (
+          <Button
+            className="bg-orange-500 hover:bg-orange-600 text-white"
+            onClick={primaryAction.onClick}
+          >
+            {primaryAction.icon && (
+              <span className="mr-2">{primaryAction.icon}</span>
+            )}
+            {primaryAction.label}
+          </Button>
+        )}
 
-      {/* Feature Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full">
-        <div className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:border-orange-200 transition-colors">
-          <div className="bg-blue-50 rounded-full p-3 w-fit mx-auto mb-4">
-            <BookOpen className="w-6 h-6 text-blue-500" />
-          </div>
-          <h3 className="font-semibold text-gray-900 mb-2">Expert Content</h3>
-          <p className="text-sm text-gray-600">
-            Learn from industry experts with carefully crafted curriculum
-          </p>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:border-orange-200 transition-colors">
-          <div className="bg-green-50 rounded-full p-3 w-fit mx-auto mb-4">
-            <Star className="w-6 h-6 text-green-500" />
-          </div>
-          <h3 className="font-semibold text-gray-900 mb-2">
-            Interactive Learning
-          </h3>
-          <p className="text-sm text-gray-600">
-            Engage with hands-on projects and practical exercises
-          </p>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:border-orange-200 transition-colors">
-          <div className="bg-purple-50 rounded-full p-3 w-fit mx-auto mb-4">
-            <ArrowRight className="w-6 h-6 text-purple-500" />
-          </div>
-          <h3 className="font-semibold text-gray-900 mb-2">
-            Learn at Your Pace
-          </h3>
-          <p className="text-sm text-gray-600">
-            Progress through courses at your own speed and schedule
-          </p>
-        </div>
+        {secondaryAction && (
+          <Button
+            variant="outline"
+            className="border-gray-300 text-gray-700 dark:text-gray-200"
+            onClick={secondaryAction.onClick}
+          >
+            {secondaryAction.icon && (
+              <span className="mr-2">{secondaryAction.icon}</span>
+            )}
+            {secondaryAction.label}
+          </Button>
+        )}
       </div>
     </div>
   );

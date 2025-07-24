@@ -1,19 +1,22 @@
 import { useCallback } from "react";
+import { handleResponse, toastOnce } from "@/lib/utils"; 
 
 const useLessonApiController = () => {
-  
   const getLessonDetails = useCallback(
     async (lessonId: string, userId: string) => {
       const queryParams = new URLSearchParams({ userId, lessonId });
       const URL = `http://localhost:8090/lesson/get?${queryParams}`;
       try {
         const response = await fetch(URL, { method: "GET" });
-        if (response.ok) {
-          const { data } = await response.json();
-          return data;
+        const data = await handleResponse<{ data: any }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     []
@@ -24,18 +27,20 @@ const useLessonApiController = () => {
       const URL = `http://localhost:8090/lesson/getlessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
       try {
         const response = await fetch(URL, { method: "GET" });
-        if (response.ok) {
-          const { data } = await response.json();
-          return data;
+        const data = await handleResponse<{ data: any[] }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     []
   );
 
-  
   const checkValidLesson = useCallback(
     async (courseId: string, moduleId: string, userId: string) => {
       const URL = `http://localhost:8090/lesson/checklesson`;
@@ -46,12 +51,15 @@ const useLessonApiController = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(requestBody),
         });
-        if (response.ok) {
-          const result = await response.json();
-          return result;
+        const data = await handleResponse(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     []
@@ -67,12 +75,15 @@ const useLessonApiController = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(requestBody),
         });
-        if (response.ok) {
-          const result = await response.json();
-          return result;
+        const data = await handleResponse(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     []
@@ -99,12 +110,15 @@ const useLessonApiController = () => {
       const URL = `http://localhost:8090/lesson/submitanswer?${queryParams}`;
       try {
         const response = await fetch(URL, { method: "GET" });
-        if (response.ok) {
-          const result = await response.json();
-          return result;
+        const data = await handleResponse(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error("Fetch error", err);
+        return data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     []
@@ -115,12 +129,15 @@ const useLessonApiController = () => {
       const URL = `http://localhost:8090/lesson/nextlesson/${course_id}/${order_index}`;
       try {
         const response = await fetch(URL, { method: "GET" });
-        if (response.ok) {
-          const result = await response.json();
-          return result;
+        const data = await handleResponse(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     []
@@ -146,12 +163,15 @@ const useLessonApiController = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(requestBody),
         });
-        if (response.ok) {
-          const result = await response.json();
-          return result;
+        const data = await handleResponse(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     []

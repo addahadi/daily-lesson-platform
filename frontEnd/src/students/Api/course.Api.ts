@@ -1,7 +1,7 @@
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
 import type { CourseCardProps, CourseProps } from "@/lib/type";
-import { toast } from "sonner";
+import { handleResponse, toastOnce } from "@/lib/utils"; 
 
 const useCourseApiController = () => {
   const { getToken } = useAuth();
@@ -22,14 +22,15 @@ const useCourseApiController = () => {
         headers,
       });
 
-      if (response.ok) {
-        const { data } = await response.json();
-        return data as CourseCardProps[];
-      } else if (response.status === 404) {
+      const data = await handleResponse<{ data: CourseCardProps[] }>(response);
+      if (typeof data === "string") {
+        toastOnce(data);
         return null;
       }
-    } catch (err) {
-      console.error("Error fetching all courses:", err);
+      return data.data;
+    } catch (err: any) {
+      toastOnce(err.message || "Something went wrong");
+      return null;
     }
   }, [getAuthHeader]);
 
@@ -45,14 +46,17 @@ const useCourseApiController = () => {
           }
         );
 
-        if (response.ok) {
-          const { data } = await response.json();
-          return data as CourseCardProps[];
-        } else if (response.status === 404) {
+        const data = await handleResponse<{ data: CourseCardProps[] }>(
+          response
+        );
+        if (typeof data === "string") {
+          toastOnce(data);
           return null;
         }
-      } catch (err) {
-        console.error("Error fetching filtered courses:", err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getAuthHeader]
@@ -70,12 +74,15 @@ const useCourseApiController = () => {
           }
         );
 
-        if (response.ok) {
-          const { data } = await response.json();
-          return data
+        const data = await handleResponse<{ data: any[] }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error("Error fetching course modules:", err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getAuthHeader]
@@ -91,23 +98,17 @@ const useCourseApiController = () => {
             method: "GET",
             headers,
           }
-          
         );
 
-        if (response.ok) {
-          const { data } = await response.json();
-          return data as CourseProps;
+        const data = await handleResponse<{ data: CourseProps }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-        else if (response.status === 404) {
-          toast("no such a course")
-        }        
-        else {
-          throw new Error("Error status : " + response.status)
-        }
-      } catch (err) {
-        console.error("Error fetching course by slug:", err);
-        toast("something went wrong")
-        return null
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getAuthHeader]
@@ -125,12 +126,15 @@ const useCourseApiController = () => {
           }
         );
 
-        if (response.ok) {
-          const { data } = await response.json();
-          return data;
+        const data = await handleResponse<{ data: any[] }>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error("Error fetching module lessons:", err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getAuthHeader]

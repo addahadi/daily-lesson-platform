@@ -21,6 +21,7 @@ import AdminAnalytics from "./admin/app/adminAnalytics";
 import Notification from "./admin/app/Notification";
 import { useEffect } from "react";
 import AdminWelcom from "./admin/app/AdminWelcom";
+import Folders from "./students/app/sidebar/Folders";
 
 function App() {
   useEffect(() => {
@@ -40,6 +41,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/dashboard" element={<Dashboard />}>
           <Route index element={<Home />} />
+          <Route path="saved" element={<Folders />}/>
           <Route path="profile" element={<Profile />} />
           <Route path="courses" element={<Courses />} />
           <Route path="discover" element={<Discover />} />

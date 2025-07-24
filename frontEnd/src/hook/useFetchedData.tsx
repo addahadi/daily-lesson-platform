@@ -30,8 +30,10 @@ export function useCourseAndEnrollment(
 
         if (user) {
           const result = await checkEnroll(courseResult.id, user?.id);
+          console.log(result)
           if (result) setButtonAction(result.action);
-          else if (result.data) {setUrl(result.data)};
+          if(result.data )setUrl(result.data)
+          
         }
       }
     }

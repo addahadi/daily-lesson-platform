@@ -8,7 +8,7 @@ const {
   getAllNotes,
 } = require("../../controller/students/note.controller");
 
-const { validate } = require("../../middleware/validate");
+const { validate } = require("../../middleware/validate.middleware");
 
 const addNoteSchema = {
   title: "string",

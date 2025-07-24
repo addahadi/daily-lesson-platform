@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { handleResponse, toastOnce } from "@/lib/utils"; 
 
 const useProfileApiController = () => {
   const getUserInfo = useCallback(async (userId: string) => {
@@ -9,12 +10,16 @@ const useProfileApiController = () => {
           method: "GET",
         }
       );
-      if (response.ok) {
-        const { data } = await response.json();
-        return data;
+
+      const data = await handleResponse<{ data: any }>(response);
+      if (typeof data === "string") {
+        toastOnce(data);
+        return null;
       }
-    } catch (error) {
-      console.error("Error fetching user info:", error);
+      return data.data;
+    } catch (error: any) {
+      toastOnce(error.message || "Failed to fetch user info");
+      return null;
     }
   }, []);
 
@@ -26,12 +31,16 @@ const useProfileApiController = () => {
           method: "GET",
         }
       );
-      if (response.ok) {
-        const { data } = await response.json();
-        return data;
+
+      const data = await handleResponse<{ data: any }>(response);
+      if (typeof data === "string") {
+        toastOnce(data);
+        return null;
       }
-    } catch (error) {
-      console.error("Error fetching user achievements:", error);
+      return data.data;
+    } catch (error: any) {
+      toastOnce(error.message || "Failed to fetch user achievements");
+      return null;
     }
   }, []);
 
@@ -43,12 +52,16 @@ const useProfileApiController = () => {
           method: "GET",
         }
       );
-      if (response.ok) {
-        const { data } = await response.json();
-        return data;
+
+      const data = await handleResponse<{ data: any[] }>(response);
+      if (typeof data === "string") {
+        toastOnce(data);
+        return null;
       }
-    } catch (error) {
-      console.error("Error fetching XP logs:", error);
+      return data.data;
+    } catch (error: any) {
+      toastOnce(error.message || "Failed to fetch XP logs");
+      return null;
     }
   }, []);
 

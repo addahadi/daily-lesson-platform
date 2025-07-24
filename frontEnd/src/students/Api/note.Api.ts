@@ -1,5 +1,6 @@
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
+import { handleResponse, toastOnce } from "@/lib/utils";
 
 const useNoteApi = () => {
   const { getToken } = useAuth();
@@ -14,14 +15,15 @@ const useNoteApi = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (res.ok) {
-          const result = await res.json();
-          return result.data;
-        } else if (res.status === 404) {
+        const data = await handleResponse<{ data: any[] }>(res);
+        if (typeof data === "string") {
+          toastOnce(data);
           return null;
         }
-      } catch (err) {
-        console.error("Error fetching all notes:", err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getToken]
@@ -37,12 +39,15 @@ const useNoteApi = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (res.ok) {
-          const result = await res.json();
-          return result.data;
+        const data = await handleResponse<{ data: any }>(res);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error("Error fetching lesson note:", err);
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getToken]
@@ -68,11 +73,15 @@ const useNoteApi = () => {
           body,
         });
 
-        if (res.ok) {
-          return await res.json();
+        const data = await handleResponse(res);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error("Error adding note:", err);
+        return data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
+        return null;
       }
     },
     [getToken]
