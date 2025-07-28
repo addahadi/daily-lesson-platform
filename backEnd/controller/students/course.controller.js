@@ -2,11 +2,31 @@ const sql = require("../../db");
 
 
 async function getAllCourses(req , res , next){
-    try {
+  const userId = req.auth.userId  
+  try {
         const response = await sql`
-        SELECT title , level , category , img_url , slug 
-        FROM courses
-        WHERE is_published = TRUE  
+        SELECT 
+          EXISTS(
+          SELECT 1 
+          FROM course_save cs 
+          JOIN folders f ON f.id = cs.folder_id  
+          WHERE cs.course_id = c.id AND f.user_id = ${userId}) as is_saved ,
+          c.id,
+          c.title,
+          c.level,
+          c.category,
+          c.img_url,
+          c.slug,
+
+          (
+            SELECT COALESCE(SUM(l.duration_minutes), 0)
+            FROM modules m
+            JOIN lessons l ON l.topic_id = m.id
+            WHERE m.course_id = c.id
+          ) AS total_duration
+        FROM courses c
+        WHERE c.is_published = TRUE;
+  
         `;
         if(response.length === 0){
           res.status(404).json({
@@ -20,7 +40,7 @@ async function getAllCourses(req , res , next){
         }
          res.status(200).json(result)
       } catch (err) {
-        next()
+        next(err)
       }
 }
 
@@ -46,7 +66,7 @@ async function getCourseBySlug(req , res , next){
     res.status(200).json(result)
   }
   catch(err){
-    next()
+    next(err)
   }
 }
 
@@ -64,7 +84,7 @@ async function getCourseModules(req , res , next) {
     ORDER BY order_index ASC
     `
     if(response.length === 0){
-      res.status(404).json({
+      return res.status(404).json({
         status : false , 
         message : "no modules available in this course"
       })
@@ -76,8 +96,7 @@ async function getCourseModules(req , res , next) {
     res.status(200).json(result)
   }
   catch(err) {
-    console.log(err);
-    res.status(500).json({error : err.message})
+    next(err)
   }
 }
 
@@ -115,7 +134,7 @@ async function getFilteredCourses(req, res, next) {
 
 
 
-async function getModuleLessons(req , res){
+async function getModuleLessons(req , res , next){
   const {moduleId} = req.params
   try {
     const response = await sql`
@@ -138,8 +157,7 @@ async function getModuleLessons(req , res){
     };
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: err.message });
+    next(err)
   }
 }
 

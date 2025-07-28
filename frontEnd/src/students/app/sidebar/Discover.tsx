@@ -15,9 +15,10 @@ import CourseCard from "@/students/components/Discover/CourseCard";
 import EmptySearch from "@/students/components/empty/EmptySearch";
 import LoadingSpinner from "@/components/ui/loading";
 import { getCach, setCache } from "@/lib/utils";
+import { CACHE_KEY_DISCOVER } from "@/lib/utils";
+
 
 const TTL = 1000*60*60
-const CACHE_KEY = "discover_courses"
 
 const Discover = () => {
   const [CourseCardData, setCourseCardData] = useState<CourseCardProps[]>([]);
@@ -27,21 +28,23 @@ const Discover = () => {
   const [loading, setLoading] = useState(false);
   const [noCourses, setNoCourses] = useState(false);
   const {getAllCourses , getFilteredCourses} = useCourseApiController()
-  
+
   useEffect(() => {
     async function fetchCourses() {
       setLoading(true);
 
-      const cached = getCach(CACHE_KEY)
+      const cached = getCach(CACHE_KEY_DISCOVER)
       if(cached){
         setCourseCardData(cached)
+        console.log(CourseCardData)  
+
         setLoading(false)
         return 
       }
       const result = await getAllCourses();
       if (result === null || result === undefined) setNoCourses(true);
       else {
-        setCache(CACHE_KEY , result , TTL)  
+        setCache(CACHE_KEY_DISCOVER , result , TTL)  
         setCourseCardData(result)
       }
       
@@ -71,6 +74,7 @@ const Discover = () => {
     };
     fetchData();
   }, [category, difficulty]);
+  
   return (
     <div className=" p-0">
       <section className="px-4 py-6 flex flex-col justify-center gap-5 bg-white">
@@ -153,7 +157,7 @@ const Discover = () => {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {CourseCardData.map((course) => (
-              <CourseCard key={course.id} {...course} />
+              <CourseCard key={course.id} {...course} deleteState={false}/>
             ))}
           </div>
         )}

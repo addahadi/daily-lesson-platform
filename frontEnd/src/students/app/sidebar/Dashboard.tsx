@@ -68,17 +68,17 @@ const Dashboard = () => {
           </Link>
 
           <Link
-            to="/dashboard/saved"
+            to="/dashboard/library"
             className={`flex items-center rounded-lg font-medium transition-colors ${
               isLessonPage ? "justify-center p-2" : "gap-3 px-4 py-3"
             } ${
-              isActiveLink("/dashboard/saved")
+              isActiveLink("/dashboard/library")
                 ? "bg-orange-100 text-orange-600"
                 : "text-gray-700 hover:bg-gray-100 hover:text-orange-600"
             }`}
           >
             <Save size={20} />
-            {!isLessonPage && <span>Saved</span>}
+            {!isLessonPage && <span>My library</span>}
           </Link>
 
           <Link

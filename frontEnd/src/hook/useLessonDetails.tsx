@@ -19,6 +19,7 @@ export function useLessonDetails() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const {getLessonDetails , startLesson , getNextLesson} = useLessonApiController()
+ 
   useEffect(() => {
     async function fetchLessonDetails() {
       if (!lessonId || !user?.id) return;
@@ -30,22 +31,22 @@ export function useLessonDetails() {
       setLoading(true);
 
       try {
-        const { "0": data } = await getLessonDetails(
+        const data = await getLessonDetails(
           lessonId,
-          user.id
         );
-
+        console.log(data)
         const {
-          content: { sections },
+          content : {sections},
           question,
           options,
           correct_option_index,
           quizz_id,
           selected_option_index,
           is_correct,
-        } = data;
+        } = data[0];
 
         setLessonDetail(data);
+        
         setLessonSections(sections);
         setQuizz({
           question,

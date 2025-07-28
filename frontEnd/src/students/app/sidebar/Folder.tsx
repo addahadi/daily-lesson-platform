@@ -4,35 +4,48 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import LoadingSpinner from "@/components/ui/loading"
 import type { FolderType } from "@/lib/type"
+import { getCach, setCache } from "@/lib/utils"
 import useFolderApiController from "@/students/Api/folder.Api"
 import EmptyCase from "@/students/components/empty/EmptyCase"
-import FolderCard from "@/students/components/save/FolderCard"
+import FolderCard from "@/students/components/library/FolderCard"
 import { Folder, Plus, Save, X } from "lucide-react"
 import { useEffect, useState, type SetStateAction } from "react"
 import { toast, Toaster } from "sonner"
+import { FOLDER_CACHE_KEY } from "@/lib/utils"
+
+
+const TTL = 1000 * 60 * 60;
 
 const Folders = () => {
   const [create , setCreate] = useState(false)
   const [loading , setLoading] = useState(false)
-  const {getAllFolders} = useFolderApiController()
-  const [page , setPage] = useState(1)
+  const {getAllFolders , deleteFolder} = useFolderApiController()
+  
   const [noFolders,setNoFolders] = useState(false)
   const [folders , setFolders] = useState<FolderType[] | null>(null)
+  
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
-      const data = await getAllFolders()
-      if(!data && page == 1){
-        setLoading(false)
-        setNoFolders(true)
-        return
-      } 
-      setLoading(false)      
-      console.log(data)
-      setFolders(data)
-    } 
-    fetchData()
-  }, [])
+      setLoading(true);
+      const data = await getAllFolders();
+      if (data?.length === 0) {
+        setLoading(false);
+        setNoFolders(true);
+        return;
+      }
+      setLoading(false);
+      setFolders(data);
+      setCache(FOLDER_CACHE_KEY, data, TTL); 
+    };
+
+    const cached = getCach(FOLDER_CACHE_KEY);
+    if (cached) {
+      setFolders(cached);
+    } else {
+      fetchData();
+    }
+  }, [getAllFolders]);
+
   return (
     <div className=" h-screen p-6">
       <section className=" flex flex-row justify-between items-center">
@@ -59,6 +72,7 @@ const Folders = () => {
       {create && (
         <div className=" h-64 flex justify-center items-center mt-10">
           <NewFolder
+            setNoFolders={setNoFolders}
             setFolders = {
               setFolders
             }
@@ -87,7 +101,10 @@ const Folders = () => {
               {
                 folders !== null && folders?.map((folder) => {
                   return <FolderCard
+                      setFolders={setFolders}
+                      deleteFolder = {deleteFolder}
                       title={folder.title}
+                      id = {folder.id}
                       key={folder.id}
                       createdAt={folder.created_at.split("T")[0]} 
                     />
@@ -110,11 +127,13 @@ export default Folders
 type NewFolderProps = {
   close : () => void 
   setFolders : React.Dispatch<SetStateAction<FolderType[] | null>>
+  setNoFolders : React.Dispatch<SetStateAction<boolean>>
 }
 
 const NewFolder = ({
   close,
-  setFolders
+  setFolders,
+  setNoFolders
 } :  NewFolderProps) => {
 
   const [title , setTitle] = useState("")
@@ -135,7 +154,9 @@ const NewFolder = ({
         }
         return [...prev, data]
       })
+      setNoFolders(false)
       setLoading(false)
+      localStorage.removeItem(FOLDER_CACHE_KEY)
     }
     setLoading(false)
   }

@@ -15,13 +15,12 @@ const LessonBar = ({
   const {getLessonsDetails} = useLessonApiController()
   useEffect(() => {
     async function fetchData() {
-      console.log(courseId, enrollmentId);
       if (!courseId || !enrollmentId) return;
+      
       const data = await getLessonsDetails(
         courseId,
         enrollmentId
       );
-      console.log(data);
       if (data) {
         setCML(data);
       }

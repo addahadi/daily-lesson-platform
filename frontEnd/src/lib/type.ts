@@ -11,7 +11,8 @@ export interface CourseCardProps  {
     guest? : boolean
     img_url : string
     slug : string
-    description : string
+    total_duration : string
+    is_saved : boolean
 }
 
 export interface achievementsProps {

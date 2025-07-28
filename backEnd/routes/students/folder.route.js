@@ -1,5 +1,5 @@
 const express = require("express");
-const { createFolder, deleteFolder, saveCourseToFolder, deleteSavedCourse , getAllFolders } = require("../../controller/students/folder.controller");
+const { createFolder, deleteFolder, saveCourseToFolder, deleteSavedCourse , getAllFolders, getCoursesInFolder } = require("../../controller/students/folder.controller");
 const { validate } = require("../../middleware/validate.middleware");
 const router = express.Router()
 
@@ -19,6 +19,10 @@ router.delete(
 
 router.get("/", getAllFolders);
 
+router.get("/:folderId/courses",
+
+  validate({folderId : "string"} , "params")
+  , getCoursesInFolder);
 
 
 router.post(
@@ -26,8 +30,8 @@ router.post(
   validate({ course_id : "string", folder_id:"string" }, "body"),
   saveCourseToFolder
 );
-router.delete("/save/:saveId",
-    validate({ saveId : "string" }, "params"),
+router.delete("/save/:course_id/:folder_id",
+    validate({ course_id : "string" , folder_id : "string" }, "params"),
     deleteSavedCourse);
 
 

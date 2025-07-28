@@ -1,34 +1,29 @@
 const express = require("express");
 const {
   getLessonDetails,
-  getLessonsDetails,
   getFirstLesson,
   isLessonAccessible,
   startLesson,
   SubmitQuizzAnswer,
   getNextLesson,
   MarkAsComplete,
+  getLessonsDetails
 } = require("../../controller/students/lesson.controller");
 
 const { validate } = require("../../middleware/validate.middleware");
 
 const router = express.Router();
 
-router.get(
-  "/get",
-  validate({ lessonId: "string", userId: "string" }, "query"),
-  getLessonDetails
-);
 
 router.get("/getfirstlesson/:courseId", getFirstLesson);
 
 router.post(
-  "/checklesson",
+  "/is-lesson",
   validate(
     {
       userId: "string",
       courseId: "string",
-      moduleId: "number",
+      moduleId: "string",
     },
     "body"
   ),
@@ -36,11 +31,11 @@ router.post(
 );
 
 router.post(
-  "/startlesson",
+  "/start-lesson",
   validate(
     {
-      enrollmentId: "number",
-      moduleId: "number",
+      enrollmentId: "string",
+      moduleId: "string",
       lessonId: "string", // it's slug
     },
     "body"
@@ -48,8 +43,8 @@ router.post(
   startLesson
 );
 
-router.get(
-  "/submitanswer",
+router.post(
+  "/answer-submit",
   validate(
     {
       quizz_id: "number",
@@ -57,7 +52,7 @@ router.get(
       user_id: "string",
       selected_option: "number",
       correct: "boolean",
-      module_id: "number",
+      module_id: "string",
     },
     "query"
   ),
@@ -67,23 +62,29 @@ router.get(
 router.get("/nextlesson/:courseId/:orderIndex", getNextLesson);
 
 router.get(
-  "/getLessons",
-  validate({ courseId: "string", enrollmentId: "number" }, "query"),
+  "/all-lessons",
+  validate({ courseId: "string", enrollmentId: "string" }, "query"),
   getLessonsDetails
 );
 
 router.post(
-  "/markascomplete",
+  "/completed",
   validate(
     {
       lessonSlug: "string",
-      enrollmentId: "number",
-      moduleId: "number",
+      enrollmentId: "string",
+      moduleId: "string",
       userId: "string",
     },
     "body"
   ),
   MarkAsComplete
+);
+
+router.get(
+  "/:lessonSlug",
+  validate({ lessonSlug: "string"}, "params"),
+  getLessonDetails
 );
 
 module.exports = router;

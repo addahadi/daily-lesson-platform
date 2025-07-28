@@ -4,7 +4,8 @@ const { addXp, checkAchievements } = require("./xp.controller");
 
 
 async function getLessonDetails(req, res, next) {
-  const { lessonId, userId } = req.query;
+  const {lessonSlug} = req.params;
+  const userId = req.auth.userId
   try {
     const lessons = await sql`
       SELECT 
@@ -25,7 +26,7 @@ async function getLessonDetails(req, res, next) {
       FROM lessons l
       LEFT JOIN quizzes q ON l.id = q.lesson_id
       LEFT JOIN quiz_answers a ON a.quiz_id = q.id AND a.user_id = ${userId} 
-      WHERE l.slug = ${lessonId};
+      WHERE l.slug = ${lessonSlug};
     `;
     if (lessons.length === 0) {
       return res
@@ -40,10 +41,13 @@ async function getLessonDetails(req, res, next) {
 
 async function getLessonsDetails(req, res, next) {
   try {
-    const { courseId, enrollmentId } = req.query;
+    console.log("Hit")
+    const { courseId : Courseslug, enrollmentId } = req.query;
+    
     const courseResponse = await sql`
-      SELECT id, slug, title FROM courses WHERE slug = ${courseId}
+      SELECT id, slug, title FROM courses WHERE slug = ${Courseslug}
     `;
+    console.log(courseResponse)
     if (courseResponse.length === 0) {
       return res
         .status(404)
@@ -103,7 +107,6 @@ async function getFirstLesson(client , courseId ,  res) {
       JOIN lessons l ON m.id = l.topic_id
       WHERE c.id = ${courseId} AND m.order_index = 1 AND l.order_index = 1
     `;
-    console.log(firstLesson)
     if (firstLesson.length === 0) {
       return res
         .status(404)

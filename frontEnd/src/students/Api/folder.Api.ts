@@ -1,7 +1,7 @@
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
 import { handleResponse, toastOnce } from "@/lib/utils";
-import type { CourseSave, FolderType } from "@/lib/type";
+import type { CourseCardProps, CourseSave, FolderType } from "@/lib/type";
 
 
 const useFolderApiController = () => {
@@ -41,12 +41,12 @@ const useFolderApiController = () => {
 
 
   
-const getAllFolders = useCallback(
-  async (page = 1) => {
+  const getAllFolders = useCallback(
+  async () => {
     try {
       const headers = await getAuthHeader();
       const response = await fetch(
-        `http://localhost:8090/folder?page=${page}`,
+        `http://localhost:8090/folder`,
         {
           method: "GET",
           headers,
@@ -109,6 +109,7 @@ const getAllFolders = useCallback(
         }
         return data.data;
       } catch (err: any) {
+        console.log(err)
         toastOnce(err.message || "Failed to save course");
         return null;
       }
@@ -117,11 +118,11 @@ const getAllFolders = useCallback(
   );
 
   const unsaveCourse = useCallback(
-    async (saveId: string) => {
+    async (course_id: string , folder_id : string) => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/folder/save/${saveId}`,
+          `http://localhost:8090/folder/save/${course_id}/${folder_id}`,
           {
             method: "DELETE",
             headers,
@@ -141,13 +142,40 @@ const getAllFolders = useCallback(
     },
     [getAuthHeader]
   );
+  const getCoursesInFolder = useCallback(
+    async (folderId: string) => {
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(
+          `http://localhost:8090/folder/${folderId}/courses`,
+          {
+            method: "GET",
+            headers,
+          }
+        );
 
+        const data = await handleResponse<{ data: CourseCardProps[] }>(
+          response
+        );
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
+        }
+        return data.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Failed to fetch saved courses");
+        return null;
+      }
+    },
+    [getAuthHeader]
+  );
   return {
     createFolder,
     deleteFolder,
     saveCourseToFolder,
     unsaveCourse,
-    getAllFolders
+    getAllFolders,
+    getCoursesInFolder
   };
 };
 

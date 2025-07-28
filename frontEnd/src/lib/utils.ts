@@ -84,6 +84,20 @@ export function getLevelColor(level: string | undefined) {
   }
 }
 
+
+export const FOLDER_CACHE_KEY = "cached_folders";
+export const CACHE_KEY_DISCOVER = "discover_courses";
+
+
+
+
+
+
+
+
+
+
+
 export const setCache = (key : string , data : any , ttl : number) => {
   const now = Date.now()
   const item = {
@@ -112,8 +126,14 @@ export const getCach = (key : string) => {
 
 
 
+// utils/handleResponse.ts
 
 type ApiResponse<T> = T | string;
+
+interface ApiError {
+  message: string;
+  error?: string;
+}
 
 export const handleResponse = async <T = any>(
   response: Response
@@ -128,18 +148,28 @@ export const handleResponse = async <T = any>(
     }
   }
 
-  const errorMsg = "unexpected error occur"
+  // Try to parse JSON error body if available
+  let errorMsg = "Unexpected error occurred";
+  try {
+    const errorBody: ApiError = await response.json();
+    if (errorBody?.message) errorMsg = errorBody.message;
+  } catch {
+    // fallback if not JSON
+    errorMsg = response.statusText || errorMsg;
+  }
+
+  // Customize common status code messages
   switch (response.status) {
     case 400:
-      throw new Error("Bad Request");
+      throw new Error(errorMsg || "Bad Request");
     case 401:
-      throw new Error("Unauthorized");
+      throw new Error(errorMsg || "Unauthorized");
     case 403:
-      throw new Error("Forbidden");
+      throw new Error(errorMsg || "Forbidden");
     case 404:
-      throw new Error("Not Found");
+      throw new Error(errorMsg || "Not Found");
     case 500:
-      throw new Error("Internal Server Error");
+      throw new Error(errorMsg || "Internal Server Error");
     default:
       throw new Error(errorMsg);
   }
@@ -153,12 +183,7 @@ export const toastOnce = (message: string) => {
   shownErrors.add(message);
   setTimeout(() => shownErrors.delete(message), 3000);
   toast.error(message);
-};
-
-
-
-
-
+}
 
 
 

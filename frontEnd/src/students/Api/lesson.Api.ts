@@ -1,13 +1,27 @@
 import { useCallback } from "react";
-import { handleResponse, toastOnce } from "@/lib/utils"; 
+import { handleResponse, toastOnce } from "@/lib/utils";
+import { useAuth } from "@clerk/clerk-react";
 
 const useLessonApiController = () => {
+  const { getToken } = useAuth();
+
+  const getAuthHeader = useCallback(async () => {
+    const token = await getToken();
+    return {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+  }, [getToken]);
+
   const getLessonDetails = useCallback(
-    async (lessonId: string, userId: string) => {
-      const queryParams = new URLSearchParams({ userId, lessonId });
-      const URL = `http://localhost:8090/lesson/get?${queryParams}`;
+    async (lessonId: string) => {
+      const URL = `http://localhost:8090/lesson/${lessonId}`;
       try {
-        const response = await fetch(URL, { method: "GET" });
+        const headers = await getAuthHeader();
+        const response = await fetch(URL, {
+          method: "GET",
+          headers,
+        });
         const data = await handleResponse<{ data: any }>(response);
         if (typeof data === "string") {
           toastOnce(data);
@@ -19,14 +33,20 @@ const useLessonApiController = () => {
         return null;
       }
     },
-    []
+    [getAuthHeader]
   );
 
   const getLessonsDetails = useCallback(
     async (courseId: string, enrollmentId: string) => {
-      const URL = `http://localhost:8090/lesson/getlessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
+
+      
+      const URL = `http://localhost:8090/lesson/all-lessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
       try {
-        const response = await fetch(URL, { method: "GET" });
+        const headers = await getAuthHeader();
+        const response = await fetch(URL, {
+          method: "GET",
+          headers,
+        });
         const data = await handleResponse<{ data: any[] }>(response);
         if (typeof data === "string") {
           toastOnce(data);
@@ -38,17 +58,18 @@ const useLessonApiController = () => {
         return null;
       }
     },
-    []
+    [getAuthHeader]
   );
 
   const checkValidLesson = useCallback(
     async (courseId: string, moduleId: string, userId: string) => {
-      const URL = `http://localhost:8090/lesson/checklesson`;
+      const URL = `http://localhost:8090/lesson/is-lesson`;
       const requestBody = { courseId, moduleId, userId };
       try {
+        const headers = await getAuthHeader();
         const response = await fetch(URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify(requestBody),
         });
         const data = await handleResponse(response);
@@ -62,17 +83,18 @@ const useLessonApiController = () => {
         return null;
       }
     },
-    []
+    [getAuthHeader]
   );
 
   const startLesson = useCallback(
     async (enrollmentId: string, moduleId: string, lessonId: string) => {
-      const URL = `http://localhost:8090/lesson/startlesson`;
+      const URL = `http://localhost:8090/lesson/start-lesson`;
       const requestBody = { enrollmentId, moduleId, lessonId };
       try {
+        const headers = await getAuthHeader();
         const response = await fetch(URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify(requestBody),
         });
         const data = await handleResponse(response);
@@ -86,7 +108,7 @@ const useLessonApiController = () => {
         return null;
       }
     },
-    []
+    [getAuthHeader]
   );
 
   const SubmitQuizzAnswer = useCallback(
@@ -106,10 +128,13 @@ const useLessonApiController = () => {
         correct: is_correct.toString(),
         module_id,
       });
-
-      const URL = `http://localhost:8090/lesson/submitanswer?${queryParams}`;
+      const URL = `http://localhost:8090/lesson/answer-submit?${queryParams}`;
       try {
-        const response = await fetch(URL, { method: "GET" });
+        const headers = await getAuthHeader();
+        const response = await fetch(URL, {
+          method: "POST",
+          headers,
+        });
         const data = await handleResponse(response);
         if (typeof data === "string") {
           toastOnce(data);
@@ -121,14 +146,18 @@ const useLessonApiController = () => {
         return null;
       }
     },
-    []
+    [getAuthHeader]
   );
 
   const getNextLesson = useCallback(
     async (order_index: number, course_id: string) => {
       const URL = `http://localhost:8090/lesson/nextlesson/${course_id}/${order_index}`;
       try {
-        const response = await fetch(URL, { method: "GET" });
+        const headers = await getAuthHeader();
+        const response = await fetch(URL, {
+          method: "GET",
+          headers,
+        });
         const data = await handleResponse(response);
         if (typeof data === "string") {
           toastOnce(data);
@@ -140,7 +169,7 @@ const useLessonApiController = () => {
         return null;
       }
     },
-    []
+    [getAuthHeader]
   );
 
   const markAsComplete = useCallback(
@@ -150,17 +179,18 @@ const useLessonApiController = () => {
       lessonId: string,
       userId: string
     ) => {
+      const URL = `http://localhost:8090/lesson/completed`;
       const requestBody = {
         enrollmentId,
         moduleId,
         lessonSlug: lessonId,
         userId,
       };
-      const URL = `http://localhost:8090/lesson/markascomplete`;
       try {
+        const headers = await getAuthHeader();
         const response = await fetch(URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify(requestBody),
         });
         const data = await handleResponse(response);
@@ -174,7 +204,7 @@ const useLessonApiController = () => {
         return null;
       }
     },
-    []
+    [getAuthHeader]
   );
 
   return {

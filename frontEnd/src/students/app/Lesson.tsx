@@ -8,6 +8,7 @@ import LessonBullet from "../components/Lesson/LessonBullet";
 import { Button } from "@/components/ui/button";
 import { useLessonDetails } from "@/hook/useLessonDetails";
 import { BookOpen, ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { Toaster } from "sonner";
 
 const Lesson = () => {
   const {
@@ -95,12 +96,6 @@ const Lesson = () => {
                     heading={lessonSection.heading}
                   />
                 )}
-                {"bullets" in lessonSection && (
-                  <LessonBullet
-                    bullets={lessonSection.bullets}
-                    heading={lessonSection.heading}
-                  />
-                )}
               </div>
             );
           })}
@@ -125,6 +120,7 @@ const Lesson = () => {
           />
         ))}
       </div>
+      <Toaster />
     </div>
   );
 };
