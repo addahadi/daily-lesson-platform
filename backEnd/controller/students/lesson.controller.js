@@ -33,6 +33,16 @@ async function getLessonDetails(req, res, next) {
         .status(404)
         .json({ success: false, message: "Lesson not found." });
     }
+    if(lessons[0].order_index === 1){
+      return res.status(200).json({ success: true, 
+        data: {
+          ...lessons[0],
+          previous:false,
+          next:true
+        }
+      });
+    }
+    const LastLesson
     res.status(200).json({ success: true, data: lessons });
   } catch (err) {
     next(err);

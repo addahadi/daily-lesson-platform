@@ -104,8 +104,7 @@ async function tryUnlockAchievement(client, user_id, code) {
 }
 
 async function getXpLogs(req, res) {
-  const { userId } = req.params;
-
+  const userId = req.auth.userId
   try {
     const xpLogs = await sql`
     SELECT 

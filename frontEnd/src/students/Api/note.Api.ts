@@ -4,7 +4,6 @@ import { handleResponse, toastOnce } from "@/lib/utils";
 
 const useNoteApi = () => {
   const { getToken } = useAuth();
-
   const getAllNotes = useCallback(
     async (userId: string, page: number) => {
       const token = await getToken();

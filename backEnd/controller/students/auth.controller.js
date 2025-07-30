@@ -116,7 +116,7 @@ async function getEnroll(req, res , next) {
 
 
 async function getUserAchievments(req , res , next){
-  const {userId} = req.params
+  const userId = req.auth.userId
   try {
     const user_achievements = await sql`
     SELECT 
@@ -144,7 +144,7 @@ async function getUserAchievments(req , res , next){
 
 
 async function getUserInfo(req ,res , next){
-  const {userId} = req.params
+  const userId = req.auth.userId
   try {
     const userInfoResult = await sql`
     SELECT * FROM users WHERE clerk_id = ${userId}

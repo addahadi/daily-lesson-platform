@@ -4,7 +4,6 @@ import LessonCode from "../components/Lesson/LessonCode";
 import LessonQuizz from "../components/Lesson/LessonQuizz";
 import LessonSummary from "../components/Lesson/LessonSummary";
 import LessonText from "../components/Lesson/LessonText";
-import LessonBullet from "../components/Lesson/LessonBullet";
 import { Button } from "@/components/ui/button";
 import { useLessonDetails } from "@/hook/useLessonDetails";
 import { BookOpen, ChevronLeft, ChevronRight, Clock } from "lucide-react";
@@ -36,30 +35,37 @@ const Lesson = () => {
   }
 
   return (
-    <div key={lessonDetail.slug} className="flex flex-row gap-5 overflow-auto">
-      <LessonBar enrollmentId={enrollmentId} courseId={courseId} />
+    <div
+      key={lessonDetail.slug}
+      className="flex flex-row gap-5 overflow-auto max-lg:flex-col"
+    >
+      <div className=" max-lg:w-full ">
+        <LessonBar enrollmentId={enrollmentId} courseId={courseId} />
+      </div>
       <div className="flex-1 px-5  ">
         <LessonNote />
         {/* Lesson Header */}
-        <section className="bg-white border border-gray-200 flex flex-col p-5 rounded-lg gap-3 mt-16 mb-5 ">
-          <div className="flex flex-row gap-2 text-gray-500 items-center">
+        <section className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex flex-col p-5 rounded-lg gap-3 mt-16 mb-5">
+          <div className="flex flex-row gap-2 text-gray-500 dark:text-gray-400 items-center">
             <BookOpen className="w-4 h-4" />
             <span>Lesson {lessonDetail.order_index}</span>
           </div>
 
-          <h1 className="text-2xl font-semibold">{lessonDetail.title}</h1>
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+            {lessonDetail.title}
+          </h1>
 
-          <div className="flex items-center space-x-4 text-sm text-gray-600">
+          <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center space-x-1">
               <Clock className="w-4 h-4" />
               <span>{lessonDetail.duration_minutes} min</span>
             </div>
           </div>
 
-          <div className="flex flex-row gap-4 mt-3">
+          <div className="flex flex-wrap gap-4 mt-3">
             <Button
               variant="outline"
-              className="flex items-center border-orange-1"
+              className="flex items-center border-orange-1 text-orange-1 hover:bg-orange-50 dark:hover:bg-gray-800"
               onClick={handlePrevious}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -68,7 +74,7 @@ const Lesson = () => {
 
             <Button
               variant="destructive"
-              className="flex items-center bg-orange-1"
+              className="flex items-center bg-orange-500 hover:bg-orange-600 text-white dark:text-white"
               onClick={handleNext}
             >
               <span>Next</span>

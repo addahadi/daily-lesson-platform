@@ -33,14 +33,12 @@ router.get(
 );
 
 router.get(
-  "/user-info/:userId",
-  validate({ userId: "string" }, "params"),
+  "/user-info",
   getUserInfo
 );
 
 router.get(
-  "/user-achievements/:userId",
-  validate({ userId: "string" }, "params"),
+  "/user-achievements/",
   getUserAchievments
 );
 

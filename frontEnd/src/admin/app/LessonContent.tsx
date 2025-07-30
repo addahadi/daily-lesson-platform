@@ -26,11 +26,27 @@ const LessonContent = () => {
 
   useEffect(() => {
     if (!lesson) return;
-    setSections(lesson.content.sections);
+    console.log(lesson)
+    setSections(lesson.content?.sections || []);
   }, [lesson]);
 
+ 
   async function handleSave() {
     if (!lessonId || !sections) return;
+
+    const summarySection = sections.find(
+      (section) => "heading" in section && section.heading === "Summary"
+    );
+
+    if (
+      !summarySection ||
+      !summarySection.text ||
+      summarySection.text.trim() === ""
+    ) {
+      toast.error("Summary content is required before saving.");
+      return;
+    }
+
     setLoading(true);
 
     if (quizz) {
@@ -69,7 +85,6 @@ const LessonContent = () => {
       toast.error("Failed to save lesson content.");
     }
   }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6 w-full">
       <BackTo

@@ -1,10 +1,9 @@
-import { Button } from '@/components/ui/button'
-import type { section } from '@/lib/adminType'
-import { Code, FileText } from 'lucide-react'
-import React, { type SetStateAction } from 'react'
-import LessonCodeEditor from './LessonCodeEditor'
-import LessonTextEditor from './LessonTextEditor'
-
+import { Button } from "@/components/ui/button";
+import type { section } from "@/lib/adminType";
+import { Code, FileText } from "lucide-react";
+import React, { type SetStateAction, useEffect } from "react";
+import LessonCodeEditor from "./LessonCodeEditor";
+import LessonTextEditor from "./LessonTextEditor";
 
 interface ContentBlockEditorProps {
   sections: section[];
@@ -13,10 +12,47 @@ interface ContentBlockEditorProps {
 }
 
 const ContentBlockEditor = ({
-    sections,
-    setSections,
-    setChange
-} : ContentBlockEditorProps) => {
+  sections,
+  setSections,
+  setChange,
+}: ContentBlockEditorProps) => {
+  useEffect(() => {
+    setSections((prev) => {
+      if (!prev) return;
+
+      const summaryIndex = prev.findIndex(
+        (section) => "heading" in section && section.heading === "Summary"
+      );
+
+      if (summaryIndex === -1) {
+        return [
+          ...prev,
+          {
+            heading: "Summary",
+            text: "",
+            id: crypto.randomUUID(),
+            isSummary: true,
+          },
+        ];
+      }
+
+      if (summaryIndex !== prev.length - 1) {
+        const summarySection = prev[summaryIndex];
+        const otherSections = prev.filter((_, index) => index !== summaryIndex);
+        return [...otherSections, summarySection];
+      }
+
+      return prev;
+    });
+  }, [setSections]);
+
+  const regularSections = sections.filter(
+    (section) => !("heading" in section && section.heading === "Summary")
+  );
+  const summarySection = sections.find(
+    (section) => "heading" in section && section.heading === "Summary"
+  );
+
   return (
     <div className=" w-full mt-4">
       <div className="flex flex-row gap-3">
@@ -24,14 +60,26 @@ const ContentBlockEditor = ({
           onClick={() => {
             setSections((prev) => {
               if (!prev) return;
-              return [
-                ...prev,
-                {
-                  heading: "",
-                  text: "",
-                  id: crypto.randomUUID(),
-                },
-              ];
+
+              const summaryIndex = prev.findIndex(
+                (section) =>
+                  "heading" in section && section.heading === "Summary"
+              );
+              const summarySection =
+                summaryIndex !== -1 ? prev[summaryIndex] : null;
+              const otherSections = prev.filter(
+                (_, index) => index !== summaryIndex
+              );
+
+              const newSection = {
+                heading: "",
+                text: "",
+                id: crypto.randomUUID(),
+              };
+
+              return summarySection
+                ? [...otherSections, newSection, summarySection]
+                : [...otherSections, newSection];
             });
           }}
           variant="destructive"
@@ -44,14 +92,27 @@ const ContentBlockEditor = ({
           onClick={() => {
             setSections((prev) => {
               if (!prev) return;
-              return [
-                ...prev,
-                {
-                  heading: "",
-                  code: "",
-                  id: crypto.randomUUID(),
-                },
-              ];
+
+              // Find summary section and remove it temporarily
+              const summaryIndex = prev.findIndex(
+                (section) =>
+                  "heading" in section && section.heading === "Summary"
+              );
+              const summarySection =
+                summaryIndex !== -1 ? prev[summaryIndex] : null;
+              const otherSections = prev.filter(
+                (_, index) => index !== summaryIndex
+              );
+
+              const newSection = {
+                heading: "",
+                code: "",
+                id: crypto.randomUUID(),
+              };
+
+              return summarySection
+                ? [...otherSections, newSection, summarySection]
+                : [...otherSections, newSection];
             });
           }}
           variant="outline"
@@ -73,7 +134,8 @@ const ContentBlockEditor = ({
                 setChange={setChange}
               />
             );
-          } else
+          } else {
+            const isSummary = section.heading === "Summary";
             return (
               <LessonTextEditor
                 key={section.id}
@@ -81,12 +143,14 @@ const ContentBlockEditor = ({
                 section={section}
                 setSections={setSections}
                 setChange={setChange}
+                isSummary={isSummary}
               />
             );
+          }
         })}
       </section>
     </div>
   );
-}
+};
 
-export default ContentBlockEditor
+export default ContentBlockEditor;
