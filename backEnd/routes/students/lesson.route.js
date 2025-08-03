@@ -59,7 +59,7 @@ router.post(
   SubmitQuizzAnswer
 );
 
-router.get("/nextlesson/:courseId/:orderIndex", getNextLesson);
+router.get("/next-lesson/:moduleId/:orderIndex", getNextLesson);
 
 router.get(
   "/all-lessons",
@@ -82,8 +82,8 @@ router.post(
 );
 
 router.get(
-  "/:lessonSlug",
-  validate({ lessonSlug: "string"}, "params"),
+  "/:lessonSlug/:moduleId",
+  validate({ lessonSlug: "string" , moduleId : "string"}, "params"),
   getLessonDetails
 );
 

@@ -47,7 +47,6 @@ async function DeleteUser(req , res , next){
     await clerk.users.deleteUser(userId);
     
     await sql`DELETE FROM users WHERE clerk_id = ${userId}`;
-    console.log("very good")
     return res
       .status(200)
       .json({ success: true, message: "User deleted successfully" });

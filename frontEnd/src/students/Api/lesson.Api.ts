@@ -14,8 +14,8 @@ const useLessonApiController = () => {
   }, [getToken]);
 
   const getLessonDetails = useCallback(
-    async (lessonId: string) => {
-      const URL = `http://localhost:8090/lesson/${lessonId}`;
+    async (lessonId: string ,  moduleId : string) => {
+      const URL = `http://localhost:8090/lesson/${lessonId}/${moduleId}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -150,8 +150,8 @@ const useLessonApiController = () => {
   );
 
   const getNextLesson = useCallback(
-    async (order_index: number, course_id: string) => {
-      const URL = `http://localhost:8090/lesson/nextlesson/${course_id}/${order_index}`;
+    async (order_index: number, module_id: string) => {
+      const URL = `http://localhost:8090/lesson/next-lesson/${module_id}/${order_index}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {

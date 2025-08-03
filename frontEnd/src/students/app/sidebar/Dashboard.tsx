@@ -9,15 +9,44 @@ import {
   Save,
   Moon,
   Sun,
+  Bell,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/clerk-react";
+import { UserButton, useUser } from "@clerk/clerk-react";
+import NotificationModel from "@/students/components/notification/NotificationModel";
+import type { NotificationData } from "@/lib/type";
+import { useNotificationApi } from "@/students/Api/notification.Api";
 
 const Dashboard = () => {
   const location = useLocation();
   const [isDark, setIsDark] = useState(false);
+  const [openModel ,setOpenModel] = useState(false)
+  const [notifications , setNotifications] = useState<NotificationData[] | null>(null)
+  const [loading , setLoading] = useState(false)
+ 
+  const {user} = useUser()
+  const {getUserNotifications} = useNotificationApi()
+  
+  
+  useEffect(() => {
+    
+    const fetchData = async () => {
+      if(!user?.id) return
+      setLoading(true)
+      const result = await getUserNotifications(user.id);
+      if(result){
+        setNotifications(result)
+        setLoading(false)
+      }
+      setLoading(false)
+    }
+    fetchData()
 
+  },[user])
+  
+  
+  
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const systemPrefersDark = window.matchMedia(
@@ -193,15 +222,22 @@ const Dashboard = () => {
               placeholder="Search..."
               className="w-32 sm:w-48 md:w-80 max-w-sm bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             />
-            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-              <img
-                src="/icon/notification.svg"
-                alt="notifications"
-                width={24}
-                height={24}
-                className="dark:invert w-5 h-5 md:w-6 md:h-6"
-              />
-            </button>
+            <div className=" relative">
+              <button
+              
+              onClick={() => setOpenModel(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                <Bell className=" text-white w-5 h-5 md:w-6 md:h-6"/>
+              </button>
+              <div className=" absolute top-10 right-10">
+                {openModel && 
+                <NotificationModel 
+                loading = {loading}
+                notifications={notifications}
+                close={() => setOpenModel(false)} />
+                }                
+              </div>
+            </div>
             <div className="scale-75 md:scale-100">
               <UserButton />
             </div>

@@ -31,7 +31,7 @@ const UserManagement = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [getUsers]);
 
   const filteredUsers = users.filter(
     (user) =>

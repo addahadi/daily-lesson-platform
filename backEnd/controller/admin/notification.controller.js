@@ -1,5 +1,74 @@
 const sql = require("../../db");
 
+
+
+
+// Get target users based on notification target type
+async function getTargetUsers({ sent_to, course_id }) {
+  try {
+    let users = [];
+
+    if (sent_to === "all_users") {
+      users = await sql`
+        SELECT clerk_id AS user_id
+        FROM users 
+        WHERE status = 'active'
+      ;`
+    } else if (sent_to === "enrolled_users" && course_id) {
+      users = await sql`
+        SELECT DISTINCT u.clerk_id AS user_id
+        FROM users u
+        INNER JOIN enrollments e ON u.clerk_id = e.user_id
+        WHERE e.course_id = ${course_id} 
+        AND u.status = 'active'
+      ;`
+    }
+
+    if (users.length === 0) {
+      throw new Error("No target users found.");
+    }
+
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
+async function createUserNotifications(req, res, next) {
+  try {
+    const { sent_to, courseId, notificationId } = req.body;
+
+    const users = await getTargetUsers({ sent_to, course_id: courseId });
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "No eligible users found for notification.",
+      });
+    }
+
+    const rows = users.map((user) => [notificationId, user.user_id, false]);
+
+    const result = await sql`
+      INSERT INTO user_notification (
+        notification_id,
+        user_id,
+        is_read
+      )
+      VALUES ${sql(rows)}
+      RETURNING id, notification_id, user_id, is_read, created_at
+    `;
+
+    res.status(200).json({
+      status: true,
+      message: `Notifications were sent to ${result.length} user(s) successfully.`,
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error in createUserNotifications:", error);
+    next(error);
+  }
+}
+
 // GET /courses/ids
 async function getCoursesIds(req, res, next) {
   try {
@@ -71,7 +140,7 @@ async function createNotification(req, res, next) {
     }
 
     // Validation for enrolled-users with non-course content
-    if (sent_to === "enrolled-users" && content_type !== "course" && !course_id) {
+    if (sent_to === "enrolled_users" && content_type !== "course" && !course_id) {
       return res.status(400).json({
         status: false,
         message: "Course ID is required for enrolled users notifications",
@@ -207,5 +276,6 @@ module.exports = {
   getAllNotifications,
   createNotification,
   updateNotification,
-  deleteNotification
+  deleteNotification,
+  createUserNotifications,
 };

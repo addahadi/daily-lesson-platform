@@ -1,11 +1,10 @@
 const sql = require("../../db");
 const { addXp, checkAchievements } = require("./xp.controller");
 
-
-
 async function getLessonDetails(req, res, next) {
-  const {lessonSlug} = req.params;
-  const userId = req.auth.userId
+  const { lessonSlug, moduleId } = req.params;
+  const userId = req.auth.userId;
+
   try {
     const lessons = await sql`
       SELECT 
@@ -26,28 +25,40 @@ async function getLessonDetails(req, res, next) {
       FROM lessons l
       LEFT JOIN quizzes q ON l.id = q.lesson_id
       LEFT JOIN quiz_answers a ON a.quiz_id = q.id AND a.user_id = ${userId} 
-      WHERE l.slug = ${lessonSlug};
+      WHERE l.slug = ${lessonSlug} AND l.topic_id = ${moduleId};
     `;
+
     if (lessons.length === 0) {
       return res
         .status(404)
         .json({ success: false, message: "Lesson not found." });
     }
-    if(lessons[0].order_index === 1){
-      return res.status(200).json({ success: true, 
-        data: {
-          ...lessons[0],
-          previous:false,
-          next:true
-        }
-      });
-    }
-    const LastLesson
-    res.status(200).json({ success: true, data: lessons });
+
+    const order_index = lessons[0].order_index;
+
+    const result = await sql`
+      SELECT 
+        ${order_index} = (SELECT MAX(order_index) FROM lessons WHERE topic_id = ${moduleId}) 
+        AS is_last_lesson;
+    `;
+
+    const isLast = result[0]?.is_last_lesson;
+
+    res.status(200).json({
+      success: true,
+      data: {
+        ...lessons[0],
+        previous: !(order_index === 1),
+        next: !isLast,
+      },
+    });
   } catch (err) {
     next(err);
   }
 }
+
+
+
 
 async function getLessonsDetails(req, res, next) {
   try {
@@ -269,20 +280,36 @@ async function SubmitQuizzAnswer(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
-
-async function getNextLesson(req, res, next) {
+}async function getNextLesson(req, res, next) {
   try {
-    const { orderIndex, courseId } = req.params;
-    const courseSlug = await sql`
-      SELECT id as course_id FROM courses WHERE slug = ${courseId}
+    const { orderIndex, moduleId } = req.params;
+
+    const moduleCheck = await sql`
+      SELECT id FROM modules WHERE id = ${moduleId}
     `;
+    if (moduleCheck.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "Module not found.",
+      });
+    }
+
     const nextLesson = await sql`
-      SELECT slug, topic_id FROM lessons WHERE order_index = ${orderIndex} AND topic_id IN (
-        SELECT id FROM modules WHERE course_id = ${courseSlug[0].course_id}
-      )
+      SELECT slug FROM lessons 
+      WHERE order_index = ${Number(orderIndex)} AND topic_id = ${moduleId}
     `;
-    res.status(200).json({ status: true, result: nextLesson });
+
+    if (nextLesson.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "No next lesson found. This might be the last lesson or the First Lesson",
+      });
+    }
+    res.status(200).json({
+      status: true,
+      result: nextLesson[0],
+      message: "Next lesson found.",
+    });
   } catch (err) {
     next(err);
   }

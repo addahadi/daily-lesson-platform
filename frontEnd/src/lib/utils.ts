@@ -9,43 +9,6 @@ export function cn(...inputs: ClassValue[]) {
 
 
 
-export const Courses = [
-  {
-    title: "Introduction to JavaScript",
-    category: "Web Development",
-    level: "Beginner",
-    guest: false,
-    img_url: "https://source.unsplash.com/featured/?javascript,code",
-  },
-  {
-    title: "Advanced React Patterns",
-    category: "Frontend",
-    level: "Advanced",
-    guest: false,
-    img_url: "https://source.unsplash.com/featured/?reactjs,code",
-  },
-  {
-    title: "Python for Data Science",
-    category: "Data Science",
-    level: "Intermediate",
-    guest: true,
-    img_url: "https://source.unsplash.com/featured/?python,data",
-  },
-  {
-    title: "Building REST APIs with Express",
-    category: "Backend",
-    level: "Intermediate",
-    guest: false,
-    img_url: "https://source.unsplash.com/featured/?nodejs,backend",
-  },
-  {
-    title: "Building REST APIs with Express",
-    category: "Backend",
-    level: "Intermediate",
-    guest: false,
-    img_url: "https://source.unsplash.com/featured/?nodejs,backend",
-  },
-];
 
 
 
@@ -87,13 +50,23 @@ export function getLevelColor(level: string | undefined) {
 
 export const FOLDER_CACHE_KEY = "cached_folders";
 export const CACHE_KEY_DISCOVER = "discover_courses";
+export const COURSE_CACH_KEY = "course_page";
 
 
 
 
+export function formatTimestamp(isoString : string) {
+  const date = new Date(isoString);
 
-
-
+  return date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "long", // or "short" for "Jul"
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true, // Use 24h format with `false`
+  });
+}
 
 
 
@@ -128,7 +101,12 @@ export const getCach = (key : string) => {
 
 // utils/handleResponse.ts
 
-type ApiResponse<T> = T | string;
+type ApiResponse<T> = {
+  data? : T 
+  message? : string
+  status : boolean
+} | string 
+
 
 interface ApiError {
   message: string;
@@ -158,7 +136,6 @@ export const handleResponse = async <T = any>(
     errorMsg = response.statusText || errorMsg;
   }
 
-  // Customize common status code messages
   switch (response.status) {
     case 400:
       throw new Error(errorMsg || "Bad Request");

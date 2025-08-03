@@ -22,7 +22,7 @@ export function useLessonDetails() {
  
   useEffect(() => {
     async function fetchLessonDetails() {
-      if (!lessonId || !user?.id) return;
+      if (!lessonId || !user?.id || !moduleId) return;
 
       setLessonDetail(undefined);
       setLessonSections(undefined);
@@ -33,6 +33,7 @@ export function useLessonDetails() {
       try {
         const data = await getLessonDetails(
           lessonId,
+          moduleId
         );
         console.log(data)
         const {
@@ -43,7 +44,7 @@ export function useLessonDetails() {
           quizz_id,
           selected_option_index,
           is_correct,
-        } = data[0];
+        } = data;
 
         setLessonDetail(data);
         
@@ -65,7 +66,7 @@ export function useLessonDetails() {
     }
 
     fetchLessonDetails();
-  }, [lessonId, user]);
+  }, [lessonId, user , getLessonDetails]);
 
   useEffect(() => {
     async function startLessonProgress() {
@@ -84,17 +85,17 @@ export function useLessonDetails() {
     }
 
     startLessonProgress();
-  }, [enrollmentId, moduleId, lessonId]);
+  }, [enrollmentId, moduleId, lessonId , startLesson]);
 
   const handlePrevious = async () => {
-    if (!lessonDetail || !courseId) return;
+    if (!lessonDetail || !moduleId) return;
     try {
       const { result } = await getNextLesson(
         lessonDetail.order_index - 1,
-        courseId
+        moduleId
       );
       navigate(
-        `/dashboard/course/${courseId}/module/${result[0].topic_id}/lesson/${result[0].slug}`
+        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
       );
     } catch (err) {
       console.error("Failed to load previous lesson:", err);
@@ -102,14 +103,14 @@ export function useLessonDetails() {
   };
 
   const handleNext = async () => {
-    if (!lessonDetail || !courseId) return;
+    if (!lessonDetail || !moduleId) return;
     try {
       const { result } = await getNextLesson(
         lessonDetail.order_index + 1,
-        courseId
+        moduleId
       );
       navigate(
-        `/dashboard/course/${courseId}/module/${result[0].topic_id}/lesson/${result[0].slug}`
+        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
       );
     } catch (err) {
       console.error("Failed to load next lesson:", err);

@@ -15,6 +15,7 @@ const noteRoutes = require("../backEnd/routes/students/note.route");
 const errorHandler = require("../backEnd/middleware/error.middleware");
 const webhookRouter = require("../backEnd/routes/Webhook");
 const folderRouter = require("../backEnd/routes/students/folder.route")
+const notificationRoute  = require("../backEnd/routes/students/notification.route")
 
 // admin router
 const adminUserRouter = require("../backEnd/routes/admin/user.route");
@@ -47,6 +48,7 @@ app.use("/lesson" , requireAuth(), lessonRoutes);
 app.use("/home" , requireAuth(), homeRoutes);
 app.use("/note" , requireAuth(), noteRoutes);
 app.use("/folder" , requireAuth() , folderRouter)
+app.use("/notifications", requireAuth(), notificationRoute);
 app.use("/admin/user" , requireAdmin() , adminUserRouter);
 app.use("/admin/course" , requireAdmin() , adminCourseRouter);
 app.use("/admin/lesson", requireAdmin(), lessonRoutesAdmin);

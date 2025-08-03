@@ -1,66 +1,73 @@
 import { useAuth } from "@clerk/clerk-react";
+import { useCallback } from "react";
 
 const useUserApi = () => {
-    const { getToken } = useAuth();
+  const { getToken } = useAuth();
 
-    const getAuthHeader = async () => {
-      const token = await getToken();
-      return {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      };
+  const getAuthHeader = useCallback(async () => {
+    const token = await getToken();
+    return {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     };
+  }, [getToken]);
 
-    const getUsers = async () => {
-      const URL = `http://localhost:8090/admin/user/`;
-      try {
-        const headers = await getAuthHeader();
-        const response = await fetch(URL, { method: "GET", headers });
+  const getUsers = useCallback(async () => {
+    const URL = `http://localhost:8090/admin/user/`;
+    try {
+      const headers = await getAuthHeader();
+      const response = await fetch(URL, { method: "GET", headers });
 
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
-        } 
-      } catch (err) {
-        console.error(err);
+      if (response.ok) {
+        const result = await response.json();
+        return result.data;
       }
-    };
-    
-    
-    const deleteUser = async (userId : string) => {
+    } catch (err) {
+      console.error("getUsers error:", err);
+    }
+  }, [getAuthHeader]);
+
+  const deleteUser = useCallback(
+    async (userId: string) => {
       const URL = `http://localhost:8090/admin/user/${userId}`;
-      console.log("hih")
       try {
         const headers = await getAuthHeader();
         await fetch(URL, { method: "DELETE", headers });
       } catch (err) {
-        console.error(err);
+        console.error("deleteUser error:", err);
       }
-    };
-    const updateUser = async (userId : string , role : string , status : string) => {
-      const requestBody = {
-        role,
-        status
-      }
+    },
+    [getAuthHeader]
+  );
+
+  const updateUser = useCallback(
+    async (userId: string, role: string, status: string) => {
+      const requestBody = { role, status };
       const URL = `http://localhost:8090/admin/user/${userId}`;
       try {
         const headers = await getAuthHeader();
-        const response = await fetch(URL, { method: "POST", headers , body : JSON.stringify(requestBody) });
+        const response = await fetch(URL, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(requestBody),
+        });
 
         if (response.ok) {
           const result = await response.json();
           return result.data;
         }
       } catch (err) {
-        console.error(err);
+        console.error("updateUser error:", err);
       }
-    };
-    return {
-        getUsers,
-        updateUser, 
-        deleteUser
-    }
-}
+    },
+    [getAuthHeader]
+  );
 
+  return {
+    getUsers,
+    updateUser,
+    deleteUser,
+  };
+};
 
-export default useUserApi
+export default useUserApi;

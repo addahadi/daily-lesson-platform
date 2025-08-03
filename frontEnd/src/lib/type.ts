@@ -15,6 +15,18 @@ export interface CourseCardProps  {
     is_saved : boolean
 }
 
+
+
+export interface NotificationData {
+  id : string 
+  type : string 
+  title : string
+  body : string
+  created_at : string
+  content_type : null | string
+  course_id : null | string
+  is_read : boolean
+}
 export interface achievementsProps {
   code: string
   description: string

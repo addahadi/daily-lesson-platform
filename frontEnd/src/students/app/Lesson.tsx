@@ -64,6 +64,7 @@ const Lesson = () => {
 
           <div className="flex flex-wrap gap-4 mt-3">
             <Button
+              disabled={!lessonDetail.previous}
               variant="outline"
               className="flex items-center border-orange-1 text-orange-1 hover:bg-orange-50 dark:hover:bg-gray-800"
               onClick={handlePrevious}
@@ -73,6 +74,7 @@ const Lesson = () => {
             </Button>
 
             <Button
+              disabled={!lessonDetail.next}
               variant="destructive"
               className="flex items-center bg-orange-500 hover:bg-orange-600 text-white dark:text-white"
               onClick={handleNext}
@@ -118,7 +120,7 @@ const Lesson = () => {
         {Summary?.map((lessonSection, index) => (
           <LessonSummary
             key={`summary-${index}`}
-            text={lessonSection.text}
+            text={lessonSection?.text }
             heading={lessonSection.heading}
             enrollementId={enrollmentId}
             completed={completed}

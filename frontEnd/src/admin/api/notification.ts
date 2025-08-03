@@ -1,3 +1,4 @@
+import { handleResponse, toastOnce } from "@/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
 import { toast } from "sonner";
@@ -142,12 +143,51 @@ const useNotificationApi = () => {
     },
     [getAuthHeader]
   );
+  
+  const createUserNotification = async ({
+    sent_to,
+    courseId,
+    notificationId
+  } : {
+    sent_to :string
+    courseId : string
+    notificationId : string
+  }) =>  {
+      const headers = await getAuthHeader();
+          try {  
+            const requestBody = {
+              sent_to,
+              courseId,
+              notificationId
+            }
+            const response = await fetch(
+              "http://localhost:8090/admin/notifications/user-notifications",
+              {
+                method: "POST",
+                headers,
+                body: JSON.stringify(requestBody),
+              }
+            );
+      
+            const result = await handleResponse<{ message : string ,data : any}>(response);
+            if (typeof result === "string") {
+              toastOnce(result);
+              return
+            }
+            toast(result.message)
+          } catch (err: any) {
+            toastOnce(err.message || "Something went wrong");
+            return 
+          }
+  }
+
   return {
     getCoursesId,
     getCourseNotifications,
     createNotification,
     updateNotification,
-    deleteNotification
+    deleteNotification,
+    createUserNotification
   }
 };
 

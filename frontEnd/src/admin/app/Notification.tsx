@@ -11,10 +11,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
-  SelectContent,
   SelectTrigger,
-  SelectItem,
   SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,7 +28,7 @@ const Notification = () => {
   const [noNotifications, setNoNotifications] = useState(false);
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [Edit , setEdit] = useState<NotificationType | null>(null)
-  const { getCourseNotifications, deleteNotification } = useNotificationApi();
+  const { getCourseNotifications, deleteNotification , createUserNotification} = useNotificationApi();
 
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const Notification = () => {
       setLoading(false)
     };
     fetchNotifications()
-  },[])
+  },[getCourseNotifications])
 
   const handleNotificationCreated = (newNotification: NotificationType) => {
     setNotifications((prev) => [newNotification, ...prev]);
@@ -78,7 +78,7 @@ const Notification = () => {
     }
   }
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen  bg-white dark:bg-gray-900">
       {/* Header */}
       <header className="">
         <div className=" w-full px-6 py-8 flex justify-between items-center">
@@ -130,6 +130,7 @@ const Notification = () => {
               notifications={notifications}
               OpenEdit={setEdit}
               onDelete={handleDeleteNotification}
+              createUserNotification = {createUserNotification}
             />
           )}
         </div>
@@ -250,7 +251,7 @@ function CreateNotification({
   }, [getCoursesId]);
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl mx-auto dark:bg-gray-800 bg-gray-100">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>New Notification</CardTitle>
         <Button variant="ghost" size="icon" onClick={close}>
@@ -264,10 +265,10 @@ function CreateNotification({
             value={notificationInfo.type}
             onValueChange={(value) => handleChange("type", value)}
           >
-            <SelectTrigger>
+            <SelectTrigger className=" dark:bg-gray-700">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className=" dark:bg-gray-700">
               <SelectItem value="new_content">New Content</SelectItem>
               <SelectItem value="announcement">Announcement</SelectItem>
             </SelectContent>
@@ -280,10 +281,10 @@ function CreateNotification({
               value={notificationInfo.content_type}
               onValueChange={(value) => handleChange("content_type", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className=" dark:bg-gray-700">
                 <SelectValue placeholder="Select content type" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className=" dark:bg-gray-700">
                 <SelectItem value="course">Course</SelectItem>
                 <SelectItem value="module">Module</SelectItem>
                 <SelectItem value="lesson">Lesson</SelectItem>
@@ -294,6 +295,7 @@ function CreateNotification({
         <div>
           <Label>Title *</Label>
           <Input
+            className=" dark:bg-gray-700"
             placeholder="Enter a title"
             value={notificationInfo.title}
             onChange={(e) => {
@@ -304,6 +306,7 @@ function CreateNotification({
         <div>
           <Label>Message *</Label>
           <Textarea
+            className=" dark:bg-gray-700"
             placeholder="Enter a message"
             value={notificationInfo.message}
             onChange={(e) => {
@@ -317,10 +320,10 @@ function CreateNotification({
             value={notificationInfo.sent_to}
             onValueChange={(value) => handleChange("sent_to", value)}
           >
-            <SelectTrigger>
+            <SelectTrigger className=" dark:bg-gray-700">
               <SelectValue placeholder="Select recipients" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className=" dark:bg-gray-700">
               <SelectItem value="all_users">All users</SelectItem>
               <SelectItem
                 value="enrolled_users"
@@ -334,40 +337,40 @@ function CreateNotification({
             </SelectContent>
           </Select>
         </div>
-        {notificationInfo.content_type !== "course" &&
-          notificationInfo.sent_to === "enrolled_users" && (
-            <div>
-              <Label>Course *</Label>
-              <Select
-                value={notificationInfo.course_id}
-                onValueChange={(value) => handleChange("course_id", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a course" />
-                </SelectTrigger>
-                <SelectContent>
-                  {loading ? (
-                    <SelectItem value="" disabled>
-                      Loading courses...
-                    </SelectItem>
-                  ) : courses && courses.length > 0 ? (
-                    courses.map((course: any) => (
-                      <SelectItem key={course.id} value={course.id}>
-                        {course.title}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="" disabled>
-                      No courses available
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+
+        { notificationInfo.type !== "announcement"        
+        && <div>
+          <Label>Course *</Label>
+          <Select
+            value={notificationInfo.course_id}
+            onValueChange={(value) => handleChange("course_id", value)}
+          >
+            <SelectTrigger className=" dark:bg-gray-700">
+              <SelectValue placeholder="Select a course" />
+            </SelectTrigger>
+            <SelectContent className=" dark:bg-gray-700">
+              {loading ? (
+                <SelectItem value="loading" disabled>
+                  Loading courses...
+                </SelectItem>
+              ) : courses && courses.length > 0 ? (
+                courses.map((course: any) => (
+                  <SelectItem key={course.id} value={course.id}>
+                    {course.title}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="empty" disabled>
+                  No courses available
+                </SelectItem>
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+        }
         <Button
           variant="destructive"
-          className=" text-white bg-gray-900 mt-4"
+          className=" text-white bg-gray-900 mt-4 dark:bg-blue-600"
           onClick={handleSubmit}
           disabled={isSubmitting}
         >

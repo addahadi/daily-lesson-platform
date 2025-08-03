@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import useCourseApiController from "@/students/Api/course.Api";
 import useUserApiController from "@/students/Api/user.Api";
 import type { CourseProps } from "@/lib/type";
+import { COURSE_CACH_KEY, getCach, setCache } from "@/lib/utils";
+
+const CACHE_TTL = 3600 * 1000; // 1 hour
 
 export function useCourseAndEnrollment(
   CourseId: string | undefined,
@@ -9,37 +12,43 @@ export function useCourseAndEnrollment(
 ) {
   const [CourseData, setCourseData] = useState<CourseProps | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
-  const [buttonAction,setButtonAction] = useState("")
-  const [url, setUrl] = useState<{
-    lesson_id: string;
-    module_id: string;
-  }>();
-  const {getCourseBySlug} = useCourseApiController()
-  const {checkEnroll} = useUserApiController()
+  const [buttonAction, setButtonAction] = useState("");
+  const [url, setUrl] = useState<{ lesson_id: string; module_id: string }>();
+
+  const { getCourseBySlug } = useCourseApiController();
+  const { checkEnroll } = useUserApiController();
 
   useEffect(() => {
     async function fetchCourseAndCheckEnrollment() {
       if (!CourseId) return;
-      console.log(CourseId)
-      const courseResult = await getCourseBySlug(
-        CourseId
-      );
-      if (courseResult) {
-        setCourseData(courseResult);
-        setSlug(courseResult.id);
 
-        if (user) {
-          const result = await checkEnroll(courseResult.id, user?.id);
-          console.log(result)
-          if (result) setButtonAction(result.action);
-          if(result.data )setUrl(result.data)
-          
+      const cacheKey = `${COURSE_CACH_KEY}_${CourseId}`;
+      const cachedCourse = getCach(cacheKey);
+
+      if (cachedCourse) {
+        setCourseData(cachedCourse);
+        setSlug(cachedCourse.id);
+      } else {
+        const courseResult = await getCourseBySlug(CourseId);
+        if (courseResult) {
+          setCourseData(courseResult);
+          setSlug(courseResult.id);
+          setCache(cacheKey, courseResult, CACHE_TTL);
+        }
+      }
+
+      const courseIdToUse = cachedCourse?.id || CourseId;
+      if (user && courseIdToUse) {
+        const result = await checkEnroll(courseIdToUse, user?.id);
+        if (result) {
+          setButtonAction(result.action);
+          if (result.data) setUrl(result.data);
         }
       }
     }
 
     fetchCourseAndCheckEnrollment();
-  }, [CourseId, user]);
+  }, [CourseId, user, getCourseBySlug, checkEnroll]);
 
-  return { CourseData, slug, setButtonAction , buttonAction , url , setUrl};
+  return { CourseData, slug, setButtonAction, buttonAction, url, setUrl };
 }

@@ -9,6 +9,9 @@ import { useCourseAndEnrollment } from "@/hook/useFetchedData";
 import { Toaster } from "@/components/ui/sonner";
 import LoadingSpinner from "@/components/ui/loading";
 
+
+
+
 const Course = () => {
   const { user } = useUser();
   const { CourseId } = useParams();
