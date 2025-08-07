@@ -5,17 +5,29 @@ const sql = require("../../db")
 
 
 async function getAllCourses( req , res , next) {
+    const page = req.query.page || 1;
+    const limit = 1
+    const offset = (page - 1) * limit
     try {
         const response = await sql`
-        SELECT c.* , COUNT(DISTINCT m.id) AS moduleCount, COUNT(DISTINCT l.id) AS lessonCount,      
-        SUM(l.duration_minutes) AS totalDuration
-
+        SELECT c.*, 
+          COUNT(DISTINCT CASE WHEN m.is_deleted = false THEN m.id END) AS moduleCount, 
+          COUNT(DISTINCT CASE WHEN l.is_deleted = false THEN l.id END) AS lessonCount,
+          SUM(CASE WHEN l.is_deleted = false THEN l.duration_minutes ELSE 0 END) AS totalDuration
         FROM courses c
         LEFT JOIN modules m ON c.id = m.course_id
         LEFT JOIN lessons l ON m.id = l.topic_id
         GROUP BY c.id
         ORDER BY c.created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
         `;
+
+         const [{ count }] = await sql`
+          SELECT COUNT(*)::int as count FROM courses
+        `;
+
+        const totalPages = Math.ceil(count / limit);
+        const isFinalPage = page >= totalPages;
         if(response.length === 0) {
             return res.status(404).json({ 
                 status : false,
@@ -24,7 +36,8 @@ async function getAllCourses( req , res , next) {
         return res.status(200).json({
             status: true,
             message: "Courses fetched successfully",
-            data: response
+            data: response,
+            final : !isFinalPage
         });
     }
     catch (error){
@@ -48,10 +61,10 @@ async function getCourseModule(req, res, next) {
         SELECT m.id , m.title , m.order_index , SUM(l.duration_minutes) AS totalDuration , COUNT(l.id) AS lessonCount
         FROM modules m
         LEFT JOIN lessons l ON m.id = l.topic_id
-        WHERE m.course_id = ${courseId}
+        WHERE m.course_id = ${courseId} AND m.is_deleted = false
         GROUP BY m.id
         ORDER BY m.order_index;
-        `
+        `;
         if(response.length === 0){
             return res.status(404).json({
                 status : false , 
@@ -119,47 +132,48 @@ async function UpdateCreateCourse(req ,res , next) {
     }
 }
 
-
 async function UpdateModuleOrder(req, res, next) {
-    try {
-        const { courseId } = req.params;
-        const {orderedModules} = req.body;
-        console.log(orderedModules)
-        console.log(courseId)
-        if (!courseId || !Array.isArray(orderedModules)) {
-            return res.status(400).json({
-                status: false,
-                message: "Course ID and module order are required"
-            });
-        }
+  try {
+    const { courseId } = req.params;
+    const { orderedModules } = req.body;
 
-        const updatePromises = orderedModules.map((module, index) => {
-            return sql`
-                UPDATE modules
-                SET order_index = ${index}
-                WHERE id = ${module.id} AND course_id = ${courseId}
-                RETURNING *;
-            `;
-        });
-
-        const results = await Promise.all(updatePromises);
-
-        if (results.some(result => result.length === 0)) {
-            return res.status(404).json({
-                status: false,
-                message: "Some modules could not be updated"
-            });
-        }
-
-        return res.status(200).json({
-            status: true,
-            message: "Module order updated successfully",
-            data: results
-        });
-    } catch (error) {
-        console.error("Error updating module order:", error);   
-        next(error);
+    if (!courseId || !Array.isArray(orderedModules)) {
+      return res.status(400).json({
+        status: false,
+        message: "Course ID and module order are required",
+      });
     }
+
+    const results = [];
+
+    for (let index = 0; index < orderedModules.length; index++) {
+      const module = orderedModules[index];
+      const result = await sql`
+        UPDATE modules
+        SET order_index = ${index}
+        WHERE id = ${module.id} AND course_id = ${courseId} AND is_deleted = false
+        RETURNING *;
+      `;
+
+      if (result.length === 0) {
+        return res.status(404).json({
+          status: false,
+          message: `Module with ID ${module.id} not found or already deleted.`,
+        });
+      }
+
+      results.push(result[0]);
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Module order updated successfully",
+      data: results,
+    });
+  } catch (error) {
+    console.error("Error updating module order:", error);
+    next(error);
+  }
 }
 
 
@@ -210,7 +224,8 @@ async function updateModule(req, res, next) {
     const response = await sql`
       UPDATE modules
       SET title = ${title}
-      WHERE id = ${moduleId}
+      WHERE id = ${moduleId} AND is_deleted = false
+
       RETURNING *;
     `;
 
@@ -232,6 +247,113 @@ async function updateModule(req, res, next) {
   }
 }
 
+const ToggleCourseView = async (req, res, next) => {
+  const { courseId } = req.params;
+
+  try {
+    const [result] = await sql`
+      UPDATE courses
+      SET is_published = NOT is_published
+      WHERE id = ${courseId}
+      RETURNING is_published;
+    `;
+
+    if (!result) {
+      return res.status(404).json({
+        status: false,
+        message: "Course not found.",
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: result.is_published
+        ? "Course is now visible to users."
+        : "Course has been hidden from users.",
+    });
+  } catch (err) {
+    console.error("Error toggling course visibility:", err);
+    next(err);
+  }
+};
+
+
+const softDeleteModule = async (req, res, next) => {
+  const { moduleId } = req.params;
+
+  try {
+    // 1. Get the course_id for the module
+    const [module] = await sql`
+      SELECT course_id
+      FROM modules
+      WHERE id = ${moduleId}
+      LIMIT 1;
+    `;
+
+    if (!module) {
+      return res.status(404).json({
+        status: false,
+        message: "Module not found.",
+      });
+    }
+
+    const courseId = module.course_id;
+
+    // 2. Soft delete the module
+    await sql`
+      UPDATE modules
+      SET is_deleted = true
+      WHERE id = ${moduleId};
+    `;
+
+    // 3. Soft delete lessons under this module
+    await sql`
+      UPDATE lessons
+      SET is_deleted = true
+      WHERE topic_id = ${moduleId};
+    `;
+
+    // 4. Get remaining non-deleted modules
+    const remainingModules = await sql`
+      SELECT id
+      FROM modules
+      WHERE course_id = ${courseId} AND is_deleted = false
+      ORDER BY order_index ASC;
+    `;
+
+    if (remainingModules.length > 0) {
+      const caseStatements = [];
+      const ids = [];
+
+      remainingModules.forEach((mod, index) => {
+        caseStatements.push(`WHEN '${mod.id}' THEN ${index+1}`);
+        ids.push(`'${mod.id}'`);
+      });
+
+      const caseSql = caseStatements.join(" ");
+      const idList = ids.join(", ");
+
+      await sql.unsafe(`
+        UPDATE modules
+        SET order_index = CASE id
+          ${caseSql}
+        END
+        WHERE id IN (${idList});
+      `);
+    }
+
+    res.status(200).json({
+      status: true,
+      message:
+        "Module and its lessons soft-deleted, and module order normalized.",
+    });
+  } catch (error) {
+    console.error("Error in softDeleteModule:", error);
+    next(error);
+  }
+};
+
+
 
 
 
@@ -239,7 +361,9 @@ module.exports = {
   getAllCourses,
   UpdateCreateCourse,
   getCourseModule,
-    createModule,
-    updateModule,
-    UpdateModuleOrder
+  createModule,
+  updateModule,
+  UpdateModuleOrder,
+  softDeleteModule,
+  ToggleCourseView,
 };

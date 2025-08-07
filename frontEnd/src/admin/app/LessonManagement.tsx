@@ -85,7 +85,7 @@ const LessonManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6">
-      <BackTo title="back to course" URL={`/admin/course/${courseId}`} />
+      <BackTo title="back to course" URL={`/admin/course-management`} />
       <Card className="mb-14 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <CardContent className="flex flex-row gap-2 p-6">
           <div>
@@ -166,6 +166,7 @@ const LessonManagement = () => {
                       lesson={lesson}
                       module_id={moduleId}
                       course_id={courseId}
+                      setLessons={setLessons}
                       setEditLesson={setEditLesson}
                     />
                   </DraggableAdminCard>
@@ -238,14 +239,12 @@ const EditLesson = ({
     const result = await createUpdateLesson(moduleId, formData);
     if (result) {
       setLessons(
-        (prev) =>
-          prev &&
-          prev.map((l) => {
-            if (l.id === result.id) {
-              return result;
-            }
-            return l;
+        (prev) => {
+          const updatedLessons = prev.filter((lesson) => {
+            return lesson.id != result.id
           })
+          return [...updatedLessons , result]
+        }
       );
       setLoading(false);
       toast.success("successful inserting");
@@ -253,6 +252,7 @@ const EditLesson = ({
       setLoading(false);
       toast.success("unsuccessful inserting");
     }
+    close()
   }
 
   return (

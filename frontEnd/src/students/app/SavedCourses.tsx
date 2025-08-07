@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useFolderApiController from "../Api/folder.Api";
 import type { CourseCardProps } from "@/lib/type";
 import LoadingSpinner from "@/components/ui/loading";
-import EmptyCase from "../components/empty/EmptyCase";
+import EmptyCase from "@/components/empty/EmptyCase";
 import { File, ArrowLeft } from "lucide-react";
 import CourseCard from "../components/Discover/CourseCard";
 import { toast } from "sonner";

@@ -2,15 +2,15 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import LoginInPage from "./students/app/LoginInPage";
 import SignUpPage from "./students/app/SignUpPage";
-import Home from "./students/app/sidebar/Home";
-import Dashboard from "./students/app/sidebar/Dashboard";
+import Home from "./students/app/Home";
+import Dashboard from "./students/app/Dashboard";
 import PrivateRoute from "./students/components/PrivateRoute";
-import Profile from "./students/app/sidebar/Profile";
-import Courses from "./students/app/sidebar/Courses";
-import Discover from "./students/app/sidebar/Discover";
+import Profile from "./students/app/Profile";
+import Courses from "./students/app/Courses";
+import Discover from "./students/app/Discover";
 import Course from "./students/app/Course";
 import Lesson from "./students/app/Lesson";
-import Notes from "./students/app/sidebar/Notes";
+import Notes from "./students/app/Notes";
 import Private from "./Private";
 import UserManagement from "./admin/app/UserManagement";
 import CourseManegement from "./admin/app/CourseManegement";
@@ -22,7 +22,7 @@ import Notification from "./admin/app/Notification";
 import { useEffect } from "react";
 import AdminWelcom from "./admin/app/AdminWelcom";
 import SavedCourses from "./students/app/SavedCourses";
-import Folders from "./students/app/sidebar/Folder";
+import Folders from "./students/app/Folder";
 
 
 function App() {
@@ -56,7 +56,7 @@ function App() {
           />
         </Route>
         <Route path="/admin" element={<Private />}>
-          <Route path="welcom" element={<AdminWelcom />} />
+          <Route index element={<AdminWelcom />} />
           <Route path="user-management" element={<UserManagement />} />
           <Route path="course-management" element={<CourseManegement />} />
           <Route path="course/:courseId" element={<ModuleManagement />} />

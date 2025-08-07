@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { handleResponse, toastOnce } from "@/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
+import type { LessonDataType } from "@/lib/type";
 
 const useLessonApiController = () => {
   const { getToken } = useAuth();
@@ -22,7 +23,7 @@ const useLessonApiController = () => {
           method: "GET",
           headers,
         });
-        const data = await handleResponse<{ data: any }>(response);
+        const data = await handleResponse<LessonDataType>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
@@ -97,12 +98,13 @@ const useLessonApiController = () => {
           headers,
           body: JSON.stringify(requestBody),
         });
-        const data = await handleResponse(response);
+        const data = await handleResponse<boolean>(response);
+        
         if (typeof data === "string") {
           toastOnce(data);
           return null;
         }
-        return data;
+        return data.data;
       } catch (err: any) {
         toastOnce(err.message || "Something went wrong");
         return null;
@@ -114,7 +116,6 @@ const useLessonApiController = () => {
   const SubmitQuizzAnswer = useCallback(
     async (
       quizz_id: string,
-      user_id: string,
       lesson_id: string,
       selected_option_index: number,
       is_correct: boolean,
@@ -122,7 +123,6 @@ const useLessonApiController = () => {
     ) => {
       const queryParams = new URLSearchParams({
         quizz_id,
-        user_id,
         lesson_id,
         selected_option: selected_option_index.toString(),
         correct: is_correct.toString(),
@@ -135,12 +135,12 @@ const useLessonApiController = () => {
           method: "POST",
           headers,
         });
-        const data = await handleResponse(response);
+        const data = await handleResponse<any>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
         }
-        return data;
+        return data.message;
       } catch (err: any) {
         toastOnce(err.message || "Something went wrong");
         return null;
@@ -158,12 +158,12 @@ const useLessonApiController = () => {
           method: "GET",
           headers,
         });
-        const data = await handleResponse(response);
+        const data = await handleResponse<string>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
         }
-        return data;
+        return data.data;
       } catch (err: any) {
         toastOnce(err.message || "Something went wrong");
         return null;
@@ -177,15 +177,14 @@ const useLessonApiController = () => {
       enrollmentId: string,
       moduleId: string,
       lessonId: string,
-      userId: string
     ) => {
       const URL = `http://localhost:8090/lesson/completed`;
       const requestBody = {
         enrollmentId,
         moduleId,
         lessonSlug: lessonId,
-        userId,
       };
+
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -193,7 +192,13 @@ const useLessonApiController = () => {
           headers,
           body: JSON.stringify(requestBody),
         });
-        const data = await handleResponse(response);
+        const data = await handleResponse<{
+          lessonId : string,
+          moduleProgress: string,
+          xpAwarded: number,
+          CourseCompletedAler : boolean,
+        }>(response);
+
         if (typeof data === "string") {
           toastOnce(data);
           return null;

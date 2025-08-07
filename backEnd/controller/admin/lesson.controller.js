@@ -5,7 +5,9 @@ async function getAllLessons(req, res , next) {
     const moduleId = req.params.moduleId;
     try {
         const response = await sql`
-            SELECT * FROM lessons WHERE topic_id = ${moduleId} ORDER BY order_index;
+          SELECT * FROM lessons 
+          WHERE topic_id = ${moduleId} AND is_deleted = false
+          ORDER BY order_index;
         `;
 
         if (response.length === 0) {
@@ -41,7 +43,8 @@ async function createUpdateLesson(req, res, next) {
           WHERE topic_id = ${moduleId}
         )
       )
-      ON CONFLICT (slug, topic_id) DO UPDATE
+      ON CONFLICT (slug, topic_id) WHERE is_deleted = false 
+      DO UPDATE
       SET 
         title = EXCLUDED.title,
         content = EXCLUDED.content,
@@ -95,7 +98,7 @@ async function updateOrderLesson(req, res, next) {
             return sql`
                 UPDATE lessons
                 SET order_index = ${lesson.order_index}
-                WHERE id = ${lesson.id} AND topic_id = ${moduleId}
+                WHERE id = ${lesson.id} AND topic_id = ${moduleId} AND is_deleted = false
                 RETURNING id
             `;
         });
@@ -195,6 +198,73 @@ async function updateOrAddLessonQuizz(req, res, next) {
     next(err);
   }
 }
+const softDeleteLesson = async (req, res, next) => {
+  const { lessonId } = req.params;
+
+  try {
+    // 1. Get the topic_id (module) of the lesson
+    const [lesson] = await sql`
+      SELECT topic_id
+      FROM lessons
+      WHERE id = ${lessonId}
+      LIMIT 1;
+    `;
+
+    if (!lesson) {
+      return res.status(404).json({
+        status: false,
+        message: "Lesson not found.",
+      });
+    }
+
+    const topicId = lesson.topic_id;
+
+    // 2. Soft delete the lesson
+    await sql`
+      UPDATE lessons
+      SET is_deleted = true
+      WHERE id = ${lessonId};
+    `;
+
+    // 3. Fetch all remaining non-deleted lessons in the module
+    const remainingLessons = await sql`
+      SELECT id
+      FROM lessons
+      WHERE topic_id = ${topicId} AND is_deleted = false
+      ORDER BY order_index ASC;
+    `;
+
+    // 4. Normalize order_index using raw SQL if needed
+    if (remainingLessons.length > 0) {
+      const caseStatements = [];
+      const ids = [];
+
+      remainingLessons.forEach((l, i) => {
+        caseStatements.push(`WHEN '${l.id}' THEN ${i}`);
+        ids.push(`'${l.id}'`);
+      });
+
+      const caseSql = caseStatements.join(" ");
+      const idList = ids.join(", ");
+
+      await sql.unsafe(`
+        UPDATE lessons
+        SET order_index = CASE id
+          ${caseSql}
+        END
+        WHERE id IN (${idList});
+      `);
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "Lesson soft-deleted and order normalized.",
+    });
+  } catch (error) {
+    console.error("Error in softDeleteLesson:", error);
+    next(error);
+  }
+};
 
 
 module.exports = {
@@ -203,5 +273,6 @@ module.exports = {
     updateLesson,
     updateOrderLesson,
     updateLessonContent,
-    updateOrAddLessonQuizz
+    updateOrAddLessonQuizz,
+    softDeleteLesson
 }

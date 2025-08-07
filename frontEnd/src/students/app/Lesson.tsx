@@ -8,24 +8,44 @@ import { Button } from "@/components/ui/button";
 import { useLessonDetails } from "@/hook/useLessonDetails";
 import { BookOpen, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { Toaster } from "sonner";
+import { useParams } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
+import useEnroll from "@/hook/useEnroll";
+import  { useState } from "react";
+import CourseCompleteModal from "../components/Course/CourseCompleteModal";
 
 const Lesson = () => {
+  const { courseId, moduleId, lessonId } = useParams();
+  const { user } = useUser();
+  const { enrollmentId } = useEnroll(courseId, user?.id);
+  const [courseCompleted,setCourseCompleted] = useState(false)
+  // Local state for navigation button disabling (so LessonBar doesn't see it)
+  const [clickedNavigationButton, setClickedNavigationButton] = useState({
+    previous: false,
+    next: false,
+  });
+
   const {
     lessonDetail,
     lessonSections,
     quizz,
     completed,
-    setCompleted,
     handleNext,
     handlePrevious,
+    setCompleted,
     loading,
-    enrollmentId,
-    courseId,
-  } = useLessonDetails();
+  } = useLessonDetails(
+    lessonId!,
+    moduleId!,
+    courseId!,
+    enrollmentId!,
+    setClickedNavigationButton // pass setter so hook can update button state
+  );
 
   const Summary = lessonSections?.filter(
     (section) => section.heading === "Summary"
   );
+
   if (loading || !lessonDetail) {
     return (
       <div className="min-h-screen w-full flex justify-center items-center">
@@ -39,11 +59,14 @@ const Lesson = () => {
       key={lessonDetail.slug}
       className="flex flex-row gap-5 overflow-auto max-lg:flex-col"
     >
-      <div className=" max-lg:w-full ">
+      {/* LessonBar only depends on stable props */}
+      <div className="max-lg:w-full">
         <LessonBar enrollmentId={enrollmentId} courseId={courseId} />
       </div>
-      <div className="flex-1 px-5  ">
+
+      <div className="flex-1 px-5">
         <LessonNote />
+
         {/* Lesson Header */}
         <section className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex flex-col p-5 rounded-lg gap-3 mt-16 mb-5">
           <div className="flex flex-row gap-2 text-gray-500 dark:text-gray-400 items-center">
@@ -64,7 +87,9 @@ const Lesson = () => {
 
           <div className="flex flex-wrap gap-4 mt-3">
             <Button
-              disabled={!lessonDetail.previous}
+              disabled={
+                !lessonDetail.previous || clickedNavigationButton.previous
+              }
               variant="outline"
               className="flex items-center border-orange-1 text-orange-1 hover:bg-orange-50 dark:hover:bg-gray-800"
               onClick={handlePrevious}
@@ -74,7 +99,7 @@ const Lesson = () => {
             </Button>
 
             <Button
-              disabled={!lessonDetail.next}
+              disabled={!lessonDetail.next || clickedNavigationButton.next}
               variant="destructive"
               className="flex items-center bg-orange-500 hover:bg-orange-600 text-white dark:text-white"
               onClick={handleNext}
@@ -120,14 +145,22 @@ const Lesson = () => {
         {Summary?.map((lessonSection, index) => (
           <LessonSummary
             key={`summary-${index}`}
-            text={lessonSection?.text }
+            text={lessonSection?.text}
             heading={lessonSection.heading}
             enrollementId={enrollmentId}
             completed={completed}
+            setCourseCompleted={setCourseCompleted}
             setCompleted={setCompleted}
           />
         ))}
       </div>
+      {
+        courseCompleted && <CourseCompleteModal         
+        onClose={() => {
+          setCourseCompleted(false)
+        }}
+        />
+      }
       <Toaster />
     </div>
   );

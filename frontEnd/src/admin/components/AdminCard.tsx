@@ -13,6 +13,8 @@ type AdminCardProps = {
   handleDeleteModule: () => void;
   State: Module | Lesson;
   children: React.ReactNode;
+  loading : boolean
+  manageTitle : string
 };
 
 const AdminCard = ({
@@ -23,6 +25,8 @@ const AdminCard = ({
   handleEditModule,
   handleDeleteModule,
   children,
+  loading,
+  manageTitle
 }: AdminCardProps) => {
   const navigate = useNavigate();
 
@@ -52,7 +56,7 @@ const AdminCard = ({
               size="sm"
               className="dark:border-gray-600 dark:text-gray-200 hover:dark:bg-gray-700"
             >
-              Manage Lessons
+              {manageTitle}
             </Button>
 
             <Button
@@ -66,6 +70,7 @@ const AdminCard = ({
             <Button
               variant="outline"
               size="icon"
+              disabled={loading}
               onClick={handleDeleteModule}
               className="dark:border-gray-600 dark:text-gray-200 hover:dark:bg-gray-700"
             >

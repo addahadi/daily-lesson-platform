@@ -1,22 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Toast } from "@/components/ui/Toast";
-import type { ToastProps } from "@/lib/type";
 import type { QuizzProps } from "@/lib/type";
 import useLessonApiController from "@/students/Api/lesson.Api";
-import { useUser } from "@clerk/clerk-react";
 import { Trophy } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
-  const { user } = useUser();
   const { lessonId, moduleId } = useParams();
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const [toast, setToast] = useState<ToastProps>();
   const { SubmitQuizzAnswer } = useLessonApiController();
-
+  const [loading ,setLoading] = useState(false)
   useEffect(() => {
     if (
       quizz &&
@@ -33,31 +30,28 @@ const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
     try {
       if (
         !lessonId ||
-        !user?.id ||
         !moduleId ||
         !quizz.quizz_id ||
         selectedAnswer === null ||
         selectedAnswer === undefined
-      )
-        return;
-
+      ) return;
       const isAnswerCorrect = selectedAnswer === quizz.correct_option_index;
-
-      await SubmitQuizzAnswer(
+      setLoading(true)
+      const message = await SubmitQuizzAnswer(
         quizz.quizz_id,
-        user.id,
         lessonId,
         selectedAnswer,
         isAnswerCorrect,
         moduleId
       );
-
-      setIsCorrect(isAnswerCorrect);
-      setIsSubmitted(true);
-
-      if (isAnswerCorrect) {
-        setToast({ type: "success", message: "You earned 50XP!" });
+      if(message){
+        if (isAnswerCorrect) {
+          toast.success(message)
+        }
+        setIsCorrect(isAnswerCorrect);
+        setIsSubmitted(true);
       }
+      setLoading(false)
     } catch (err) {
       console.error(err);
     }
@@ -105,6 +99,7 @@ const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
         {!isSubmitted ? (
           <Button
             className="bg-purple-600 hover:bg-purple-700 text-white dark:bg-purple-700 dark:hover:bg-purple-600 w-full sm:w-auto"
+            disabled={loading}
             onClick={handleClick}
           >
             Submit
@@ -135,14 +130,6 @@ const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
           </div>
         )}
       </div>
-
-      {toast && (
-        <Toast
-          type={toast.type}
-          message={toast.message}
-          onClose={() => setToast(undefined)}
-        />
-      )}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import type { NotificationType } from "@/lib/adminType";
 import { handleResponse, toastOnce } from "@/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
@@ -33,22 +34,22 @@ const useNotificationApi = () => {
     }
   }, [getAuthHeader]);
 
-  const getCourseNotifications = useCallback(async () => {
-    const URL = `http://localhost:8090/admin/notifications/`;
+  const getCourseNotifications = useCallback(async (page : number) => {
+    const URL = `http://localhost:8090/admin/notifications?page=${page}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
+      const result = await handleResponse<NotificationType[]>(response);
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
+      if(typeof result === "string"){
+        toastOnce(result)
+        return null
       }
-      if(response.status === 404){
-        return null;
-      }
+      return result      
     } 
-    catch (err) {
-      console.error("Error fetching notifications:", err);
+    catch (err : any) {      
+      toastOnce(err.message)
+      return null
     }
   }, [getAuthHeader]);
 

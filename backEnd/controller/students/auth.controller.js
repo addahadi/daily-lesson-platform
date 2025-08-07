@@ -10,9 +10,28 @@ async function SignUp(requestBody) {
       ON CONFLICT (id) DO NOTHING
       RETURNING *;
     `;
-    return result
+    return result?.length > 0
+      ? { success: true, data: result[0] }
+      : { success: false, error: "User not found or no changes applied" };
 }
 
+async function UpdateUser(requestBody) {
+  const result = await sql`
+    UPDATE users
+    SET 
+      name = ${requestBody.full_name},
+      avatar_url = ${requestBody.image_url},
+      email = ${requestBody.email},
+      role = ${requestBody.role},
+      status = ${requestBody.status}
+    WHERE clerk_id = ${requestBody.clerk_id}
+    RETURNING *;
+  `;
+
+  return result?.length > 0
+    ? { success: true, data: result[0] }
+    : { success: false, error: "User not found or no changes applied" };
+}
 
 
 async function enrollToCourse(req , res , next) {
@@ -36,7 +55,7 @@ async function enrollToCourse(req , res , next) {
 async function checkEnroll(req, res, next) {
   const { courseId } = req.query;
   const userId = req.auth.userId;
-  console.log(courseId)
+  console.log(userId)
   try {
     await sql.begin(async (client) => {
       const checkEnroll = await client`
@@ -48,7 +67,7 @@ async function checkEnroll(req, res, next) {
       if (checkEnroll.length === 0) {
         return res.status(200).json({
           status : false , 
-          action : "Enroll"
+          action : "enroll"
         })
       }
 
@@ -62,7 +81,6 @@ async function checkEnroll(req, res, next) {
         ORDER BY p.started_at DESC
         LIMIT 1
       `;
-      console.log(Continue)
       if (Continue.length === 0) {  
         return await getFirstLesson(client, courseId, res);
       }
@@ -70,7 +88,7 @@ async function checkEnroll(req, res, next) {
       return res.status(200).json({
         status: true,
         data: Continue[0],
-        action: "Continue learning",
+        action: "continue learning",
       });
 
     });
@@ -166,4 +184,4 @@ async function getUserInfo(req ,res , next){
 }
 
 
-module.exports = { SignUp , enrollToCourse  , getEnroll , getUserInfo , getUserAchievments , checkEnroll};
+module.exports = { SignUp , UpdateUser , enrollToCourse  , getEnroll , getUserInfo , getUserAchievments , checkEnroll};

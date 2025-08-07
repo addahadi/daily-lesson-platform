@@ -1,10 +1,10 @@
-import noteApiController from "@/students/Api/note.Api";
+import useNoteApi from "@/students/Api/note.Api";
 import { Button } from "@/components/ui/button";
 import { renderMarkdown } from "@/lib/utils";
-import { useUser } from "@clerk/clerk-react";
 import { Edit2, Edit3, Eye, Move, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const LessonNote = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,15 +15,15 @@ const LessonNote = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragState, setDragState] = useState(false);
   const { lessonId } = useParams();
-  const { user } = useUser();
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const modalRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-
+  const [loading ,setLoading] = useState(false)
+  const {getLessonNote , addNote} = useNoteApi()
+  
+  
   const closeModal = () => {
     setIsModalOpen(false);
-    setTitle("");
-    setContent("");
     setIsPreview(false);
     setPosition({ x: 0, y: 0 });
     setIsDragging(false);
@@ -81,32 +81,39 @@ const LessonNote = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!lessonId || !user?.id) return;
-      const result = await noteApiController().getLessonNote(lessonId, user.id);
-
-      setContent(result[0].content);
-      setTitle(result[0].title);
+      if (!lessonId) return;
+      const userNote = await getLessonNote(lessonId);
+      if(userNote){
+        setContent(userNote?.content);
+        setTitle(userNote.title);  
+      }
     };
     fetchData();
-  }, [lessonId, user]);
+  }, [lessonId]);
 
   async function saveNote() {
-    if (!content || !lessonId || !user?.id) return;
-    console.log(lessonId);
-    const result = await noteApiController().addNote(
+    
+    if (!content || !lessonId) return;
+    
+    console.log(content , lessonId)
+    setLoading(true)
+    const message = await addNote(
       title,
       content,
       lessonId,
-      user.id
     );
-    console.log(result);
+    if(message){
+      toast.success(message)
+
+    }
+    setLoading(false)
   }
 
   return (
     <div>
-      <div className="flex w-full justify-end p-4 fixed top-[70px]  right-10 z-50">
+      <div className="flex w-full justify-end p-4 fixed top-[70px] right-10 z-50">
         <Button
-          className="  rounded-full border-orange-1 text-black-1 bg-orange-100  flex justify-center items-center"
+          className="rounded-full  text-gray-600 bg-orange-400 dark:text-white dark:bg-orange-400"
           variant="outline"
           size="icon"
           onClick={() => {
@@ -114,16 +121,16 @@ const LessonNote = () => {
             setPosition({ x: 0, y: 0 });
           }}
         >
-          <Edit2 className=" w-9 h-9 text-black-1 " />
+          <Edit2 className="w-9 h-9" />
         </Button>
       </div>
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
           <div
             ref={modalRef}
-            className={`bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col ${
+            className={`rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col ${
               isDragging ? "cursor-grabbing" : ""
-            }`}
+            } bg-white dark:bg-gray-900`}
             style={{
               position: "absolute",
               left: position.x,
@@ -135,11 +142,11 @@ const LessonNote = () => {
             <div
               onMouseDown={handleMouseDown}
               ref={headerRef}
-              className="drag-handle flex items-center justify-between p-6 border-b border-gray-200 cursor-grab active:cursor-grabbing select-none"
+              className="drag-handle flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 cursor-grab active:cursor-grabbing select-none"
             >
               <div className="flex items-center gap-3">
-                <Move size={16} className="text-gray-400" />
-                <h2 className="text-xl font-semibold text-gray-800">
+                <Move size={16} className="text-gray-400 dark:text-gray-500" />
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                   {isPreview ? "Preview Note" : "Edit Note"}
                 </h2>
               </div>
@@ -148,8 +155,8 @@ const LessonNote = () => {
                   onClick={togglePreview}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                     isPreview
-                      ? "bg-orange-100 text-orage-1 hover:bg-orange-200"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-orange-100 text-orange-800 dark:bg-orange-300 dark:text-orange-900 hover:bg-orange-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                   }`}
                 >
                   {isPreview ? <Edit3 size={16} /> : <Eye size={16} />}
@@ -158,28 +165,26 @@ const LessonNote = () => {
 
                 <button
                   onClick={closeModal}
-                  className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                 >
                   <X size={20} />
                 </button>
               </div>
             </div>
 
-            {/* Modal Content */}
-
             {!dragState && (
-              <div className=" flex-1 p-6">
-                <div className="">
+              <div className="flex-1 p-6 overflow-auto">
+                <div>
                   {isPreview ? (
                     <div className="h-full flex flex-col">
                       <div className="mb-4">
-                        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                           {title || "Untitled Note"}
                         </h1>
                       </div>
                       <div className="flex-1 overflow-y-auto">
                         <div
-                          className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+                          className="prose prose-gray dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed"
                           dangerouslySetInnerHTML={{
                             __html: content
                               ? renderMarkdown(content)
@@ -190,44 +195,40 @@ const LessonNote = () => {
                     </div>
                   ) : (
                     <div className="h-full flex flex-col gap-4">
-                      <div>
-                        <input
-                          type="text"
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                          placeholder="Title"
-                          className="w-full text-4xl font-bold text-gray-900 placeholder-gray-300 bg-transparent border-none outline-none mb-6 leading-tight"
-                        />
-                      </div>
-
-                      <div className="flex-1 flex flex-col">
-                        <textarea
-                          value={content}
-                          onChange={(e) => setContent(e.target.value)}
-                          placeholder="Tell your note... (Supports markdown: **bold**, *italic*, `code`, # headers)"
-                          className="w-full text-lg text-gray-800 placeholder-gray-400 bg-transparent border-none outline-none resize-none leading-relaxed"
-                          style={{
-                            minHeight: "200px",
-                            lineHeight: "1.58",
-                          }}
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Title"
+                        className="w-full text-4xl font-bold text-gray-900 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-500 bg-transparent border-none outline-none mb-6 leading-tight"
+                      />
+                      <textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="Tell your note... (Supports markdown)"
+                        className="w-full text-lg text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-none outline-none resize-none leading-relaxed"
+                        style={{
+                          minHeight: "200px",
+                          lineHeight: "1.58",
+                        }}
+                      />
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between p-3 border-t mt-4">
-                  <div className="text-sm text-gray-500">
+                <div className="flex items-center justify-between p-3 border-t mt-4 border-gray-200 dark:border-gray-700">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
                     {isPreview ? "Preview Mode" : "Edit Mode"} •{" "}
                     {content.length} characters
                   </div>
                   <div className="flex gap-3">
                     <button
+                      disabled={loading}
                       onClick={() => {
                         saveNote();
                         closeModal();
                       }}
-                      className="px-6 py-2 bg-orange-1 text-white rounded-lg hover:bg-orange-500 transition-colors"
+                      className="px-6 py-2 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition-colors"
                     >
                       Save Note
                     </button>

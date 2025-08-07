@@ -1,12 +1,5 @@
-import {
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Table,
-} from "@/components/ui/table";
-import { Edit, Eye, Search, Trash2, X } from "lucide-react";
+
+import { Edit, Eye, Search, Trash2, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import useUserApi from "../api/user.api";
 import type { UserInfo } from "@/lib/adminType";
@@ -14,6 +7,15 @@ import type { UserInfo } from "@/lib/adminType";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loading";
 import { Badge } from "@/components/ui/badge";
+import EmptyCase from "@/components/empty/EmptyCase";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const UserManagement = () => {
   const { getUsers } = useUserApi();
@@ -22,18 +24,35 @@ const UserManagement = () => {
   const [selectedUser, setSelectedUser] = useState<UserInfo | null>(null);
   const [editingUserId, setEditingUserId] = useState<string>("");
   const [deletingUserId, setDeletingUserId] = useState<string>("");
+  const [showMore, setShowMore] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await getUsers();
-      if (result) {
-        setUsers(result);
-      }
-    };
-    fetchData();
-  }, [getUsers]);
+    fetchUsers(1);
+  }, []);
 
-  const filteredUsers = users.filter(
+  const fetchUsers = async (currentPage: number) => {
+    const result = await getUsers(currentPage);
+    if (result && result.data) {
+      setUsers((prev) =>{
+        if(result.data){
+          const updatedResult = [...prev, ...result.data];
+          return (currentPage === 1 ? result.data : updatedResult)
+        }
+        return prev
+        }
+      );
+      if(result.final) setShowMore(result.final);
+    }
+  };
+
+  const handleShowMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchUsers(nextPage);
+  };
+
+  const filteredUsers = users?.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -48,7 +67,7 @@ const UserManagement = () => {
             User Management
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            Manage and monitor platform users
+            Manage and monitor all registered users on the platform
           </p>
         </div>
 
@@ -94,84 +113,115 @@ const UserManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.map((user) => (
-                <TableRow
-                  key={user.id}
-                  className="border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-                >
-                  <TableCell className="py-4">
-                    <div className="flex flex-col">
-                      <span className="font-medium text-gray-800 dark:text-gray-100">
-                        {user.name}
-                      </span>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {user.email}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={user.role === "admin" ? "default" : "secondary"}
-                      className={
-                        user.role === "admin"
-                          ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700/50"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600"
+              {filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={6}>
+                    <EmptyCase
+                      title={
+                        users.length === 0
+                          ? "No Users Available"
+                          : "No Matches Found"
                       }
-                    >
-                      {user.role}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="secondary"
-                      className={
-                        user.status === "active"
-                          ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700/50"
-                          : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700/50"
+                      icon={<User />}
+                      description={
+                        users.length === 0
+                          ? "There are no users in the system yet."
+                          : "No users matched your search. Try a different keyword."
                       }
-                    >
-                      {user.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">
-                    {user.created_at?.split("T")[0]}
-                  </TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">
-                    27/11/2025
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedUser(user)}
-                        className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    />
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map((user) => (
+                  <TableRow
+                    key={user.id}
+                    className="border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  >
+                    <TableCell className="py-4">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-800 dark:text-gray-100">
+                          {user.name}
+                        </span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {user.email}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          user.role === "admin" ? "default" : "secondary"
+                        }
+                        className={
+                          user.role === "admin"
+                            ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700/50"
+                            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600"
+                        }
                       >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setEditingUserId(user.clerk_id)}
-                        className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                        {user.role}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="secondary"
+                        className={
+                          user.status === "active"
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700/50"
+                            : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700/50"
+                        }
                       >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setDeletingUserId(user.clerk_id)}
-                        className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        {user.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-gray-400">
+                      {user.created_at?.split("T")[0]}
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-gray-400">
+                      27/11/2025
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedUser(user)}
+                          className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditingUserId(user.clerk_id)}
+                          className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDeletingUserId(user.clerk_id)}
+                          className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
+
+        {/* Show More */}
+        {showMore && (
+          <div className="flex justify-center mt-6">
+            <Button onClick={handleShowMore} variant="outline">
+              Show More Users
+            </Button>
+          </div>
+        )}
 
         {/* Modals */}
         {editingUserId && (
@@ -200,6 +250,8 @@ const UserManagement = () => {
     </div>
   );
 };
+
+
 
 // Modal Backdrop Component
 const ModalBackdrop = ({
@@ -246,7 +298,7 @@ const EditModal = ({
 
   return (
     <ModalBackdrop onClose={onClose}>
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full max-w-sm shadow-lg dark:shadow-xl dark:shadow-gray-900/50">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-[400px] max-w-sm shadow-lg dark:shadow-xl dark:shadow-gray-900/50">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
@@ -326,7 +378,7 @@ const UserViewModal = ({
   onClose: () => void;
 }) => (
   <ModalBackdrop onClose={onClose}>
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full max-w-sm shadow-lg dark:shadow-xl dark:shadow-gray-900/50">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-[400px]  shadow-lg dark:shadow-xl dark:shadow-gray-900/50">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
@@ -428,7 +480,7 @@ const DeleteModal = ({
             variant="destructive"
             onClick={handleDelete}
             disabled={loading}
-            className="flex-1"
+            className="flex-1 bg-red-500  dark:text-red-400 dark:bg-red-900"
           >
             {loading ? <LoadingSpinner size={16} thickness={2} /> : "Delete"}
           </Button>

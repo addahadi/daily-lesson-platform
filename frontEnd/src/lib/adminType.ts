@@ -27,8 +27,9 @@ export interface Course {
   img_url: string;
   modulecount: number;
   lessoncount: number;
-  content : string[];
+  content: string[];
   totalduration: number;
+  is_published : boolean
 }
   
 

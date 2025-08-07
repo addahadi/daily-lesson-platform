@@ -26,8 +26,8 @@ const EmptyCase = ({
   return (
     <div className="w-full flex flex-col items-center justify-center py-16 px-4 text-center text-gray-600 dark:text-gray-400">
       {/* Icon inside circle */}
-      <div className="bg-orange-100 dark:bg-orange-300/10 p-4 rounded-full mb-4">
-        <div className="text-orange-500 w-8 h-8">{icon}</div>
+      <div className="bg-orange-100 dark:bg-orange-300/10 p-4 rounded-full mb-4 flex justify-center items-center">
+        <div className="text-orange-500 w-8 h-8 flex justify-center items-center">{icon}</div>
       </div>
 
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">

@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/select";
 import { Filter } from "lucide-react";
 import { useEffect, useState } from "react";
-import CourseCard from "@/students/components/Discover/CourseCard";
-import EmptySearch from "@/students/components/empty/EmptySearch";
+import CourseCard from "../components/Discover/CourseCard";
+import EmptySearch from "@/components/empty/EmptySearch";
 import LoadingSpinner from "@/components/ui/loading";
 import { getCach, setCache } from "@/lib/utils";
 import { CACHE_KEY_DISCOVER } from "@/lib/utils";

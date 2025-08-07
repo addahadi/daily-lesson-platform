@@ -1,12 +1,11 @@
+import React, { useEffect, useState } from "react";
 import useLessonApiController from "@/students/Api/lesson.Api";
 import type { LessonBarProps } from "@/lib/type";
-
-import { useEffect, useState } from "react";
 import LessonsList from "./LessonsList";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const LessonBar = ({
+const LessonBarComponent = ({
   courseId,
   enrollmentId,
 }: {
@@ -27,14 +26,14 @@ const LessonBar = ({
       }
     }
     fetchData();
-  }, [courseId, enrollmentId]);
+  }, [courseId, enrollmentId, getLessonsDetails]);
 
   return (
     <aside className="shrink-0 px-4 py-6 w-full lg:w-[350px] bg-white dark:bg-gray-900 lg:min-h-screen">
       <h1 className="text-gray-900 dark:text-gray-100 font-semibold xl:text-2xl mb-5 lg:text-xl flex flex-row gap-2 items-center">
         {/* Toggle Button only visible on small screens */}
         <Button
-          onClick={() => setExpand(!expand)}
+          onClick={() => setExpand((prev) => !prev)}
           variant="outline"
           className="lg:hidden z-[1000] dark:hover:bg-gray-700"
         >
@@ -47,7 +46,6 @@ const LessonBar = ({
         <span>{CML?.course.title}</span>
       </h1>
 
-      {/* Always visible on lg and up, toggled on smaller screens */}
       <div className={`flex flex-col gap-2 ${!expand ? "max-lg:hidden" : ""}`}>
         {CML?.modules.map((module, index) => (
           <LessonsList key={index} module={module} />
@@ -56,5 +54,7 @@ const LessonBar = ({
     </aside>
   );
 };
+
+const LessonBar = React.memo(LessonBarComponent);
 
 export default LessonBar;

@@ -25,7 +25,7 @@ const useUserApiController = () => {
           body: JSON.stringify(requestBody),
         });
 
-        const data = await handleResponse<{ data: any }>(response);
+        const data = await handleResponse<any>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;

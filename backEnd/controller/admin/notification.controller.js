@@ -96,11 +96,15 @@ async function getCoursesIds(req, res, next) {
 
 // GET /notifications
 async function getAllNotifications(req, res, next) {
+      const page = req.query.page || 1;
+      const limit = 1;
+      const offset = (page - 1) * limit;
+
   try {
     const notifications = await sql`
             SELECT * FROM notifications
+            LIMIT ${limit} OFFSET ${offset}
         `;
-
     if (notifications.length === 0) {
       return res.status(404).json({
         status: false,
@@ -108,9 +112,17 @@ async function getAllNotifications(req, res, next) {
       });
     }
 
+    const [{ count }] = await sql`
+      SELECT COUNT(*)::int as count FROM notifications
+    `;
+
+    const totalPages = Math.ceil(count / limit);
+    const isFinalPage = page >= totalPages;
+
     res.status(200).json({
       status: true,
       data: notifications,
+      final : !isFinalPage
     });
   } catch (err) {
     next(err);

@@ -7,7 +7,8 @@ const {
   SubmitQuizzAnswer,
   getNextLesson,
   MarkAsComplete,
-  getLessonsDetails
+  getLessonsDetails,
+  markLessonComplete
 } = require("../../controller/students/lesson.controller");
 
 const { validate } = require("../../middleware/validate.middleware");
@@ -36,7 +37,7 @@ router.post(
     {
       enrollmentId: "string",
       moduleId: "string",
-      lessonId: "string", // it's slug
+      lessonId: "string",
     },
     "body"
   ),
@@ -47,9 +48,8 @@ router.post(
   "/answer-submit",
   validate(
     {
-      quizz_id: "number",
+      quizz_id: "string",
       lesson_id: "string", // slug
-      user_id: "string",
       selected_option: "number",
       correct: "boolean",
       module_id: "string",
@@ -74,11 +74,10 @@ router.post(
       lessonSlug: "string",
       enrollmentId: "string",
       moduleId: "string",
-      userId: "string",
     },
     "body"
   ),
-  MarkAsComplete
+  markLessonComplete
 );
 
 router.get(

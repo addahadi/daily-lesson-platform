@@ -1,4 +1,5 @@
 import type { Course } from "@/lib/adminType";
+import { handleResponse, toastOnce } from "@/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 
 const useCourseApi = () => {
@@ -11,20 +12,22 @@ const useCourseApi = () => {
     };
   };
 
-  const getCourses = async () => {
-    const URL = `http://localhost:8090/admin/course/`;
+  const getCourses = async (page : number) => {
+    const URL = `http://localhost:8090/admin/course?page=${page}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
-      }
-      else if (response.status === 404) {
+      
+      const result = await handleResponse<Course[]>(response)
+
+      if(typeof result === "string"){
+        toastOnce(result)
         return null
       }
-    } catch (err) {
-      console.error(err);
+      return result
+    } catch (err: any) {
+      toastOnce(err.message)
+      return null
     }
   };
   const UpdateCourse = async (courseData: Partial<Course>) => {
@@ -48,9 +51,30 @@ const useCourseApi = () => {
     }
   }
 
+
+
+  const ToggleCourseView = async (courseId: string) => {
+    const URL = `http://localhost:8090/admin/course/${courseId}`;
+    try {
+      const headers = await getAuthHeader();
+      const response = await fetch(URL, {
+        method: "PATCH",
+        headers,
+      });
+      const data = await handleResponse<any>(response);
+      if (typeof data === "string") {
+        toastOnce(data);
+        return null;
+      }
+      return data.message;
+    } catch (err: any) {
+      toastOnce(err.message || "failed to hide the course");
+    }
+  };
   return {
     getCourses,
-    UpdateCourse
+    UpdateCourse,
+    ToggleCourseView,
   };
 };
 

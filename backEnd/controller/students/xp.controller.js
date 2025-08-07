@@ -1,14 +1,17 @@
 const sql = require("../../db");
 
 async function addXp(client, source, userId, xp) {
+
   await client`
-    INSERT INTO xp_logs (user_id, source,  xp_earned)
-    VALUES (${userId}, ${source},  ${xp})
+    INSERT INTO xp_logs (user_id, source, xp_earned)
+    VALUES (${userId}, ${source}, ${xp})
   `;
 
   await client`
     UPDATE users
-    SET xp = xp + ${xp}
+    SET 
+      xp = xp + ${xp},
+      level = FLOOR((xp + ${xp}) / 100) + 1
     WHERE clerk_id = ${userId}
   `;
 }
@@ -74,7 +77,6 @@ async function checkAchievements(client, enrollment_id, user_id) {
     }
   }
 }
-
 async function tryUnlockAchievement(client, user_id, code) {
   const achievement = await client`
     SELECT * FROM achievements WHERE code = ${code}
@@ -97,12 +99,18 @@ async function tryUnlockAchievement(client, user_id, code) {
   if (achievement.xp_reward > 0) {
     await client`
       UPDATE users
-      SET xp = xp + ${achievement.xp_reward}
+      SET 
+        xp = xp + ${achievement.xp_reward},
+        level = FLOOR((xp + ${achievement.xp_reward}) / 100) + 1
       WHERE clerk_id = ${user_id}
+    `;
+
+    await client`
+      INSERT INTO xp_logs (user_id, source, xp_earned)
+      VALUES (${user_id}, ${code}, ${achievement.xp_reward})
     `;
   }
 }
-
 async function getXpLogs(req, res) {
   const userId = req.auth.userId
   try {

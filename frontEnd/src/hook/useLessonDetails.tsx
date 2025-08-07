@@ -1,25 +1,35 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-import useEnroll from "@/hook/useEnroll";
 import useLessonApiController from "@/students/Api/lesson.Api";
-import type {QuizzProps} from "@/lib/type";
-import type { LessonSectionProps } from "@/lib/type";
+import type {
+  LessonDataType,
+  QuizzProps,
+  LessonSectionProps,
+} from "@/lib/type";
 
-export function useLessonDetails() {
-  const { courseId, moduleId, lessonId } = useParams();
+export function useLessonDetails(
+  lessonId: string,
+  moduleId: string,
+  courseId: string,
+  enrollmentId: string,
+  setClickedNavigationButton: React.Dispatch<
+    React.SetStateAction<{ previous: boolean; next: boolean }>
+  >
+) {
   const { user } = useUser();
   const navigate = useNavigate();
-  const { enrollmentId } = useEnroll(courseId, user?.id);
 
-  const [lessonDetail, setLessonDetail] = useState<any>();
+  const [lessonDetail, setLessonDetail] = useState<LessonDataType>();
   const [lessonSections, setLessonSections] = useState<LessonSectionProps[]>();
   const [quizz, setQuizz] = useState<QuizzProps>();
   const [completed, setCompleted] = useState<boolean | undefined>(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const {getLessonDetails , startLesson , getNextLesson} = useLessonApiController()
- 
+
+  const { getLessonDetails, startLesson, getNextLesson } =
+    useLessonApiController();
+
   useEffect(() => {
     async function fetchLessonDetails() {
       if (!lessonId || !user?.id || !moduleId) return;
@@ -30,92 +40,78 @@ export function useLessonDetails() {
       setError(null);
       setLoading(true);
 
-      try {
-        const data = await getLessonDetails(
-          lessonId,
-          moduleId
-        );
-        console.log(data)
-        const {
-          content : {sections},
-          question,
-          options,
-          correct_option_index,
-          quizz_id,
-          selected_option_index,
-          is_correct,
-        } = data;
+      const data = await getLessonDetails(lessonId, moduleId);
+      if (!data) return;
 
-        setLessonDetail(data);
-        
-        setLessonSections(sections);
+      const {
+        content: { sections },
+        quizz,
+      } = data;
+      setLessonDetail(data);
+      setLessonSections(sections);
+      setLoading(false);
+
+      if (quizz) {
         setQuizz({
-          question,
-          options,
-          correct_option_index,
-          quizz_id,
-          selected_option_index,
-          is_correct,
+          question: quizz.question,
+          options: quizz.options,
+          correct_option_index: quizz.correct_option_index,
+          quizz_id: quizz.quizz_id,
+          selected_option_index: quizz.selected_option_index,
+          is_correct: quizz.is_correct,
         });
-      } catch (err: any) {
-        console.error("Error fetching lesson details:", err);
-        setError("Failed to load lesson details");
-      } finally {
-        setLoading(false);
       }
     }
-
     fetchLessonDetails();
-  }, [lessonId, user , getLessonDetails]);
+  }, [lessonId, moduleId, user, getLessonDetails]);
 
   useEffect(() => {
     async function startLessonProgress() {
       if (!(lessonId && moduleId && enrollmentId)) return;
-
       try {
-        const response = await startLesson(
-          enrollmentId,
-          moduleId,
-          lessonId
-        );
-        setCompleted(response.completed);
+        const isCompleted = await startLesson(enrollmentId, moduleId, lessonId);
+        if (isCompleted) setCompleted(isCompleted);
       } catch (err) {
         console.error("Error starting lesson progress:", err);
       }
     }
-
     startLessonProgress();
-  }, [enrollmentId, moduleId, lessonId , startLesson]);
+  }, [enrollmentId, moduleId, lessonId, startLesson]);
 
   const handlePrevious = async () => {
-    if (!lessonDetail || !moduleId) return;
+    if (!lessonDetail?.order_index || !moduleId) return;
     try {
-      const { result } = await getNextLesson(
-        lessonDetail.order_index - 1,
+      setClickedNavigationButton((prev) => ({ ...prev, previous: true }));
+      const prevSlug = await getNextLesson(
+        parseInt(lessonDetail.order_index) - 1,
         moduleId
       );
       navigate(
-        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
+        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${prevSlug}`
       );
+      setClickedNavigationButton((prev) => ({ ...prev, previous: false }));
     } catch (err) {
       console.error("Failed to load previous lesson:", err);
     }
   };
 
   const handleNext = async () => {
-    if (!lessonDetail || !moduleId) return;
+    if (!lessonDetail?.order_index || !moduleId) return;
     try {
-      const { result } = await getNextLesson(
-        lessonDetail.order_index + 1,
+      setClickedNavigationButton((prev) => ({ ...prev, next: true }));
+      const nextSlug = await getNextLesson(
+        parseInt(lessonDetail.order_index) + 1,
         moduleId
       );
       navigate(
-        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${result[0].slug}`
+        `/dashboard/course/${courseId}/module/${moduleId}/lesson/${nextSlug}`
       );
+      setClickedNavigationButton((prev) => ({ ...prev, next: false }));
     } catch (err) {
       console.error("Failed to load next lesson:", err);
     }
   };
+
   return {
     lessonDetail,
     lessonSections,
@@ -126,7 +122,5 @@ export function useLessonDetails() {
     handleNext,
     loading,
     error,
-    enrollmentId,
-    courseId,
   };
 }

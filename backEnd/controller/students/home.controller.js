@@ -7,7 +7,7 @@ async function getEnrolledCourses(req, res, next) {
       SELECT c.title, c.id course_id , e.id as enrollment_id , count(c.id) as total_courses
       FROM courses c
       JOIN enrollments e ON e.course_id = c.id
-      WHERE  e.user_id = ${userId}
+      WHERE e.user_id = ${userId} AND c.is_published = TRUE
       GROUP BY c.title , c.id , e.id`;
 
     if (response.length === 0) {
@@ -52,10 +52,10 @@ async function getTotalLessons(req, res, next) {
       SELECT 
         (SELECT COUNT(*) 
          FROM modules m
-         JOIN lessons l ON m.id = l.topic_id
+         JOIN lessons l ON m.id = l.topic_id AND l.is_deleted = false
          WHERE m.course_id IN (
            SELECT course_id FROM enrollments WHERE user_id = ${userId}
-         )) AS total_lessons,
+         )) AS total_lessons AND m.is_deleted = false ,  
 
         (SELECT COUNT(*) 
          FROM lesson_progress lp
@@ -108,23 +108,33 @@ async function getNextLesson(req, res, next) {
   const { courseId, enrollmentId } = req.query;
   try {
     const lessons = await sql`
-      SELECT l.duration_minutes , l.level , l.topic_id as module_id , l.id as lesson_id , l.slug
+      SELECT 
+        l.duration_minutes, 
+        l.level, 
+        l.topic_id AS module_id, 
+        l.id AS lesson_id, 
+        l.slug
       FROM lessons l
-      JOIN modules m ON l.topic_id = m.id
-      LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.enrollment_id = ${enrollmentId}
-      WHERE m.course_id = ${courseId}
+      JOIN modules m ON l.topic_id = m.id AND m.is_deleted = false
+      LEFT JOIN lesson_progress lp 
+        ON l.id = lp.lesson_id AND lp.enrollment_id = ${enrollmentId}
+      WHERE 
+        m.course_id = ${courseId}
+        AND l.is_deleted = false
         AND (lp.completed IS NULL OR lp.completed = false)
       ORDER BY m.order_index, l.order_index
-      LIMIT 1`;
+      LIMIT 1;
+    `;
 
     const progress = await sql`
       SELECT 
-        COUNT(m.id) as total_modules,
-        COUNT(mp.id) as total_progressed_modules,
-        COUNT(mp.progress) as progress_count         
-      FROM modules m         
-      LEFT JOIN module_progress mp ON mp.module_id = m.id AND mp.enrollment_id = ${enrollmentId}
-      WHERE m.course_id = ${courseId}`;
+        COUNT(*) FILTER (WHERE m.is_deleted = false) AS total_modules,
+        COUNT(mp.id) AS total_progressed_modules
+      FROM modules m
+      LEFT JOIN module_progress mp 
+        ON mp.module_id = m.id AND mp.enrollment_id = ${enrollmentId}
+      WHERE m.course_id = ${courseId};
+    `;
 
     if (lessons.length === 0) {
       return res.status(404).json({

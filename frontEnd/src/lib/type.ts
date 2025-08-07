@@ -96,7 +96,7 @@ export type LessonSectionProps  = {
 export interface LessonCardProps {
   lesson_id: string;
   title: string;
-  lesson_slug: string;
+  slug: string;
   duration_minutes: string;
   level: string;
   order_index? : string
@@ -125,6 +125,10 @@ export interface QuizzProps {
 
 export type Lesson = Pick<LessonCardProps, "title" | "order_index"> & {slug : string , completed : boolean};
 
+export type LessonDataType = LessonCardProps & {content: {sections :LessonSectionProps[]}} & {quizz : QuizzProps|null} & {
+  previous : boolean
+  next : boolean
+}
 export interface LessonBarProps {
   course: Pick<CourseCardProps, "title" | "slug">;
   modules: Array<ModuleCardProps & { lessons: Lesson[] }>;

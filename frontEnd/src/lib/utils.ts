@@ -105,6 +105,8 @@ type ApiResponse<T> = {
   data? : T 
   message? : string
   status : boolean
+  final? : boolean
+  action? : string
 } | string 
 
 

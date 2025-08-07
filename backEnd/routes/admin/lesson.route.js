@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllLessons, updateOrderLesson, updateLesson, createUpdateLesson, updateLessonContent, updateOrAddLessonQuizz } = require('../../controller/admin/lesson.controller');
+const { getAllLessons, updateOrderLesson, updateLesson, createUpdateLesson, updateLessonContent, updateOrAddLessonQuizz, softDeleteLesson } = require('../../controller/admin/lesson.controller');
 
 
 
@@ -11,5 +11,8 @@ router.put("/order/:moduleId" , updateOrderLesson)
 router.put("/:lessonId" , updateLesson);
 router.put("/content/:lessonId" , updateLessonContent)
 router.put("/quizz/:lessonId" , updateOrAddLessonQuizz)
+router.put("/delete/:lessonId", softDeleteLesson)
+
+
 
 module.exports = router;

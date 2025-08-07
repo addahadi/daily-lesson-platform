@@ -1,4 +1,4 @@
-import type { Module } from "@/lib/adminType";
+import { handleResponse, toastOnce } from "@/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 
 const useModuleApi = () => {
@@ -90,14 +90,38 @@ const useModuleApi = () => {
     catch (err) {
       console.error(err);
     }
-  }
+  };
 
-;
+
+  const deleteModule = async (moduleId : string) => {
+        const URL = `http://localhost:8090/admin/course/modules/${moduleId}`;
+        try {
+          const headers = await getAuthHeader();
+          const res = await fetch(URL, {
+            method: "DELETE",
+            headers: {
+              ...headers,
+              "Content-Type": "application/json",
+            },
+          });
+          
+          const data = await handleResponse<any>(res)
+          if (typeof data === "string") {
+            toastOnce(data);
+            return null;
+          }
+          return data.message
+        } catch (err : any) {
+          toastOnce(err.message || "Failed to delete the module");
+          return null;
+        }
+    }
     return {
         getCourseModules,
         createModule ,
         updateModule, 
-        updateModuleOrder
+        updateModuleOrder,
+        deleteModule
   };
 };
 

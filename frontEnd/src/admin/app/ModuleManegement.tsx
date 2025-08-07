@@ -194,6 +194,7 @@ const ModuleManagement = () => {
                         module={module}
                         course_id={course.id}
                         setEditModel={setEditModule}
+                        setModules={setModules}
                       />
                     </DraggableAdminCard>
                   ))}

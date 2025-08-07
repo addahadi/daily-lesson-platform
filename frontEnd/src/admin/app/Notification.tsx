@@ -6,7 +6,7 @@ import React, {
   type SetStateAction,
 } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
+import { Bell, Plus, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
@@ -21,35 +21,49 @@ import { Textarea } from "@/components/ui/textarea";
 import useNotificationApi from "../api/notification";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import EmptyCase from "@/components/empty/EmptyCase";
 
 const Notification = () => {
   const [isCreate, setIsCreate] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [noNotifications, setNoNotifications] = useState(false);
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [Edit , setEdit] = useState<NotificationType | null>(null)
   const { getCourseNotifications, deleteNotification , createUserNotification} = useNotificationApi();
+  const [page , setPage] = useState(1)
+  const [showMore , setShowMore] = useState(false)
+  const fetchNotifications = async (currentPage: number) => {
+    setLoading(true);
+    const result = await getCourseNotifications(currentPage);
+    if (result && result.data) {
+      console.log(result)
+      setNotifications((prev) => {
+        if (result.data && prev) {
+          const updatedResult = [...prev, ...result.data];
+          return currentPage === 1 ? result.data : updatedResult;
+        }
+        return prev;
+      });
 
+      if (result.final !== undefined) setShowMore(result.final);
+      setLoading(false);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      setLoading(true);
-      const data = await getCourseNotifications();
-      if (data && data.length > 0) {
-        setNotifications(data);
-        setNoNotifications(false);
-      } else {
-        setNotifications([]);
-        setNoNotifications(true);
-      }
-      setLoading(false)
-    };
-    fetchNotifications()
-  },[getCourseNotifications])
+    fetchNotifications(1);
+  }, [getCourseNotifications]);
 
+  const handleShowMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchNotifications(nextPage);
+  };
+
+
+  
   const handleNotificationCreated = (newNotification: NotificationType) => {
     setNotifications((prev) => [newNotification, ...prev]);
-    setNoNotifications(false);
     setIsCreate(false);
   };
 
@@ -106,7 +120,10 @@ const Notification = () => {
             <CreateNotification
               setIsCreate={setIsCreate}
               Edit={Edit}
-              close={() => {setIsCreate(false) ; setEdit(null)}}
+              close={() => {
+                setIsCreate(false);
+                setEdit(null);
+              }}
               onNotificationCreated={handleNotificationCreated}
               onNotificationUpdated={handleNotificationUpdated}
             />
@@ -119,22 +136,31 @@ const Notification = () => {
                 Loading notifications...
               </div>
             </div>
-          ) : noNotifications ? (
-            <div className="flex justify-center items-center py-8">
-              <div className="text-muted-foreground">
-                No notifications found
-              </div>
-            </div>
+          ) : notifications.length === 0 ? (
+            <EmptyCase
+              title="No Notifications Yet"
+              description="You haven’t create any notifications to users. When you do, they’ll appear here for tracking and management."
+              icon={
+                <Bell className="w-6 h-6" />
+              }
+            />
           ) : (
             <NotificationList
               notifications={notifications}
               OpenEdit={setEdit}
               onDelete={handleDeleteNotification}
-              createUserNotification = {createUserNotification}
+              createUserNotification={createUserNotification}
             />
           )}
         </div>
       </section>
+      {showMore && (
+        <div className="flex justify-center mt-6">
+          <Button onClick={handleShowMore} variant="outline">
+            Show More Users
+          </Button>
+        </div>
+      )}
       <Toaster />
     </div>
   );

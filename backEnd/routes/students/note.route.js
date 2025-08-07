@@ -11,29 +11,24 @@ const {
 const { validate } = require("../../middleware/validate.middleware");
 
 const addNoteSchema = {
-  title: "string",
   content: "string",
   lessonId: "string", // slug
-  userId: "string",
 };
 
 const lessonNoteParamsSchema = {
   lessonId: "string",
-  userId: "string",
 };
 
 const getAllNotesQuerySchema = {
-  userId: "string",
   page: "number",
 };
 
 const deleteNoteSchema = {
-  userId: "string",
   lessonId: "string",
 };
 
 router.get(
-  "/lesson-note/:lessonId/:userId",
+  "/lesson-note/:lessonId",
   validate(lessonNoteParamsSchema, "params"),
   getLessonNote
 );
@@ -46,6 +41,6 @@ router.get(
   getAllNotes
 );
 
-router.delete("/delete-note", validate(deleteNoteSchema, "query"), deleteNote);
+router.delete("/delete-note/:lessonId", validate(deleteNoteSchema, "params"), deleteNote);
 
 module.exports = router;

@@ -1,3 +1,5 @@
+import type { UserInfo } from "@/lib/adminType";
+import { handleResponse, toastOnce } from "@/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
 
@@ -12,18 +14,20 @@ const useUserApi = () => {
     };
   }, [getToken]);
 
-  const getUsers = useCallback(async () => {
-    const URL = `http://localhost:8090/admin/user/`;
+  const getUsers = useCallback(async (page : number) => {
+    const URL = `http://localhost:8090/admin/user?page=${page}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
-
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
+      const result = await handleResponse<UserInfo[]>(response)
+      if(typeof result === "string"){
+        toastOnce(result)
+        return null
       }
-    } catch (err) {
-      console.error("getUsers error:", err);
+      return result
+    } catch (err:any) {
+      toastOnce(err.message)
+      return null
     }
   }, [getAuthHeader]);
 

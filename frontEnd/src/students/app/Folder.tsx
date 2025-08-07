@@ -6,7 +6,7 @@ import LoadingSpinner from "@/components/ui/loading";
 import type { FolderType } from "@/lib/type";
 import { getCach, setCache } from "@/lib/utils";
 import useFolderApiController from "@/students/Api/folder.Api";
-import EmptyCase from "@/students/components/empty/EmptyCase";
+import EmptyCase from "@/components/empty/EmptyCase";
 import FolderCard from "@/students/components/library/FolderCard";
 import { Folder, Plus, Save, X } from "lucide-react";
 import { useEffect, useState, type SetStateAction } from "react";

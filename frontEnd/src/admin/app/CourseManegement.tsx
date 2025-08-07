@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
+import { BookCopyIcon, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import AdminCourseCard from "../components/AdminCourseCard";
 import type { Course } from "@/lib/adminType";
@@ -11,24 +11,45 @@ import LoadingSpinner from "@/components/ui/loading";
 import uploadImageToCloudinary from "../api/Cloudinary";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
+import EmptyCase from "@/components/empty/EmptyCase";
 
 const CourseManegement = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
   const [editedCourse, setEditedCourse] = useState<Course | null>(null);
   const [isCreate, setIsCreate] = useState(false);
-
+  const [page , setPage] = useState(1);
+  const [showMore , setShowMore] = useState(false)
   const { getCourses } = useCourseApi();
 
+  
+  const fetchCourses = async (currentPage: number) => {
+    setLoading(true);
+    const result = await getCourses(currentPage);
+    if (result && result.data) {
+      setCourses((prev) => {
+        if (result.data) {
+          const updatedResult = [...prev, ...result.data];
+          return currentPage === 1 ? result.data : updatedResult;
+        }
+        return prev;
+      });
+      console.log(result)
+      if (result.final !== undefined) setShowMore(result.final);
+      setLoading(false)
+    }
+    setLoading(false)
+  };
+  
   useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      const data = await getCourses();
-      setCourses(data || []);
-      setLoading(false);
-    };
-    fetchCourses();
+    fetchCourses(1);
   }, []);
+
+  const handleShowMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchCourses(nextPage);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 text-gray-900 dark:text-gray-100">
@@ -55,16 +76,11 @@ const CourseManegement = () => {
           <LoadingSpinner size={60} />
         </div>
       ) : courses.length === 0 ? (
-        <div className="flex justify-center items-center h-[60vh]">
-          <div className="text-center">
-            <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
-              No courses found
-            </p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">
-              Create your first course to get started
-            </p>
-          </div>
-        </div>
+        <EmptyCase
+          icon={<BookCopyIcon className=" w-6 h-6" />}
+          title="No courses found"
+          description="Create your first course to get started"
+        />
       ) : (
         <div className="mt-8">
           {(editedCourse || isCreate) && (
@@ -91,6 +107,14 @@ const CourseManegement = () => {
           </section>
         </div>
       )}
+      {showMore && (
+        <div className="flex justify-center mt-6">
+          <Button onClick={handleShowMore} variant="outline">
+            Show More Users
+          </Button>
+        </div>
+      )}
+      <Toaster />
     </div>
   );
 };

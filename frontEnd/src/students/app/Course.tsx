@@ -8,6 +8,7 @@ import useUserApiController from "@/students/Api/user.Api";
 import { useCourseAndEnrollment } from "@/hook/useFetchedData";
 import { Toaster } from "@/components/ui/sonner";
 import LoadingSpinner from "@/components/ui/loading";
+import { toast } from "sonner";
 
 
 
@@ -23,19 +24,21 @@ const Course = () => {
   const navigate = useNavigate();
 
   async function Enroll() {
+    console.log(buttonAction)
     switch (buttonAction) {
       case "enroll":
         if (!slug || !user?.id) return;
         setLoading(true);
-        console.log(user.id);
+
         const result = await EnrollToCourse(slug, user?.id);
         setLoading(false);
-        if (result) {
+        if (result && result.action) {
           setButtonAction(result.action);
           setUrl(result.data);
+          toast.success(result.message)
         }
         break;
-      case "Continue learning":
+      case "continue learning":
         navigate(
           `/dashboard/course/${CourseId}/module/${url?.module_id}/lesson/${url?.lesson_id}`
         );

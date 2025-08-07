@@ -3,7 +3,6 @@ import {
   BookCheck,
   ChartSpline,
   LayoutDashboard,
-  Settings,
   User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -12,7 +11,7 @@ const navigationItems = [
   {
     name: "Overview",
     icon: LayoutDashboard,
-    path: "/admin/welcom",
+    path: "/admin/",
   },
   {
     name: "Lesson Management",
