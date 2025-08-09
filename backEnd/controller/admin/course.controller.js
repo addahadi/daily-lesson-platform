@@ -282,7 +282,6 @@ const softDeleteModule = async (req, res, next) => {
   const { moduleId } = req.params;
 
   try {
-    // 1. Get the course_id for the module
     const [module] = await sql`
       SELECT course_id
       FROM modules

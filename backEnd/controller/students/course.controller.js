@@ -1,5 +1,13 @@
 const sql = require("../../db");
 
+
+
+
+
+
+
+
+
 async function getAllCourses(req, res, next) {
   const userId = req.auth.userId;
   try {

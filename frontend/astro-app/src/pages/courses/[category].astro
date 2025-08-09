@@ -1,0 +1,80 @@
+---
+
+import {availableCategories} from "../../data/category.ts"
+import {handleResponse , toastOnce} from "../../utils/util.ts"
+import type {CourseCardProps} from "../../../../packages/sharedType"
+
+export  const getStaticPaths = (() => {    
+    return availableCategories.map((category) => {
+            return {
+                params :{category : category}
+            }
+        })
+}) 
+
+const {category} = Astro.params
+
+const fetchCoursesApi = async (category: string) => {
+  try {
+    const response = await fetch(`http://localhost:8090/public/courses/category/${category}`, {
+      method: "GET",
+    });
+
+    const data = await handleResponse<CourseCardProps[]>(response);
+
+    if (typeof data === "string") {
+      // Avoid toast during SSR
+      if (typeof window !== "undefined") {
+        toastOnce(data);
+      }
+      return null;
+    }
+
+    return data.data;
+  } catch (err: any) {
+    if (typeof window !== "undefined") {
+      toastOnce(err.message || "Something went wrong");
+    }
+    return null;
+  }
+}
+
+
+let Courses :  CourseCardProps[] = []
+const fetchCourse = async  () => {
+    const result = await fetchCoursesApi(category)
+    if(result){
+        Courses = result
+    }
+}
+
+console.log(Courses)
+
+fetchCourse()
+
+---
+
+
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{category}</title>
+	</head>
+	<body>
+
+        <div>hihihi</div>
+        {
+            Courses?.map((course) => {
+                return (
+                    <div>
+                        {course.title}
+                    </div>
+                )
+            })
+        }
+	</body>
+</html>

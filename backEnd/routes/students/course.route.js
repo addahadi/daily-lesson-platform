@@ -7,6 +7,7 @@ const {
   getCourseModules,
   getFilteredCourses,
   getModuleLessons,
+  getCoursesByCategory,
 } = require("../../controller/students/course.controller");
 const router = express.Router()
 
@@ -29,5 +30,8 @@ router.get("/getlessons/:moduleId" , (req , res) => {
 })
 
 router.get("/filtered-courses" , getFilteredCourses )
+
+router.get("/category/:categoryId" , getCoursesByCategory)
+
 
 module.exports = router

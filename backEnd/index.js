@@ -6,7 +6,14 @@ const app = express();
 const { requireAuth } = require("@clerk/express");
 
 
-// Import routes
+
+
+// public routes
+
+const publicCourseRoute = require("../backEnd/routes/public/course.route")
+
+
+// student routes
 const authRoutes = require("../backEnd/routes/students/auth.route");
 const courseRoutes = require("../backEnd/routes/students/course.route");
 const lessonRoutes = require("../backEnd/routes/students/lesson.route");
@@ -42,6 +49,8 @@ app.use(
 app.use(express.json());
 
 // API routes
+
+app.use("/public/course" , publicCourseRoute)
 app.use("/auth" , requireAuth(), authRoutes);
 app.use("/course" , requireAuth(), courseRoutes);
 app.use("/lesson" , requireAuth(), lessonRoutes);
