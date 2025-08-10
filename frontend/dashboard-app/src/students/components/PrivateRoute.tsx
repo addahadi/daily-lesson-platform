@@ -1,16 +1,15 @@
 
 import { SignedIn , SignedOut   } from "@clerk/clerk-react";
 import { Navigate } from "react-router-dom";
-import LandingPage from "../../students/components/LandingPage";
 const PrivateRoute = () => (
-    <>
-      <SignedIn>
-        <Navigate to="/dashboard" />
-      </SignedIn>
-      <SignedOut>
-        <LandingPage />
-      </SignedOut>
-    </>
-  );
+  <>
+    <SignedIn>
+      <Navigate to="/dashboard" />
+    </SignedIn>
+    <SignedOut>
+      <Navigate to="http://localhost:4321/" replace />
+    </SignedOut>
+  </>
+);
 
 export default PrivateRoute

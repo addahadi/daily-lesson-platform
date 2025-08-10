@@ -35,7 +35,10 @@ const notificationRouteAdmin = require("../backEnd/routes/admin/notification.rou
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin:
+      process.env.FRONTEND_URL ||
+      "http://localhost:5173" ||
+      "http://localhost:4321",
     credentials: true,
   })
 );
@@ -50,7 +53,7 @@ app.use(express.json());
 
 // API routes
 
-app.use("/public/course" , publicCourseRoute)
+app.use("/public/courses" , publicCourseRoute)
 app.use("/auth" , requireAuth(), authRoutes);
 app.use("/course" , requireAuth(), courseRoutes);
 app.use("/lesson" , requireAuth(), lessonRoutes);

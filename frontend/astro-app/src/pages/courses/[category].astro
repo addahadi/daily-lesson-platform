@@ -1,35 +1,42 @@
 ---
 
-import {availableCategories} from "../../data/category.ts"
-import {handleResponse , toastOnce} from "../../utils/util.ts"
-import type {CourseCardProps} from "../../../../packages/sharedType"
+import { categorySlugs } from "../../data/category.ts";
 
-export  const getStaticPaths = (() => {    
-    return availableCategories.map((category) => {
-            return {
-                params :{category : category}
-            }
-        })
-}) 
+import '../../../global.css';
 
-const {category} = Astro.params
+import { handleResponse, toastOnce } from "../../utils/util.ts";
+import type { CourseCardProps } from "../../../../packages/sharedType";
+import Navbar from "../../components/Navbar.astro";
+import CourseCard from "../../components/CourseCard.astro";
+
+export const getStaticPaths = () => {
+  return categorySlugs.map((category:string) =>  {
+    return {
+      params : {category}
+    }    
+
+  });
+};
+
+const { category } = Astro.params;
 
 const fetchCoursesApi = async (category: string) => {
   try {
-    const response = await fetch(`http://localhost:8090/public/courses/category/${category}`, {
-      method: "GET",
+    const response = await fetch(`http://localhost:8090/public/courses/category/${category}` , {
+      method : "GET",
+      headers : {
+        "Content-Type": "application/json",
+      }
     });
+    console.log("Fetch status:", response.status);
 
     const data = await handleResponse<CourseCardProps[]>(response);
-
     if (typeof data === "string") {
-      // Avoid toast during SSR
       if (typeof window !== "undefined") {
         toastOnce(data);
       }
       return null;
     }
-
     return data.data;
   } catch (err: any) {
     if (typeof window !== "undefined") {
@@ -37,44 +44,44 @@ const fetchCoursesApi = async (category: string) => {
     }
     return null;
   }
-}
+};
 
-
-let Courses :  CourseCardProps[] = []
-const fetchCourse = async  () => {
-    const result = await fetchCoursesApi(category)
-    if(result){
-        Courses = result
-    }
-}
-
+const Courses: CourseCardProps[] = (await fetchCoursesApi(category)) || [];
 console.log(Courses)
-
-fetchCourse()
-
 ---
 
 
-
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{category}</title>
-	</head>
-	<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{category} Courses | Learning DZ</title>
+  </head>
+  <body class="bg-white text-gray-900">
+    <Navbar client:idle />
 
-        <div>hihihi</div>
-        {
-            Courses?.map((course) => {
-                return (
-                    <div>
-                        {course.title}
-                    </div>
-                )
-            })
-        }
-	</body>
+    <!-- Hero Section -->
+    <section class="py-12 text-center bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+      <div class="max-w-4xl mx-auto px-4">
+        <h1 class="text-4xl font-bold capitalize">{category} Courses</h1>
+        <p class="mt-3 text-lg opacity-90">
+          Explore  lessons and courses to master {category}.
+        </p>
+      </div>
+    </section>
+    <!-- Courses Grid -->
+    <section class="py-16 max-w-7xl mx-auto px-4">
+      {Courses.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+          {Courses.map(course =>  {
+            return <CourseCard key={course.id} course={course} />
+          } )}
+        </div>
+      ) : (
+        <p class="text-center text-gray-500">
+          No Courses found in this category.
+        </p>
+      )}
+    </section>
+  </body>
 </html>

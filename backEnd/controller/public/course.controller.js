@@ -1,8 +1,23 @@
 const sql = require("../../db")
 
-async function getCoursesByCategory(req, res, next) {
-  const { category } = req.params;
 
+
+const slugToCategoryMap = {
+  frontend: "Frontend",
+  backend: "Backend",
+  fullstack: "Fullstack",
+  "mobile-development": "Mobile Development",
+  "data-science-and-ai": "Data Science & AI",
+  "devops-and-cloud": "DevOps & Cloud",
+  cybersecurity: "Cybersecurity",
+  "game-development": "Game Development",
+};
+
+async function getCoursesByCategory(req, res, next) {
+  const { slug_category } = req.params;
+
+  const category = slugToCategoryMap[slug_category]
+  console.log(category)
   try {
     const response = await sql`
       SELECT 
@@ -28,6 +43,7 @@ async function getCoursesByCategory(req, res, next) {
         message: `No published courses found in category: ${category}.`,
       });
     }
+    console.log(response)
 
     return res.status(200).json({
       status: true,

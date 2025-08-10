@@ -17,6 +17,7 @@ import { UserButton, useUser } from "@clerk/clerk-react";
 import NotificationModel from "@/students/components/notification/NotificationModel";
 import type { NotificationData } from "@/lib/type";
 import { useNotificationApi } from "@/students/Api/notification.Api";
+import LogOutButton from "@/components/ui/LogOutButton";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -186,23 +187,12 @@ const Dashboard = () => {
         </nav>
 
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-          <Link
-            to="/logout"
-            className={`flex items-center rounded-lg font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors ${
-              isLessonPage
-                ? "justify-center p-2"
-                : "justify-center md:justify-start gap-3 p-2 md:px-4 md:py-3"
-            }`}
-          >
-            <LogOut size={20} />
-            {!isLessonPage && <span className="hidden md:inline">Logout</span>}
-          </Link>
+          <LogOutButton isLessonPage={isLessonPage} />
         </div>
       </aside>
 
       <div className="col-start-2 col-end-3 flex flex-col">
         <header className="w-full sticky top-0 z-10 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 md:px-6 flex items-center justify-between md:justify-end gap-2 md:gap-4">
-          {/* Mobile menu button - could be added here for future mobile navigation */}
 
           <div className="flex items-center gap-2 md:gap-4">
             <Button
@@ -224,18 +214,19 @@ const Dashboard = () => {
             />
             <div className=" relative">
               <button
-              
-              onClick={() => setOpenModel(true)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                <Bell className=" text-white w-5 h-5 md:w-6 md:h-6"/>
+                onClick={() => setOpenModel(true)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <Bell className=" text-white w-5 h-5 md:w-6 md:h-6" />
               </button>
               <div className=" absolute top-10 right-10">
-                {openModel && 
-                <NotificationModel 
-                loading = {loading}
-                notifications={notifications}
-                close={() => setOpenModel(false)} />
-                }                
+                {openModel && (
+                  <NotificationModel
+                    loading={loading}
+                    notifications={notifications}
+                    close={() => setOpenModel(false)}
+                  />
+                )}
               </div>
             </div>
             <div className="scale-75 md:scale-100">

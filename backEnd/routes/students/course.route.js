@@ -31,7 +31,6 @@ router.get("/getlessons/:moduleId" , (req , res) => {
 
 router.get("/filtered-courses" , getFilteredCourses )
 
-router.get("/category/:categoryId" , getCoursesByCategory)
 
 
 module.exports = router
