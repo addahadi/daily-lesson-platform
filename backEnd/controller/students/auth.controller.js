@@ -53,15 +53,22 @@ async function enrollToCourse(req , res , next) {
 
 
 async function checkEnroll(req, res, next) {
-  const { courseId } = req.query;
+  const { courseSlug } = req.query;
+  console.log(courseSlug)
   const userId = req.auth.userId;
   console.log(userId)
   try {
     await sql.begin(async (client) => {
+
+      const [{course_id}] = await client`
+        SELECT id as course_id
+        FROM courses
+        WHERE slug = ${courseSlug}
+      `;
       const checkEnroll = await client`
         SELECT id as enrollment_id 
         FROM enrollments 
-        WHERE course_id = ${courseId} AND user_id = ${userId}
+        WHERE course_id = ${course_id} AND user_id = ${userId}
       `;
 
       if (checkEnroll.length === 0) {

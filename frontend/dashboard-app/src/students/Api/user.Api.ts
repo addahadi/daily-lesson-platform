@@ -41,18 +41,21 @@ const useUserApiController = () => {
   );
 
   const checkEnroll = useCallback(
-    async (courseId: string, userId: string) => {
+    async (courseSlug: string, userId: string) => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/auth/is-enroll?courseId=${courseId}&userId=${userId}`,
+          `http://localhost:8090/auth/is-enroll?courseSlug=${courseSlug}&userId=${userId}`,
           {
             method: "GET",
             headers,
           }
         );
 
-        const data = await handleResponse<{ data: any }>(response);
+        const data = await handleResponse<{
+          lesson_id: string;
+          module_id: string;
+        }>(response);
         if (typeof data === "string") {
           console.log(data)
           toastOnce(data);

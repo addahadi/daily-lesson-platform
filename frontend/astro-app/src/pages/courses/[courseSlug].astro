@@ -1,0 +1,107 @@
+---
+
+import { getAllCourses , getCourseInfoBySlug } from '../../api/course.api';
+import Navbar from '../../components/Navbar.astro';
+import SEOheader from '../../layouts/SEOheader.astro';
+import "../../../global.css"
+import CourseBanner from '../../components/CourseBanner.astro';
+import ModuleSection from '../../components/ModuleSection.astro';
+import Footer from '../../components/Footer.astro';
+
+export async function getStaticPaths() {
+  const courses = await getAllCourses();
+  if(!courses) return 
+  return courses.map(course => ({
+    params: { courseSlug: course.slug }
+  }));
+}
+
+const { courseSlug } = Astro.params;
+
+const data = await getCourseInfoBySlug(courseSlug as string);
+const course= data?.course
+const modules = data?.courseInfo ||  [];
+console.log(data)
+
+
+---
+
+<SEOheader title={data?.course.title} description={data?.course.description} keywords={
+    `${data?.course.title}, ${data?.course.category}, coding lessons, programming courses`} />
+<body>
+    <Navbar />
+    <div class="relative">
+        <div class="relative overflow-hidden">
+          <img
+            src={course?.img_url}
+            alt="Course Banner"
+            class="w-full h-[250px] sm:h-[300px] lg:h-[400px] object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+
+          <div class="absolute bottom-4 sm:bottom-16 left-4 sm:left-8 right-4 sm:right-8 text-white">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight">
+              {course?.title}
+            </h1>
+          </div>
+        </div>
+        <CourseBanner 
+          level={course?.level}
+          total_duration={course?.total_duration}
+          total_modules={course?.total_modules}
+    />
+    </div>
+
+   
+    
+    <!-- What You'll Learn Section -->
+    <section class="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-gray-800">
+          What You'll Learn
+        </h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          {course?.content.map((items: string, index: number) => (
+            <div
+              class="flex items-start space-x-3 p-3 sm:p-4 rounded-lg bg-gray-50 border border-gray-100"
+            >
+              <div class="flex-shrink-0 mt-0.5">
+                <!-- Book with check icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"
+                    role="img" aria-label="Book Check" style="color:#374151; --accent:#f97316;">
+                <title>Book Check</title>
+
+                <!-- Book outline -->
+                <path d="M4 5a2 2 0 0 1 2-2h9a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2V5z"
+                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+                <!-- Page divider -->
+                <path d="M14 3v16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+
+                <!-- Checkmark inside a circle -->
+                <circle cx="17.5" cy="17.5" r="4" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+                <path d="M15.7 17.5l1.3 1.3 2.3-2.3" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+
+              </div>
+              <p class="text-sm sm:text-base text-gray-700 font-semibold leading-relaxed">
+                {items}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+       <!-- Description Section -->
+    <section class="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">
+          Description
+        </h2>
+        <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
+          {course?.description}
+        </p>
+    </section>
+      <ModuleSection 
+        modules={modules}
+      />
+
+      <Footer />
+</body>

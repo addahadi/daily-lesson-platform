@@ -22,7 +22,7 @@ router.post(
 
 router.get(
   "/is-enroll",
-  validate({ courseId: "string"}, "query"),
+  validate({ courseSlug: "string"}, "query"),
   checkEnroll
 );
 

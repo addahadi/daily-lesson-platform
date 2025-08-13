@@ -14,20 +14,22 @@ const useCourseApiController = () => {
     };
   }, [getToken]);
 
-  const getAllCourses = useCallback(async () => {
+  const getAllCourses = useCallback(async (
+    page: number = 1
+  ) => {
     try {
       const headers = await getAuthHeader();
-      const response = await fetch("http://localhost:8090/course/getall", {
+      const response = await fetch(`http://localhost:8090/course/getall?page=${page}`, {
         method: "GET",
         headers,
       });
 
-      const data = await handleResponse<{ data: CourseCardProps[] }>(response);
+      const data = await handleResponse<CourseCardProps[]>(response);
       if (typeof data === "string") {
         toastOnce(data);
         return null;
       }
-      return data.data;
+      return data;
     } catch (err: any) {
       toastOnce(err.message || "Something went wrong");
       return null;
@@ -46,14 +48,14 @@ const useCourseApiController = () => {
           }
         );
 
-        const data = await handleResponse<{ data: CourseCardProps[] }>(
+        const data = await handleResponse<CourseCardProps[]>(
           response
         );
         if (typeof data === "string") {
           toastOnce(data);
           return null;
         }
-        return data.data;
+        return data;
       } catch (err: any) {
         toastOnce(err.message || "Something went wrong");
         return null;
@@ -100,7 +102,7 @@ const useCourseApiController = () => {
           }
         );
 
-        const data = await handleResponse<{ data: CourseProps }>(response);
+        const data = await handleResponse<CourseProps>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;

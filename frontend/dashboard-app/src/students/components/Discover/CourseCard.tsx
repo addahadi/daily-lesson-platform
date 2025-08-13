@@ -35,7 +35,7 @@ export default function CourseCard({
 } & { deleteState: boolean }) {
   const navigate = useNavigate();
   const [openModel, setOpenModel] = useState(false);
-
+  const [Saved , setIsSaved] = useState(is_saved)
   return (
     <div className="relative">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl dark:shadow-gray-900/25 dark:hover:shadow-gray-900/40 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col lg:flex-row border border-gray-200 dark:border-gray-700">
@@ -59,7 +59,7 @@ export default function CourseCard({
           </div>
 
           {/* Bookmark Button */}
-          {is_saved ? (
+          {Saved ? (
             <button
               disabled={deleteState}
               className={`
@@ -140,6 +140,7 @@ export default function CourseCard({
             close={() => {
               setOpenModel(false);
             }}
+            setIsSaved={setIsSaved}
           />
         </div>
       )}
@@ -151,9 +152,10 @@ export default function CourseCard({
 type saveModelType = {
   close: () => void;
   course_id: string | undefined;
+  setIsSaved: (isSaved: boolean) => void;
 };
 
-const SaveModel = ({ close, course_id }: saveModelType) => {
+const SaveModel = ({ close, course_id, setIsSaved }: saveModelType) => {
   const [folders, setFolders] = useState<FolderType[] | null>(null);
   const { getAllFolders, saveCourseToFolder } = useFolderApiController();
   const [selectedFolder, setSelectedFolder] = useState<string>();
@@ -184,6 +186,8 @@ const SaveModel = ({ close, course_id }: saveModelType) => {
       toast.success("course was saved successfully");
       setLoading(false);
       localStorage.removeItem(CACHE_KEY_DISCOVER);
+      setIsSaved(true);
+      close();
       return;
     }
   };

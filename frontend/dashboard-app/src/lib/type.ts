@@ -3,6 +3,16 @@
 
 
 
+export interface CourseCardProps {
+  slug: string;
+  title: string;
+  category: string;
+  level: string;
+  img_url: string;
+  total_duration: string;
+  id: string;
+  is_saved?: boolean;
+}
 
 
 
@@ -124,9 +134,7 @@ export interface LessonBarProps {
 }
 
 export interface CourseProps extends CourseCardProps{
-    description : string , 
-    id : string, 
-    total : string
+  content : string[]
 }
 
 export interface ToastProps {

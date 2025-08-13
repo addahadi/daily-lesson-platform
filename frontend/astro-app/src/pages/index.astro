@@ -1,132 +1,117 @@
 ---
-
+import { getFeaturedCourses } from "../api/course.api";
+import Footer from "../components/Footer.astro";
 import Navbar from "../components/Navbar.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
+const platformName = "DevLevelUp";
 
-
-const plaformName = "Learning dz"
 const features = [
   {
-    title: "React for Intermediates",
-    description: "Level up your React skills by building interactive, real-world projects.",
+    title: "Gamified Learning",
+    description:
+      "Earn XP, unlock achievements, and keep your streak alive while leveling up your coding skills.",
     icon: `<svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="#F97316" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
-          <circle cx="12" cy="12" r="10" stroke="#374151" strokeWidth="2" />
-        </svg>`,
+             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+             <circle cx="12" cy="12" r="10" stroke="#374151" strokeWidth="2" />
+           </svg>`,
   },
   {
-    title: "JavaScript Deep Dive",
-    description: "Master the quirks and power features of modern JavaScript.",
+    title: "Track Your Progress",
+    description:
+      "See your learning journey with detailed progress tracking and personalized growth insights.",
     icon: `<svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="#F97316" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="#374151" strokeWidth="2" />
-        </svg>`,
+             <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18" />
+             <path strokeLinecap="round" strokeLinejoin="round" d="M7 13l3 3 7-7" />
+           </svg>`,
   },
   {
-    title: "Backend with Express.js",
-    description: "Learn how to build scalable APIs using Express.js and databases.",
-    icon: ` <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="#F97316" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18" />
-          <circle cx="12" cy="12" r="10" stroke="#374151" strokeWidth="2" />
-        </svg>`,
+    title: "Learn lessons",
+    description:
+      "Engage with interactive lessons and solve coding challenges",
+    icon: `<svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="#F97316" strokeWidth="2" viewBox="0 0 24 24">
+             <path strokeLinecap="round" strokeLinejoin="round" d="M12 2l9 4.5v11L12 22l-9-4.5v-11z" />
+           </svg>`,
+  },
+  {
+    title: "Write Notes",
+    description:
+      "Take notes, jot down ideas, and keep track of your learning in one place.",
+    icon: `<svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="#F97316" strokeWidth="2" viewBox="0 0 24 24">
+             <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5V4H2v16h5" />
+             <circle cx="12" cy="10" r="3" />
+           </svg>`,
   },
 ];
 
 
 
-const courses = [
-  {
-    title: "React.js Mastery",
-    description: "Learn to build modern, scalable web apps using React and best practices.",
-    image: "/images/react-course.jpg",
-    link: "/courses/react",
-  },
-  {
-    title: "JavaScript Deep Dive",
-    description: "Master the fundamentals and advanced concepts of JavaScript.",
-    image: "/images/js-course.jpg",
-    link: "/courses/javascript",
-  },
-  {
-    title: "CSS for Developers",
-    description: "Craft stunning UI with modern CSS techniques and responsive layouts.",
-    image: "/images/css-course.jpg",
-    link: "/courses/css",
-  },
-];
+const featuredCourses = await getFeaturedCourses();
 
-
-
-
-
+console.log(featuredCourses)
 ---
 
 <BaseLayout>
-	<Navbar />
+  <Navbar />
+
   <!-- Hero -->
-    <section class="flex flex-col-reverse md:flex-row items-center justify-between max-w-6xl mx-auto px-6 py-16">
-	
-	<!-- Left: Text content -->
-	<div class="max-w-xl text-center md:text-left">
-		<h1 class="text-4xl sm:text-5xl font-bold text-gray-900  leading-tight">
-		Learn to Code <span class="text-orange-500">Every Day</span>
-		</h1>
-		<p class="mt-4 text-gray-600  text-lg">
-		{plaformName} helps you master coding with daily lessons, quizzes, and hands-on projects.
-		Stay consistent, track progress, and level up your skills.
-		</p>
-		
-		<div class="mt-6 flex flex-col sm:flex-row gap-4 sm:justify-start justify-center">
-		<a
-			href="/signup"
-			class="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
-		>
-			Get Started
-		</a>
-		<a
-			href="/courses"
-			class="px-6 py-3 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition"
-		>
-			Browse Courses
-		</a>
-		</div>
-  	</div>
+  <section class="flex flex-col-reverse md:flex-row items-center justify-between max-w-6xl mx-auto px-6 py-16">
+    <!-- Left: Text content -->
+    <div class="max-w-xl text-center md:text-left">
+      <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
+        Level Up Your <span class="text-orange-500">Developer Skills</span>
+      </h1>
+      <p class="mt-4 text-gray-600 text-lg">
+        {platformName} helps you grow as a developer through interactive lessons, quizzes, and hands-on projects. Track your progress, earn XP, and reach new levels in your coding journey.
+      </p>
 
-  <!-- Right: Image -->
-	<div class="mb-8 md:mb-0 flex justify-center md:justify-end">
-		<img
-		src="../../public/hero_illustration.svg"
-		alt="Learning Illustration"
-		class="w-full max-w-md"
-		/>
-	</div>
-	</section>
+      <div class="mt-6 flex flex-col sm:flex-row gap-4 sm:justify-start justify-center">
+        <a
+          href="/signup"
+          class="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+        >
+          Get Started
+        </a>
+        <a
+          href="/courses"
+          class="px-6 py-3 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition"
+        >
+          Browse Courses
+        </a>
+      </div>
+    </div>
 
+    <!-- Right: Image -->
+    <div class="mb-8 md:mb-0 flex justify-center md:justify-end">
+      <img
+        src="../../public/hero_illustration.svg"
+        alt="Learning Illustration"
+        class="w-full max-w-md"
+      />
+    </div>
+  </section>
 
   <!-- Features -->
   <section class="py-16 bg-white">
     <div class="max-w-6xl mx-auto px-6 text-center">
       <h2 class="text-3xl sm:text-4xl font-bold text-gray-900">
-        Why Learn with {plaformName}?
+        Why Learn with {platformName}?
       </h2>
       <p class="mt-4 text-gray-600 max-w-2xl mx-auto">
-        Our platform helps you stay consistent and motivated with a proven daily learning system.
+        Learn smarter with gamified challenges — gain XP, build streaks, and see your skills grow with every lesson.
       </p>
 
-    <!-- Features Grid -->
+      <!-- Features Grid -->
       <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-          <div class="p-6 bg-white  rounded-2xl shadow hover:shadow-lg transition">
-            <div class="w-12 h-12 mb-4 ">
-              <span set:html={feature.icon} class="  w-full "></span>
-
-
+        {features.map((feature) => (
+          <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
+            <div class="w-12 h-12 mb-4">
+              <span set:html={feature.icon} class="w-full"></span>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 ">
+            <h3 class="text-xl font-semibold text-gray-900">
               {feature.title}
             </h3>
-            <p class="mt-2 text-gray-600 ">
+            <p class="mt-2 text-gray-600">
               {feature.description}
             </p>
           </div>
@@ -135,49 +120,34 @@ const courses = [
     </div>
   </section>
 
-
   <!-- Courses -->
   <section class="py-16 bg-white">
-  <div class="max-w-6xl mx-auto px-4 text-center">
-    <h2 class="text-3xl font-bold text-gray-900">
-      Explore Our Courses
-    </h2>
-    <p class="mt-4 text-lg text-gray-600">
-      Start your learning journey with expertly crafted daily lessons.
-    </p>
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-gray-900">
+        Explore Our Courses
+      </h2>
+      <p class="mt-4 text-lg text-gray-600">
+        Learn by building — each course is packed with interactive lessons and quizzes to help you reinforce your knowledge.
+      </p>
 
-    <div class="mt-12 grid gap-8 md:grid-cols-3">
-      {courses.map((course) => (
-        <a href={course.link} class="group block rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition">
-          <img src={course.image} alt={course.title} class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
-          <div class="p-6 text-left">
-            <h3 class="text-xl font-semibold text-gray-900 group-hover:text-green-600">
-              {course.title}
-            </h3>
-            <p class="mt-2 text-gray-600">
-              {course.description}
-            </p>
-          </div>
-        </a>
-      ))}
+      <div class="mt-12 grid gap-8 md:grid-cols-3">
+        {featuredCourses?.map((featuredCourse) => (
+          <a href={`courses/${featuredCourse.slug}`} class="group block rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition">
+            <img src={featuredCourse.img_url} alt={featuredCourse.title} class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+            <div class="p-6 text-left">
+              <h3 class="text-xl font-semibold text-gray-900 group-hover:text-orange-500">
+                {featuredCourse.title}
+              </h3>
+              <p class="mt-2 text-gray-600">
+                {featuredCourse.description}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
     </div>
-  </div>
-</section>
-
-  <!-- CTA -->
-  <section class="py-20 bg-blue-600 text-white text-center px-6">
-    <h2 class="text-3xl font-bold">Join thousands of daily learners</h2>
-    <p class="mt-4">Start your journey now. No credit card required.</p>
-    <a
-      href="/signup"
-      class="mt-6 inline-block px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
-    >
-      Get Started Free
-    </a>
   </section>
 
   <!-- Footer -->
-  <footer class="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-    © 2025 Daily Coding Lessons. All rights reserved.
-  </footer>
+  <Footer />
 </BaseLayout>

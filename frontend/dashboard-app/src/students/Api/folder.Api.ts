@@ -53,7 +53,7 @@ const useFolderApiController = () => {
         }
       );
 
-      const data = await handleResponse<{data : FolderType[]}>(response);
+      const data = await handleResponse<FolderType[]>(response);
       if (typeof data === "string") {
         toastOnce(data);
         return null;

@@ -8,6 +8,7 @@ import { handleResponse, toastOnce } from "../../utils/util.ts";
 import type { CourseCardProps } from "../../../../packages/sharedType";
 import Navbar from "../../components/Navbar.astro";
 import CourseCard from "../../components/CourseCard.astro";
+import Footer from "../../components/Footer.astro";
 
 export const getStaticPaths = () => {
   return categorySlugs.map((category:string) =>  {
@@ -70,7 +71,7 @@ console.log(Courses)
       </div>
     </section>
     <!-- Courses Grid -->
-    <section class="py-16 max-w-7xl mx-auto px-4">
+    <section class="py-16 max-w-7xl mx-auto px-4 h-screen">
       {Courses.length > 0 ? (
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
           {Courses.map(course =>  {
@@ -83,5 +84,6 @@ console.log(Courses)
         </p>
       )}
     </section>
+    <Footer />
   </body>
 </html>

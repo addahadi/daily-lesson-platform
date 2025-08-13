@@ -36,11 +36,9 @@ export function useCourseAndEnrollment(
           setCache(cacheKey, courseResult, CACHE_TTL);
         }
       }
-
-      const courseIdToUse = cachedCourse?.id || CourseId;
-      if (user && courseIdToUse) {
-        const result = await checkEnroll(courseIdToUse, user?.id);
-        if (result) {
+      if (user) {
+        const result = await checkEnroll(CourseId, user?.id);
+        if (result && result.action) {
           setButtonAction(result.action);
           if (result.data) setUrl(result.data);
         }
