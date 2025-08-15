@@ -9,6 +9,7 @@ import { useCourseAndEnrollment } from "@/hook/useFetchedData";
 import { Toaster } from "@/components/ui/sonner";
 import LoadingSpinner from "@/components/ui/loading";
 import { toast } from "sonner";
+import { formatDuration } from "@/lib/utils";
 
 
 
@@ -105,7 +106,7 @@ const Course = () => {
                     Duration
                   </p>
                   <p className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
-                    5 hours
+                    {formatDuration(parseInt(CourseData?.total_duration as string))}
                   </p>
                 </div>
               </div>
@@ -120,7 +121,7 @@ const Course = () => {
                     Modules
                   </p>
                   <p className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
-                    {CourseData?.total}
+                    {CourseData?.total_modules}
                   </p>
                 </div>
               </div>

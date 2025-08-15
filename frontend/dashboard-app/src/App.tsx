@@ -6,7 +6,6 @@ import Home from "./students/app/Home";
 import Dashboard from "./students/app/Dashboard";
 import PrivateRoute from "./students/components/PrivateRoute";
 import Profile from "./students/app/Profile";
-import Courses from "./students/app/Courses";
 import Discover from "./students/app/Discover";
 import Course from "./students/app/Course";
 import Lesson from "./students/app/Lesson";
@@ -46,7 +45,6 @@ function App() {
           <Route path="library" element={<Folders />} />
           <Route path="library/:libraryId" element={<SavedCourses />}/>
           <Route path="profile" element={<Profile />} />
-          <Route path="courses" element={<Courses />} />
           <Route path="discover" element={<Discover />} />
           <Route path="course/:CourseId" element={<Course />} />
           <Route path="notes" element={<Notes />} />

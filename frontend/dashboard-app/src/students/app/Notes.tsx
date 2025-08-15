@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import useNoteApi from "@/students/Api/note.Api";
 import { toast, Toaster } from "sonner";
 import LoadingSpinner from "@/components/ui/loading";
+import { Button } from "@/components/ui/button";
 
 
 const Notes = () => {
@@ -25,38 +26,37 @@ const Notes = () => {
   const [hasMore, setHasMore] = useState(false);
   const { getAllNotes, deleteNote } = useNoteApi();
   const [isDeleteState, setIsDeleteState] = useState(false);
+  const [showMoreLoading, setShowMoreLoading] = useState(false)
+
 
   useEffect(() => {
-    const controller = new AbortController();
-
     const fetchNotes = async () => {
-      setLoading(true);
-      try {
-        const result = await getAllNotes(page, { signal: controller.signal });
-
-        if (result === null || result?.data?.length === 0) {
-          if (page === 1) setNoNotes(true);
-          setHasMore(false);
-        } else {
-          if (result.final) setHasMore(result.final);
-          setNotes((prev) => [...(prev || []), ...result.data]);
-        }
-      } catch (err: any) {
-        if (err.name !== "AbortError") {
-          console.error("Failed to fetch notes:", err);
-        }
-      } finally {
-        setLoading(false);
+      setLoading(true)
+      const result = await getAllNotes(1);
+      if(result === null){
+        setNoNotes(true);
+        setHasMore(false)
+        return;
       }
-    };
+      setNotes(result.data);
+      setHasMore(result.final as boolean);
+      setPage((prev) => prev + 1);
+      setLoading(false);
 
-    fetchNotes();
-
-    return () => {
-      controller.abort(); // cancel any in-flight request on unmount or dependency change
-    };
-  }, [getAllNotes, page]);
-
+    }
+    fetchNotes()
+  },[])
+  const showMore = async () => {
+    setShowMoreLoading(true);
+    const result = await getAllNotes(page);
+    if (result){
+      setHasMore(result.final as boolean);
+      setNotes((prev) => [...(prev || []), ...result.data as notesProps[]]);
+      setPage((prev) => prev + 1);
+    }
+    setShowMoreLoading(false);
+  };
+    
   const handleDelete = async (lesson_slug: string) => {
     setIsDeleteState(true);
     const message = await deleteNote(lesson_slug);
@@ -297,26 +297,23 @@ const Notes = () => {
       {/* Load More Button */}
       {hasMore && (
         <div className="flex justify-center mt-16">
-          <button
-            className="group relative px-8 py-4 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
-            onClick={() => setPage((prev) => prev + 1)}
-            disabled={loading}
+          <Button
+            variant="destructive"
+            className=" bg-orange-500 hover:bg-orange-600"
+            onClick={showMore}
+            disabled={showMoreLoading}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="relative flex items-center gap-3">
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white"></div>
-                  <span>Loading more notes...</span>
-                </>
-              ) : (
-                <>
-                  <PlusCircle className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                  <span>Load More Notes</span>
-                </>
-              )}
-            </div>
-          </button>
+            {showMoreLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white"></div>
+                <span>Loading more notes...</span>
+              </>
+            ) : (
+              <>
+                <span>Load More Notes</span>
+              </>
+            )}
+          </Button>
         </div>
       )}
       <Toaster />

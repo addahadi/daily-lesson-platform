@@ -1,21 +1,20 @@
 import type { achievementsProps } from "@/lib/type";
-import { useUser } from "@clerk/clerk-react";
 import { Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import useProfileApiController from "@/students/Api/profile.Api";
 const AchievementBadges = () => {
-  const { user } = useUser();
   const [achievements, setAchievements] = useState<achievementsProps[]>();
   const { getUserAchievements } = useProfileApiController();
 
   useEffect(() => {
-    if (!user?.id) return;
     const fetchData = async () => {
-      const result = await getUserAchievements(user.id);
-      setAchievements(result);
+      const result = await getUserAchievements();
+      if(result){
+        setAchievements(result);
+      }
     };
     fetchData();
-  }, [user]);
+  }, []);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 h-full w-full border border-gray-200 dark:border-gray-700 transition-colors">

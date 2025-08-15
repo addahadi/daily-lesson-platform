@@ -154,7 +154,7 @@ async function getFirstLesson(client, courseId, res) {
     action: "start the first lesson",
   });
 }
-async function isLessonAccessible(req, res, next) {
+async function isModuleAccessible(req, res, next) {
   const { userId, courseId, moduleId } = req.body;
   try {
     const courseResponse = await sql`
@@ -197,53 +197,56 @@ async function isLessonAccessible(req, res, next) {
     next(err);
   }
 }
+
 async function startLesson(req, res, next) {
   const { enrollmentId, moduleId, lessonId: lessonSlug } = req.body;
 
   try {
-    await sql.begin(async (client) => {
-      const lessonResult = await client`
-        SELECT id FROM lessons 
-        WHERE slug = ${lessonSlug} AND topic_id = ${moduleId} AND is_deleted = false
-      `;
+    const lessonResult = await sql`
+      SELECT id FROM lessons 
+      WHERE slug = ${lessonSlug} 
+        AND topic_id = ${moduleId} 
+        AND is_deleted = false
+    `;
 
-      if (lessonResult.length === 0) {
-        return res.status(404).json({
-          status: false,
-          message: "The lesson you tried to start does not exist.",
-        });
-      }
-
-      const lessonId = lessonResult[0].id;
-
-      await client`
-        INSERT INTO module_progress (enrollment_id, module_id, started_at, progress)
-        VALUES (${enrollmentId}, ${moduleId}, NOW(), 0)
-        ON CONFLICT (enrollment_id, module_id) DO NOTHING
-      `;
-
-      const existingProgress = await client`
-        SELECT completed FROM lesson_progress
-        WHERE enrollment_id = ${enrollmentId} AND module_id = ${moduleId} AND lesson_id = ${lessonId}
-      `;
-
-      let isCompleted =
-        existingProgress.length > 0 ? existingProgress[0].completed : false;
-
-      if (existingProgress.length === 0) {
-        await client`
-          INSERT INTO lesson_progress (enrollment_id, module_id, lesson_id, completed)
-          VALUES (${enrollmentId}, ${moduleId}, ${lessonId}, false)
-        `;
-      }
-
-      res.status(200).json({
-        status: true,
-        message: "Lesson progress initialized.",
-        data: isCompleted,
+    if (lessonResult.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "The lesson you tried to start does not exist.",
       });
+    }
+
+    const lessonId = lessonResult[0].id;
+
+    await sql`
+      INSERT INTO module_progress (enrollment_id, module_id, started_at, progress)
+      VALUES (${enrollmentId}, ${moduleId}, NOW(), 0)
+      ON CONFLICT (enrollment_id, module_id) DO NOTHING
+    `;
+
+    await sql`
+      INSERT INTO lesson_progress (enrollment_id, module_id, lesson_id, completed)
+      VALUES (${enrollmentId}, ${moduleId}, ${lessonId}, false)
+      ON CONFLICT (enrollment_id, module_id, lesson_id) DO NOTHING
+    `;
+
+    const progress = await sql`
+      SELECT completed 
+      FROM lesson_progress
+      WHERE enrollment_id = ${enrollmentId} 
+        AND module_id = ${moduleId} 
+        AND lesson_id = ${lessonId}
+    `;
+
+    const isCompleted = progress.length > 0 ? progress[0].completed : false;
+
+    res.status(200).json({
+      status: true,
+      message: "Lesson progress initialized.",
+      data: isCompleted,
     });
   } catch (err) {
+    console.error("Database error:", err);
     next(err);
   }
 }
@@ -492,7 +495,7 @@ module.exports = {
   getLessonDetails,
   getLessonsDetails,
   getFirstLesson,
-  isLessonAccessible,
+  isModuleAccessible,
   startLesson,
   SubmitQuizzAnswer,
   getNextLesson,

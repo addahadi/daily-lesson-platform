@@ -14,6 +14,10 @@ export interface CourseCardProps {
   is_saved?: boolean;
 }
 
+export type XpData = {
+  xp_per_day: number;
+  day: string;
+};
 
 
 export interface NotificationData {

@@ -70,7 +70,9 @@ export function useLessonDetails(
       if (!(lessonId && moduleId && enrollmentId)) return;
       try {
         const isCompleted = await startLesson(enrollmentId, moduleId, lessonId);
-        if (isCompleted) setCompleted(isCompleted);
+        if(isCompleted === null) return;
+        console.log(isCompleted)
+        setCompleted(isCompleted);
       } catch (err) {
         console.error("Error starting lesson progress:", err);
       }
@@ -108,7 +110,7 @@ export function useLessonDetails(
       );
       setClickedNavigationButton((prev) => ({ ...prev, next: false }));
     } catch (err) {
-      console.error("Failed to load next lesson:", err);
+            console.error("Failed to load next lesson:", err);
     }
   };
 

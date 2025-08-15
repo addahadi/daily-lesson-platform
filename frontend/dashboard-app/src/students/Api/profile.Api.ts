@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { handleResponse, toastOnce } from "@/lib/utils"; 
 import { useAuth } from "@clerk/clerk-react";
+import type { achievementsProps, UserInfoProps, XpData } from "@/lib/type";
 
 const useProfileApiController = () => {
   const { getToken } = useAuth();
@@ -22,7 +23,7 @@ const useProfileApiController = () => {
         }
       );
 
-      const data = await handleResponse<{ data: any }>(response);
+      const data = await handleResponse<UserInfoProps>(response);
       if (typeof data === "string") {
         toastOnce(data);
         return null;
@@ -46,7 +47,7 @@ const useProfileApiController = () => {
         }
       );
 
-      const data = await handleResponse<{ data: any }>(response);
+      const data = await handleResponse<achievementsProps[]>(response);
       if (typeof data === "string") {
         toastOnce(data);
         return null;
@@ -69,7 +70,7 @@ const useProfileApiController = () => {
         }
       );
 
-      const data = await handleResponse<{ data: any[] }>(response);
+      const data = await handleResponse<XpData[]>(response);
       if (typeof data === "string") {
         toastOnce(data);
         return null;

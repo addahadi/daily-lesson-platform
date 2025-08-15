@@ -70,19 +70,28 @@ async function getCourseBySlug(req, res, next) {
   const { slug } = req.query;
   try {
     const response = await sql`
-      SELECT c.*, (
-        SELECT COUNT(*) 
-        FROM modules m 
-        WHERE m.course_id = c.id AND m.is_deleted = false
-      ) AS total,
-      (
-        SELECT COALESCE(SUM(l.duration_minutes), 0)
-        FROM modules m
-        JOIN lessons l ON l.topic_id = m.id
-        WHERE m.course_id = c.id AND m.is_deleted = false AND l.is_deleted = false
-      ) AS total_duration
-      FROM courses c
-      WHERE c.slug = ${slug} AND c.is_published = TRUE;
+      SELECT 
+          c.id,
+          c.title,
+          c.level,
+          c.category,
+          c.img_url,
+          c.slug,
+          c.content,
+          c.description,
+          (
+            SELECT COALESCE(COUNT(m.id), 0)
+            FROM modules m
+            WHERE m.course_id = c.id AND m.is_deleted = false
+          ) AS total_modules,
+          (
+            SELECT COALESCE(SUM(l.duration_minutes), 0)
+            FROM modules m
+            JOIN lessons l ON l.topic_id = m.id
+            WHERE m.course_id = c.id AND m.is_deleted = false AND l.is_deleted = false
+          ) AS total_duration
+        FROM courses c
+        WHERE c.is_published = TRUE AND c.slug = ${slug};
     `;
 
     if (response.length === 0) {

@@ -43,8 +43,7 @@ router.get(
 );
 
 router.get(
-  "/xp-logs/:userId",
-  validate({ userId: "string" }, "params"),
+  "/xp-logs",
   getXpLogs
 );
 

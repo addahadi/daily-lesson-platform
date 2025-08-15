@@ -5,13 +5,11 @@ import {
   BookCheck,
   Telescope,
   UserRound,
-  LogOut,
   Save,
   Moon,
   Sun,
   Bell,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { UserButton, useUser } from "@clerk/clerk-react";
 import NotificationModel from "@/students/components/notification/NotificationModel";
@@ -207,11 +205,6 @@ const Dashboard = () => {
                 <Moon className="w-4 h-4" />
               )}
             </Button>
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-32 sm:w-48 md:w-80 max-w-sm bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-            />
             <div className=" relative">
               <button
                 onClick={() => setOpenModel(true)}

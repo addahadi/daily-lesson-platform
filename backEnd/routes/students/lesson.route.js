@@ -2,13 +2,13 @@ const express = require("express");
 const {
   getLessonDetails,
   getFirstLesson,
-  isLessonAccessible,
   startLesson,
   SubmitQuizzAnswer,
   getNextLesson,
   MarkAsComplete,
   getLessonsDetails,
-  markLessonComplete
+  markLessonComplete,
+  isModuleAccessible
 } = require("../../controller/students/lesson.controller");
 
 const { validate } = require("../../middleware/validate.middleware");
@@ -28,7 +28,7 @@ router.post(
     },
     "body"
   ),
-  isLessonAccessible
+  isModuleAccessible
 );
 
 router.post(

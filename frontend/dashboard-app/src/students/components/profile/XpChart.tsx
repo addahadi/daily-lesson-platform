@@ -9,28 +9,23 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
-import profileApiController from "@/students/Api/profile.Api";
+import useProfileApiController from "@/students/Api/profile.Api";
+import type { XpData } from "@/lib/type";
 
-type XpData = {
-  xp_per_day: number;
-  day: string;
-};
-const testData = [
-  { date: "2025-07-01", xp: 100 },
-  { date: "2025-07-02", xp: 200 },
-  { date: "2025-07-03", xp: 150 },
-];
+
 
 export default function XpChart() {
   const [data, setData] = useState<XpData[]>([]);
   const { user } = useUser();
-
+  const {getXpLogs} = useProfileApiController();
   useEffect(() => {
     if (!user?.id) return;
     const fetchData = async () => {
-      const data = await profileApiController().getXpLogs(user.id);
-      setData(data);
-      console.log(data);
+      const data = await getXpLogs()
+
+      if(data){
+        setData(data);
+      }
     };
     fetchData();
   }, [user]);
@@ -46,7 +41,7 @@ export default function XpChart() {
         Your XP Progress
       </h2>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={testData}>
+        <LineChart data={formattedData}>
           <CartesianGrid
             strokeDasharray="3 3"
             stroke="currentColor"

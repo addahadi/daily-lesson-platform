@@ -1,8 +1,7 @@
 import type { UserInfoProps } from "@/lib/type";
-import { Edit, User } from "lucide-react";
-import { useState } from "react";
+import { formatDuration } from "@/lib/utils";
+import { User } from "lucide-react";
 const UserInfo = ({ userData }: { userData: UserInfoProps | undefined }) => {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>();
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-700 text-white">
@@ -27,13 +26,7 @@ const UserInfo = ({ userData }: { userData: UserInfoProps | undefined }) => {
             <h1 className="text-2xl sm:text-3xl font-bold break-words">
               {userData?.name || "Loading..."}
             </h1>
-            <button
-              onClick={() => setIsEditDialogOpen(true)}
-              className="text-white hover:bg-white/20 p-2 rounded-md transition-colors flex-shrink-0"
-              aria-label="Edit profile"
-            >
-              <Edit size={16} />
-            </button>
+            
           </div>
 
           <p className="text-blue-100 dark:text-blue-200 mb-4 max-w-2xl text-sm sm:text-base">
@@ -48,7 +41,7 @@ const UserInfo = ({ userData }: { userData: UserInfoProps | undefined }) => {
               {userData?.xp || 0} XP
             </span>
             <span className="bg-white/20 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
-              Member since {userData?.created_at || "Recently"}
+              Member since {userData?.created_at.split("T")[0] || "Recently"}
             </span>
           </div>
         </div>

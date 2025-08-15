@@ -182,7 +182,7 @@ async function getUserInfo(req ,res , next){
     }
     res.status(200).json({
       status: true , 
-      data : userInfoResult
+      data : userInfoResult[0]
     })
   }
   catch(err){

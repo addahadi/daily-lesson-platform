@@ -277,69 +277,54 @@ const ToggleCourseView = async (req, res, next) => {
   }
 };
 
-
 const softDeleteModule = async (req, res, next) => {
   const { moduleId } = req.params;
 
   try {
-    const [module] = await sql`
-      SELECT course_id
-      FROM modules
-      WHERE id = ${moduleId}
-      LIMIT 1;
-    `;
+    // Start transaction
+    await sql.begin(async (tx) => {
+      // 1. Get module details and verify it exists
+      const [module] = await tx`
+        SELECT course_id, order_index
+        FROM modules
+        WHERE id = ${moduleId} AND is_deleted = false
+        LIMIT 1;
+      `;
 
-    if (!module) {
-      return res.status(404).json({
-        status: false,
-        message: "Module not found.",
-      });
-    }
+      if (!module) {
+        return res.status(404).json({
+          status: false,
+          message: "Module not found or already deleted.",
+        });
+      }
 
-    const courseId = module.course_id;
+      const { course_id: courseId, order_index: deletedOrderIndex } = module;
 
-    // 2. Soft delete the module
-    await sql`
-      UPDATE modules
-      SET is_deleted = true
-      WHERE id = ${moduleId};
-    `;
-
-    // 3. Soft delete lessons under this module
-    await sql`
-      UPDATE lessons
-      SET is_deleted = true
-      WHERE topic_id = ${moduleId};
-    `;
-
-    // 4. Get remaining non-deleted modules
-    const remainingModules = await sql`
-      SELECT id
-      FROM modules
-      WHERE course_id = ${courseId} AND is_deleted = false
-      ORDER BY order_index ASC;
-    `;
-
-    if (remainingModules.length > 0) {
-      const caseStatements = [];
-      const ids = [];
-
-      remainingModules.forEach((mod, index) => {
-        caseStatements.push(`WHEN '${mod.id}' THEN ${index+1}`);
-        ids.push(`'${mod.id}'`);
-      });
-
-      const caseSql = caseStatements.join(" ");
-      const idList = ids.join(", ");
-
-      await sql.unsafe(`
+      // 2. Soft delete the module
+      await tx`
         UPDATE modules
-        SET order_index = CASE id
-          ${caseSql}
-        END
-        WHERE id IN (${idList});
-      `);
-    }
+        SET is_deleted = true, updated_at = NOW()
+        WHERE id = ${moduleId};
+      `;
+
+      // 3. Soft delete lessons under this module
+      await tx`
+        UPDATE lessons
+        SET is_deleted = true, updated_at = NOW()
+        WHERE topic_id = ${moduleId};
+      `;
+
+      // 4. Reorder subsequent modules (decrement their order_index)
+      await tx`
+        UPDATE modules
+        SET order_index = order_index - 1, updated_at = NOW()
+        WHERE course_id = ${courseId}
+          AND order_index > ${deletedOrderIndex}
+          AND is_deleted = false;
+      `;
+
+      // Transaction will auto-commit if we reach here
+    });
 
     res.status(200).json({
       status: true,
