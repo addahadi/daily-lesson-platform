@@ -12,8 +12,7 @@ const { validate } = require("../../middleware/validate.middleware");
 const router = express.Router();
 
 router.get(
-  "/enrolled-courses/:userId",
-  validate({ userId: "string" }, "params"),
+  "/enrolled-courses",
   getEnrolledCourses
 );
 

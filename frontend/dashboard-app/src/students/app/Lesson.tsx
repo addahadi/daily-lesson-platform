@@ -11,13 +11,12 @@ const Lesson = () => {
   const { courseId, moduleId, lessonId } = useParams();
   const { user } = useUser();
   const { enrollmentId } = useEnroll(courseId, user?.id);
-  const [courseCompleted, setCourseCompleted] = useState(false);
+  const [courseCompleted, setCourseCompleted] = useState(true);
 
   return (
     <div
       className="flex flex-row gap-5 overflow-auto max-lg:flex-col"
     >
-      {/* LessonBar only depends on stable props */}
       <div className="max-lg:w-full">
         <LessonBar enrollmentId={enrollmentId} courseId={courseId} />
       </div>

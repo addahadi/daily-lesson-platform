@@ -2,15 +2,16 @@ import useHomeApi from "@/students/Api/home.Api";
 import { Button } from "@/components/ui/button";
 import type { EnrolledLessons } from "@/lib/type";
 import { getLevelColor } from "@/lib/utils";
-import { useUser } from "@clerk/clerk-react";
-import { BookX, Clock, Play } from "lucide-react";
+import {BookX, Clock, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
+
+
+type Courses = { title: string; course_id: string; enrollment_id: string , course_slug : string}[];
 const ContinueLearning = () => {
-  const { user } = useUser();
-  const [courses, setCourses] =
-    useState<{ title: string; course_id: string; enrollment_id: string }[]>();
+  const [courses, setCourses] = useState<Courses>();
   const [lessons, setLessons] = useState<EnrolledLessons | undefined>();
   const [noLesson, setNoLesson] = useState(false);
   const [noCourse, setNoCourse] = useState(false);
@@ -19,20 +20,14 @@ const ContinueLearning = () => {
 
   useEffect(() => {
     async function fetchData() {
-      if (!user?.id) return;
-      await getEnrolledCourses(user.id)
-        .then((response) => {
-          if (response == null) {
-            setNoCourse(true);
-          }
-          setCourses(response);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      const result = await getEnrolledCourses();
+      if (result == null) {
+        setNoCourse(true);
+      }
+      setCourses(result as Courses);
     }
     fetchData();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -63,46 +58,62 @@ const ContinueLearning = () => {
 
   if (noCourse) {
     return (
-      <div className="flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900/50 border border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-6 sm:p-8 text-center shadow-sm transition-colors">
+      <div className="flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100 dark:from-gray-800 dark:to-gray-900 border border-dashed border-orange-300 dark:border-gray-600 rounded-2xl p-8 sm:p-10 text-center shadow-md transition-colors">
         <BookX
-          size={40}
-          className="sm:w-12 sm:h-12 text-gray-400 dark:text-gray-500 mb-3 sm:mb-4"
+          size={56}
+          className="text-orange-400 dark:text-orange-500 mb-4 sm:mb-6 animate-pulse"
         />
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">
           No Enrolled Courses
         </h3>
-        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-4 sm:mb-6 max-w-sm">
-          Start your learning journey by discovering our available courses
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-6 max-w-md">
+          Start your learning journey today by exploring our wide range of
+          courses designed to boost your skills.
         </p>
         <Button
           variant="destructive"
-          className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white px-6 py-2 text-sm sm:text-base transition-colors"
+          className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white px-8 py-3 text-sm sm:text-base font-semibold shadow rounded-xl transition-all"
           onClick={() => {
             navigate("/dashboard/discover");
           }}
         >
-          Discover Our Courses
+          Browse Courses
         </Button>
       </div>
     );
   }
 
+
   if (noLesson) {
     return (
-      <div className="flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900/50 border border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-6 sm:p-8 text-center shadow-sm transition-colors">
-        <BookX
-          size={40}
-          className="sm:w-12 sm:h-12 text-gray-400 dark:text-gray-500 mb-3 sm:mb-4"
+      <div className="flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 to-red-100 dark:from-gray-800 dark:to-gray-900 border border-dashed border-indigo-300 dark:border-gray-600 rounded-2xl p-8 sm:p-10 text-center shadow-md transition-colors">
+        <Clock
+          size={56}
+          className="text-orange-400 dark:text-orange-500 mb-4 sm:mb-6 animate-spin-slow"
         />
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          You're All Caught Up!
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">
+          You’re All Caught Up 🎉
         </h3>
-        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-sm">
-          There are no lessons left to continue at the moment.
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-md">
+          You’ve completed all your current lessons. Check back later for new
+          content or review past lessons to strengthen your knowledge.
         </p>
       </div>
     );
   }
+
+  const getLevelVariant = (level: string) => {
+    switch (level) {
+      case "Beginner":
+        return "success";
+      case "Intermediate":
+        return "warning";
+      case "Advanced":
+        return "destructive";
+      default:
+        return "secondary";
+    }
+  };
 
   return (
     <div className="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-lg border border-gray-200 dark:border-gray-700 w-full transition-colors">
@@ -113,60 +124,71 @@ const ContinueLearning = () => {
         {lessons &&
           lessons[0] &&
           courses?.map((course, index) => {
+            const currentLesson = lessons[index]?.lesson; // match course ↔ lesson
+            if (!currentLesson) return null;
+
             return (
               <div
-                key={index}
-                className="flex items-center flex-col p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
+                className="
+              flex flex-col p-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow hover:shadow-lg transition-all border border-gray-700
+              
+              
+              "
               >
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 sm:gap-4">
-                  <h2 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base truncate flex-1">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-foreground">
                     {course.title}
                   </h2>
-                  <span
-                    className={`
-                      rounded-full py-1 px-2 sm:px-3 text-xs sm:text-sm font-medium self-start sm:self-center flex-shrink-0 ${getLevelColor(
-                        lessons && lessons[0].lesson.level
-                      )}
-                    `}
-                  >
-                    {lessons && lessons[0].lesson.level}
-                  </span>
+                  <Badge variant={getLevelVariant(currentLesson.level)}>
+                    {currentLesson.level}
+                  </Badge>
                 </div>
 
-                <div className="mt-2 sm:mt-3 px-0 sm:px-2 w-full text-gray-500 dark:text-gray-400">
-                  <p className="flex gap-2 items-center text-sm">
-                    <Clock className="w-4 h-4 flex-shrink-0" />
-                    <span>
-                      {lessons && lessons[0].lesson.duration_minutes} minutes
-                    </span>
+                {/* Lesson Info */}
+                <div className="mb-4">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                    {currentLesson.module_title}
+                  </p>
+                  <p className="text-sm text-foreground font-medium">
+                    {currentLesson.lesson_title}
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 w-full mt-4 sm:mt-5">
-                  <div className="w-full flex-1">
-                    <div className="w-full flex justify-between items-center text-gray-500 dark:text-gray-400 mb-2 text-xs sm:text-sm">
-                      <span>
-                        {lessons && lessons[0].progressPercentage}% complete
-                      </span>
-                      <span>
-                        {lessons && lessons[0].total_progressed_modules}/
-                        {lessons && lessons[0].total_modules}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                      <div
-                        className="bg-orange-500 dark:bg-orange-400 h-2 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${lessons && lessons[0].progressPercentage}%`,
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                  <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center justify-center text-sm sm:text-base font-medium min-w-fit">
-                    <Play className="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    Continue
-                  </button>
+                {/* Duration */}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                  <Clock className="w-4 h-4" />
+                  <span>{currentLesson.duration_minutes} minutes</span>
                 </div>
+
+                {/* Progress */}
+                <div className="mb-4">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-muted-foreground">Progress</span>
+                    <span className="text-foreground">
+                      {lessons[index].progressPercentage}%
+                    </span>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full">
+                    <div
+                      className="h-2 bg-orange-500 rounded-full transition-all duration-300"
+                      style={{ width: `${lessons[index].progressPercentage}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Button */}
+                <Button
+                  onClick={() =>
+                    navigate(
+                      `/dashboard/course/${course.course_slug}/module/${currentLesson.module_id}/lesson/${currentLesson.slug}`
+                    )
+                  }
+                  className="w-full bg-orange-500 text-white hover:bg-orange-600"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Continue
+                </Button>
               </div>
             );
           })}

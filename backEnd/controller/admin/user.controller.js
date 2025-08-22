@@ -4,27 +4,35 @@ const clerk = require("../../clerkClient")
 
 async function getUsers(req , res , next){
    const page = parseInt(req.query.page) || 1;
-   const limit = 5;
+   const limit = 1;
    const offset = (page - 1) * limit;
-
     
     try{
-      const [{ count }] = await sql`
-      SELECT COUNT(*)::int as count FROM users
-      WHERE is_deleted = false
-    `;
-
+            
       const users = await sql`
       SELECT * FROM users
-      WHERE is_deleted = false
       ORDER BY created_at DESC
       LIMIT ${limit} OFFSET ${offset}
-    `;
-        res.status(200).json({
-            status: true , 
-            data : response,
-            final : count === users.length
-        })
+      `;
+
+      if(users.length === 0) {
+        return res.status(404).json({
+          status: false,
+          message: "No users found"
+        });
+      }
+
+      const [{ count }] = await sql`
+        SELECT COUNT(*)::int as count FROM users
+      `;
+      const totalPages = Math.ceil(count / limit);
+      const isFinalPage = page >= totalPages;
+
+      res.status(200).json({
+          status: true , 
+          data : users,
+          final : !isFinalPage
+      })
     }
     catch(err){
         next(err)

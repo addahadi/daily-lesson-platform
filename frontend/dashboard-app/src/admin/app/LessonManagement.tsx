@@ -238,14 +238,13 @@ const EditLesson = ({
     setLoading(true);
     const result = await createUpdateLesson(moduleId, formData);
     if (result) {
-      setLessons(
-        (prev) => {
-          const updatedLessons = prev.filter((lesson) => {
-            return lesson.id != result.id
-          })
-          return [...updatedLessons , result]
-        }
-      );
+      setLessons((prev) => {
+        const updated = prev.some((l) => l.id === result.id)
+          ? prev.map((l) => (l.id === result.id ? result : l))
+          : [...prev, result]; 
+
+        return updated.sort((a, b) => a.order_index - b.order_index);
+      });
       setLoading(false);
       toast.success("successful inserting");
     } else {

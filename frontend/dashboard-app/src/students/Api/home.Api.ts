@@ -14,13 +14,13 @@ const useHomeApi = () => {
   }, [getToken]);
 
   const getEnrolledCourses = useCallback(
-    async (userId: string) => {
-      const URL = `http://localhost:8090/home/enrolled-courses/${userId}`;
+    async () => {
+      const URL = `http://localhost:8090/home/enrolled-courses`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        const data = await handleResponse<{ data: any[] }>(response);
+        const data = await handleResponse<{title: string; course_id: string; enrollment_id: string }[]>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;

@@ -143,6 +143,7 @@ const Notification = () => {
               icon={
                 <Bell className="w-6 h-6" />
               }
+              color="blue"
             />
           ) : (
             <NotificationList

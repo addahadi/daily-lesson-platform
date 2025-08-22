@@ -12,6 +12,7 @@ import uploadImageToCloudinary from "../api/Cloudinary";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import EmptyCase from "@/components/empty/EmptyCase";
+import { Select, SelectContent, SelectItem, SelectTrigger , SelectValue } from "@/components/ui/select";
 
 const CourseManegement = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -20,11 +21,11 @@ const CourseManegement = () => {
   const [isCreate, setIsCreate] = useState(false);
   const [page , setPage] = useState(1);
   const [showMore , setShowMore] = useState(false)
+  const [showMoreLoading , setShowMoreLoading] = useState(false)
   const { getCourses } = useCourseApi();
 
   
-  const fetchCourses = async (currentPage: number) => {
-    setLoading(true);
+  const fetchCourses = async (currentPage: number) => {    
     const result = await getCourses(currentPage);
     if (result && result.data) {
       setCourses((prev) => {
@@ -34,21 +35,25 @@ const CourseManegement = () => {
         }
         return prev;
       });
-      console.log(result)
-      if (result.final !== undefined) setShowMore(result.final);
-      setLoading(false)
+      if (result.final !== undefined) setShowMore(result.final);  
     }
-    setLoading(false)
   };
   
   useEffect(() => {
-    fetchCourses(1);
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchCourses(1);
+      setLoading(false);
+    };
+    fetchData();
   }, []);
 
-  const handleShowMore = () => {
+  const handleShowMore = async () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchCourses(nextPage);
+    setShowMoreLoading(true)
+    await fetchCourses(nextPage);
+    setShowMoreLoading(false)
   };
 
   return (
@@ -80,6 +85,7 @@ const CourseManegement = () => {
           icon={<BookCopyIcon className=" w-6 h-6" />}
           title="No courses found"
           description="Create your first course to get started"
+          color="blue"
         />
       ) : (
         <div className="mt-8">
@@ -109,7 +115,10 @@ const CourseManegement = () => {
       )}
       {showMore && (
         <div className="flex justify-center mt-6">
-          <Button onClick={handleShowMore} variant="outline">
+          <Button
+          disabled={showMoreLoading}
+          className=" hover:bg-gray-700"
+          onClick={handleShowMore} variant="outline">
             Show More Users
           </Button>
         </div>
@@ -153,7 +162,7 @@ function EditCourse({ editedCourse = {}, close, isCreate }: any) {
   const removeContentReason = (index: number) => {
     setCourseInfo({
       ...courseInfo,
-      content: courseInfo.content.filter((_, i: number) => i !== index),
+      content: courseInfo.content.filter((_ : any, i: number) => i !== index),
     });
   };
 
@@ -242,14 +251,33 @@ function EditCourse({ editedCourse = {}, close, isCreate }: any) {
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
                   Category *
                 </Label>
-                <Input
-                  id="category"
-                  placeholder="e.g., Frontend Development"
+                <Select
+                  onValueChange={(value) => handleChange("category", value)}
                   value={courseInfo.category}
-                  onChange={(e) => handleChange("category", e.target.value)}
                   required
-                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                />
+                >
+                  <SelectTrigger className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg py-2">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent className="dark:bg-gray-900 dark:border-gray-700">
+                    <SelectItem value="Frontend">Frontend</SelectItem>
+                    <SelectItem value="Backend">Backend</SelectItem>
+                    <SelectItem value="Fullstack">Fullstack</SelectItem>
+                    <SelectItem value="Mobile Development">
+                      Mobile Development
+                    </SelectItem>
+                    <SelectItem value="Data Science & AI">
+                      Data Science & AI
+                    </SelectItem>
+                    <SelectItem value="DevOps & Cloud">
+                      DevOps & Cloud
+                    </SelectItem>
+                    <SelectItem value="Cybersecurity">Cybersecurity</SelectItem>
+                    <SelectItem value="Game Development">
+                      Game Development
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

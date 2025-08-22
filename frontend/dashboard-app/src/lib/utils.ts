@@ -7,27 +7,91 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
+export const renderMarkdown = (text: string) => {
+  return (
+    text
+      // Code blocks (```code```)
+      .replace(
+        /```([\s\S]*?)```/g,
+        '<pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4"><code class="font-mono text-sm">$1</code></pre>'
+      )
 
+      // Headings
+      .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-4">$1</h1>')
+      .replace(/^## (.*$)/gm, '<h2 class="text-xl font-semibold mb-3">$1</h2>')
+      .replace(/^### (.*$)/gm, '<h3 class="text-lg font-medium mb-2">$1</h3>')
+      .replace(
+        /^#### (.*$)/gm,
+        '<h4 class="text-base font-medium mb-2">$1</h4>'
+      )
 
+      // Blockquotes
+      .replace(
+        /^> (.*$)/gm,
+        '<blockquote class="border-l-4 border-gray-300 pl-4 italic text-gray-700 dark:text-gray-300 mb-4">$1</blockquote>'
+      )
 
+      // Unordered lists (grouped properly)
+      .replace(/(?:^|\n)([-+*] .+(?:\n[-+*] .+)*)/gm, (match) => {
+        const items = match
+          .trim()
+          .split(/\n/)
+          .map((line) =>
+            line.replace(/^[-+*] (.*)/, '<li class="mb-1">$1</li>')
+          )
+          .join("");
+        return `<ul class="list-disc ml-6 mb-4">${items}</ul>`;
+      })
 
+      // Ordered lists (grouped properly)
+      .replace(/(?:^|\n)(\d+\. .+(?:\n\d+\. .+)*)/gm, (match) => {
+        const items = match
+          .trim()
+          .split(/\n/)
+          .map((line) =>
+            line.replace(/^\d+\. (.*)/, '<li class="mb-1">$1</li>')
+          )
+          .join("");
+        return `<ol class="list-decimal ml-6 mb-4">${items}</ol>`;
+      })
 
+      // Links
+      .replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">$1</a>'
+      )
 
-export const renderMarkdown = (text : string) => {
-  return text
-    .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-4">$1</h1>')
-    .replace(/^## (.*$)/gm, '<h2 class="text-xl font-semibold mb-3">$1</h2>')
-    .replace(/^### (.*$)/gm, '<h3 class="text-lg font-medium mb-2">$1</h3>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-    .replace(
-      /`(.*?)`/g,
-      '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono">$1</code>'
-    )
-    .replace(/\n\n/g, '</p><p class="mb-4">')
-    .replace(/\n/g, "<br>")
-    .replace(/^(.+)$/gm, '<p class="mb-4">$1</p>');
+      // Images
+      .replace(
+        /!\[([^\]]*)\]\(([^)]+)\)/g,
+        '<img src="$2" alt="$1" class="rounded-lg my-4" />'
+      )
+
+      // Bold + italic
+      .replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>")
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+
+      // Inline code
+      .replace(
+        /`(.*?)`/g,
+        '<code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm font-mono">$1</code>'
+      )
+
+      // Horizontal rule
+      .replace(
+        /^---$/gm,
+        '<hr class="my-6 border-gray-300 dark:border-gray-700" />'
+      )
+
+      // Paragraphs
+      .replace(/\n\n/g, '</p><p class="mb-4">')
+      .replace(/\n/g, "<br>")
+      .replace(/^(.+)$/gm, '<p class="mb-4">$1</p>')
+  );
 };
+
+
 export const formatDuration = (minutes: number) => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;

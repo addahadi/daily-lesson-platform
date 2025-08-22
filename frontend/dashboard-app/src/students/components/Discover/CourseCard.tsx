@@ -11,7 +11,7 @@ import {
 import type { CourseCardProps, FolderType } from "@/lib/type";
 import { FOLDER_CACHE_KEY, getLevelColor } from "@/lib/utils";
 import useFolderApiController from "@/students/Api/folder.Api";
-import { Bookmark, BookmarkCheck, Clock, Play, X } from "lucide-react";
+import { Bookmark, BookmarkCheck, CheckCheck, Clock, Play, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -28,9 +28,10 @@ export default function CourseCard({
   total_duration,
   id,
   is_saved,
+  is_completed,
   handleDelete,
   deleteState,
-}: CourseCardProps & { is_saved: boolean } & {
+}: CourseCardProps & { is_saved: boolean  , is_completed: boolean } & {
   handleDelete?: (course_id: string) => void;
 } & { deleteState: boolean }) {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function CourseCard({
   const [Saved , setIsSaved] = useState(is_saved)
   return (
     <div className="relative">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl dark:shadow-gray-900/25 dark:hover:shadow-gray-900/40 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col lg:flex-row border border-gray-200 dark:border-gray-700">
+      <div className="bg-white lg:h-[250px] dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl dark:shadow-gray-900/25 dark:hover:shadow-gray-900/40 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col lg:flex-row border border-gray-200 dark:border-gray-700">
         {/* Image Section */}
         <div className="relative w-full lg:w-80 h-48 lg:h-auto flex-shrink-0">
           <img
@@ -118,7 +119,17 @@ export default function CourseCard({
               </p>
             </div>
           </div>
-
+          {/* better design please for is_completed */}
+          {
+            is_completed && (
+              <div className="flex items-center mb-2 gap-1">
+                <CheckCheck className=" w-3 h-3 text-orange-500 dark:text-orange-400" />
+                <span className="text-xs text-orange-500 dark:text-orange-400">
+                  Completed
+                </span>
+              </div>
+            )
+          }
           {/* Action Button */}
           <div className="flex items-center justify-between mt-auto">
             <button

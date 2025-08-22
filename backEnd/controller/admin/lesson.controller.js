@@ -202,64 +202,45 @@ const softDeleteLesson = async (req, res, next) => {
   const { lessonId } = req.params;
 
   try {
-    // 1. Get the topic_id (module) of the lesson
-    const [lesson] = await sql`
-      SELECT topic_id
-      FROM lessons
-      WHERE id = ${lessonId}
-      LIMIT 1;
-    `;
-
-    if (!lesson) {
-      return res.status(404).json({
-        status: false,
-        message: "Lesson not found.",
-      });
-    }
-
-    const topicId = lesson.topic_id;
-
-    // 2. Soft delete the lesson
-    await sql`
-      UPDATE lessons
-      SET is_deleted = true
-      WHERE id = ${lessonId};
-    `;
-
-    // 3. Fetch all remaining non-deleted lessons in the module
-    const remainingLessons = await sql`
-      SELECT id
-      FROM lessons
-      WHERE topic_id = ${topicId} AND is_deleted = false
-      ORDER BY order_index ASC;
-    `;
-
-    // 4. Normalize order_index using raw SQL if needed
-    if (remainingLessons.length > 0) {
-      const caseStatements = [];
-      const ids = [];
-
-      remainingLessons.forEach((l, i) => {
-        caseStatements.push(`WHEN '${l.id}' THEN ${i}`);
-        ids.push(`'${l.id}'`);
-      });
-
-      const caseSql = caseStatements.join(" ");
-      const idList = ids.join(", ");
-
-      await sql.unsafe(`
+    await sql.begin(async (tx) => {
+      const [lesson] = await tx`
+        SELECT topic_id , order_index
+        FROM lessons
+        WHERE id = ${lessonId}
+      `;
+      if (!lesson) {
+        return res.status(404).json({
+          status: false,
+          message: "Lesson not found.",
+        });
+      }
+      const deletedOrderIndex = lesson.order_index;
+      const topicId = lesson.topic_id;
+      // 2. Soft delete the lesson
+      await tx`
         UPDATE lessons
-        SET order_index = CASE id
-          ${caseSql}
-        END
-        WHERE id IN (${idList});
-      `);
-    }
+        SET is_deleted = true
+        WHERE id = ${lessonId};
+      `;
+      // 4. Reorder subsequent lessons (decrement their order_index)
+      await tx`
+          UPDATE lessons
+          SET order_index = order_index - 1, updated_at = NOW()
+          WHERE topic_id = ${topicId}
+            AND order_index > ${deletedOrderIndex}
+            AND is_deleted = false;
+        `;
 
-    res.status(200).json({
-      status: true,
-      message: "Lesson soft-deleted and order normalized.",
-    });
+        
+      })
+      
+      res.status(200).json({
+        status: true,
+        message: "Lesson soft-deleted and order normalized.",
+      });
+      
+      
+      
   } catch (error) {
     console.error("Error in softDeleteLesson:", error);
     next(error);

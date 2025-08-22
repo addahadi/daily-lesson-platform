@@ -1,10 +1,9 @@
 import type { UserInfoProps } from "@/lib/type";
-import { formatDuration } from "@/lib/utils";
 import { User } from "lucide-react";
-const UserInfo = ({ userData }: { userData: UserInfoProps | undefined }) => {
 
+const UserInfo = ({ userData }: { userData: UserInfoProps | undefined }) => {
   return (
-    <div className="p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-700 text-white">
+    <div className="p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 bg-gradient-to-r from-orange-500 to-red-500 dark:from-orange-600 dark:to-red-600 text-white">
       <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-6">
         <div className="relative flex-shrink-0">
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white/20 overflow-hidden bg-white/20 flex items-center justify-center">
@@ -26,10 +25,9 @@ const UserInfo = ({ userData }: { userData: UserInfoProps | undefined }) => {
             <h1 className="text-2xl sm:text-3xl font-bold break-words">
               {userData?.name || "Loading..."}
             </h1>
-            
           </div>
 
-          <p className="text-blue-100 dark:text-blue-200 mb-4 max-w-2xl text-sm sm:text-base">
+          <p className="text-orange-100 dark:text-orange-200 mb-4 max-w-2xl text-sm sm:text-base">
             {userData?.bio || "No bio available"}
           </p>
 

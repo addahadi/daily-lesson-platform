@@ -12,18 +12,17 @@ import { useUser } from "@clerk/clerk-react";
 import useProfileApiController from "@/students/Api/profile.Api";
 import type { XpData } from "@/lib/type";
 
-
-
 export default function XpChart() {
   const [data, setData] = useState<XpData[]>([]);
   const { user } = useUser();
-  const {getXpLogs} = useProfileApiController();
+  const { getXpLogs } = useProfileApiController();
+
   useEffect(() => {
     if (!user?.id) return;
     const fetchData = async () => {
-      const data = await getXpLogs()
+      const data = await getXpLogs();
 
-      if(data){
+      if (data) {
         setData(data);
       }
     };
@@ -73,19 +72,19 @@ export default function XpChart() {
             wrapperStyle={
               {
                 "--tooltip-bg": "white",
-                "--tooltip-border": "#e5e7eb",
-                "--tooltip-text": "#374151",
-                "--tooltip-label": "#6b7280",
+                "--tooltip-border": "#fed7aa", // orange-200
+                "--tooltip-text": "#7c2d12", // orange-900
+                "--tooltip-label": "#ea580c", // orange-600
               } as React.CSSProperties
             }
           />
           <Line
             type="monotone"
             dataKey="xp"
-            stroke="#6366f1"
+            stroke="#f97316" // orange-500
             strokeWidth={2}
-            dot={{ r: 3, strokeWidth: 2 }}
-            activeDot={{ r: 5, fill: "#4f46e5", strokeWidth: 2 }}
+            dot={{ r: 3, strokeWidth: 2, stroke: "#fdba74" }} // orange-300
+            activeDot={{ r: 5, fill: "#ea580c", strokeWidth: 2 }} // orange-600
           />
         </LineChart>
       </ResponsiveContainer>

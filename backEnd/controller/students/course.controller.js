@@ -33,8 +33,10 @@ async function getAllCourses(req, res, next) {
           FROM modules m
           JOIN lessons l ON l.topic_id = m.id
           WHERE m.course_id = c.id AND m.is_deleted = false AND l.is_deleted = false
-        ) AS total_duration
+        ) AS total_duration,
+        e.completed as completed_course
       FROM courses c
+      LEFT JOIN enrollments e ON e.course_id = c.id AND e.user_id = ${userId}
       WHERE c.is_published = TRUE
       LIMIT ${limit} OFFSET ${offset};
     `;

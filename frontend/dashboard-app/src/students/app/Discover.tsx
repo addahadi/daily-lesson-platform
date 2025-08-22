@@ -159,9 +159,25 @@ const Discover = () => {
                     <SelectTrigger className="w-full border-black-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white py-2 rounded-lg">
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
-                    <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                      <SelectItem value="frontend">FrontEnd</SelectItem>
-                      <SelectItem value="backend">BackEnd</SelectItem>
+                    <SelectContent className="dark:bg-gray-900 ">
+                      <SelectItem value="Frontend">Frontend</SelectItem>
+                      <SelectItem value="Backend">Backend</SelectItem>
+                      <SelectItem value="Fullstack">Fullstack</SelectItem>
+                      <SelectItem value="Mobile Development">
+                        Mobile Development
+                      </SelectItem>
+                      <SelectItem value="Data Science & AI">
+                        Data Science & AI
+                      </SelectItem>
+                      <SelectItem value="DevOps & Cloud">
+                        DevOps & Cloud
+                      </SelectItem>
+                      <SelectItem value="Cybersecurity">
+                        Cybersecurity
+                      </SelectItem>
+                      <SelectItem value="Game Development">
+                        Game Development
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </label>
@@ -199,6 +215,7 @@ const Discover = () => {
                     key={course.id}
                     {...course}
                     is_saved={course.is_saved as boolean}
+                    is_completed={course.completed_course}
                     deleteState={false}
                   />
                 ))}

@@ -19,7 +19,7 @@ const LessonContent = ({
     moduleId: string;
     courseId: string;
     enrollmentId: string;
-    setCourseCompleted: (completed: boolean) => void;
+    setCourseCompleted: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
     
     const [clickedNavigationButton, setClickedNavigationButton] = useState({
@@ -137,6 +137,7 @@ const LessonContent = ({
       {Summary?.map((lessonSection, index) => (
         <LessonSummary
           key={`summary-${index}`}
+          //@ts-ignore
           text={lessonSection?.text}
           heading={lessonSection.heading}
           enrollementId={enrollmentId}

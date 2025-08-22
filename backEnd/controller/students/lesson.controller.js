@@ -103,7 +103,7 @@ async function getLessonsDetails(req, res, next) {
         COALESCE(p.completed, false) AS completed
       FROM lessons l
       LEFT JOIN lesson_progress p ON (l.id = p.lesson_id AND p.enrollment_id = ${enrollmentId})
-      WHERE l.topic_id = ANY(${moduleIds})
+      WHERE l.topic_id = ANY(${moduleIds}) AND l.is_deleted = false
       ORDER BY l.topic_id, l.order_index
     `;
 
@@ -156,10 +156,12 @@ async function getFirstLesson(client, courseId, res) {
 }
 async function isModuleAccessible(req, res, next) {
   const { userId, courseId, moduleId } = req.body;
+
   try {
     const courseResponse = await sql`
-      SELECT id, slug, title FROM courses WHERE slug = ${courseId}
+      SELECT id FROM courses WHERE slug = ${courseId}
     `;
+
     if (courseResponse.length === 0) {
       return res
         .status(404)
@@ -167,31 +169,53 @@ async function isModuleAccessible(req, res, next) {
     }
 
     const course = courseResponse[0];
-    const accessCheck = await sql`
+
+    // Get all non-deleted modules in order
+    const modules = await sql`
+      SELECT id
+      FROM modules
+      WHERE course_id = ${course.id} AND is_deleted = false
+      ORDER BY order_index ASC
+    `;
+
+    const index = modules.findIndex((m) => m.id === moduleId);
+
+    if (index === -1) {
+      return res
+        .status(404)
+        .json({ status: false, error: "Module not found." });
+    }
+
+    // First active module → always accessible
+    if (index === 0) {
+      return res.status(200).json({
+        status: true,
+        message: "Module is accessible.",
+        isAccessible: true,
+      });
+    }
+
+    const previousModuleId = modules[index - 1].id;
+
+    // Check progress on previous active module
+    const [accessCheck] = await sql`
       SELECT EXISTS (
-        SELECT 1 FROM module_progress mp
+        SELECT 1
+        FROM module_progress mp
         JOIN enrollments e ON mp.enrollment_id = e.id
         WHERE e.user_id = ${userId}
           AND e.course_id = ${course.id}
-          AND mp.module_id = (
-            SELECT id FROM modules
-            WHERE modules.course_id = ${course.id}
-            AND order_index = (
-              SELECT order_index - 1 FROM modules WHERE id = ${moduleId} AND is_deleted = false
-            )
-            AND is_deleted = false
-          )
+          AND mp.module_id = ${previousModuleId}
           AND mp.progress = 100
-      ) OR (
-        SELECT order_index FROM modules WHERE id = ${moduleId}
-      ) = 1 AS is_accessible
+      ) AS is_accessible
     `;
+
     return res.status(200).json({
       status: true,
-      message: accessCheck[0].is_accessible
-        ? "Lesson is accessible."
+      message: accessCheck.is_accessible
+        ? "Module is accessible."
         : "Previous module is not completed yet.",
-      isAccessible: accessCheck[0].is_accessible,
+      isAccessible: accessCheck.is_accessible,
     });
   } catch (err) {
     next(err);

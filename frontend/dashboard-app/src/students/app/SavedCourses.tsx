@@ -100,23 +100,19 @@ const SavedCourses = () => {
                 title="No saved courses"
                 description="You haven't saved any course yet."
                 icon={<File className="w-8 h-8" />}
+                color="orange"
               />
             </div>
           ) : (
             /* Responsive Grid */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid max-lg:grid-cols-1  lg:grid-cols-2  gap-4 sm:gap-6">
               {courses.map((course) => {
                 return (
                   <div key={course.id} className="w-full">
                     <CourseCard
-                      slug={course.slug}
-                      title={course.title}
-                      category={course.category}
-                      level={course.level}
-                      img_url={course.img_url}
-                      total_duration={course.total_duration}
-                      id={course.id}
+                      {...course}
                       is_saved={true}
+                      is_completed={course.completed_course}
                       handleDelete={handleDelete}
                       deleteState={deleteState}
                     />

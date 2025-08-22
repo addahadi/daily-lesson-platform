@@ -11,6 +11,7 @@ export interface CourseCardProps {
   img_url: string;
   total_duration: string;
   id: string;
+  completed_course : boolean;
   is_saved?: boolean;
 }
 
@@ -108,8 +109,10 @@ export interface LessonCardProps {
 
 
 export type EnrolledLessons = ({
-  lesson: Pick<LessonCardProps, "duration_minutes" | "level" | "lesson_slug"> &
-    Pick<ModuleCardProps, "module_id">;
+  lesson: Pick<LessonCardProps, "duration_minutes" | "level" | "slug"> & Pick<ModuleCardProps, "module_id"> & {
+    module_title: string;
+    lesson_title : string
+  };
 } & {
   progressPercentage: string;
   total_modules : string

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import clsx from "clsx";
 
 type EmptyCaseProps = {
   icon: React.ReactNode;
@@ -14,6 +15,7 @@ type EmptyCaseProps = {
     onClick: () => void;
     icon?: React.ReactNode;
   };
+  color?: "orange" | "blue" | "green" | "red" | "purple"; // extend as needed
 };
 
 const EmptyCase = ({
@@ -22,12 +24,29 @@ const EmptyCase = ({
   description,
   primaryAction,
   secondaryAction,
+  color = "orange", // default fallback
 }: EmptyCaseProps) => {
+  // Build dynamic Tailwind classes
+  const bgLight = `bg-${color}-100`;
+  const bgDark = `dark:bg-${color}-300/10`;
+  const textMain = `text-${color}-500`;
+  const btnBg = `bg-${color}-500 hover:bg-${color}-600`;
+
   return (
     <div className="w-full flex flex-col items-center justify-center py-16 px-4 text-center text-gray-600 dark:text-gray-400">
       {/* Icon inside circle */}
-      <div className="bg-orange-100 dark:bg-orange-300/10 p-4 rounded-full mb-4 flex justify-center items-center">
-        <div className="text-orange-500 w-8 h-8 flex justify-center items-center">{icon}</div>
+      <div
+        className={clsx(
+          bgLight,
+          bgDark,
+          "p-4 rounded-full mb-4 flex justify-center items-center"
+        )}
+      >
+        <div
+          className={clsx(textMain, "w-8 h-8 flex justify-center items-center")}
+        >
+          {icon}
+        </div>
       </div>
 
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
@@ -43,7 +62,7 @@ const EmptyCase = ({
       <div className="mt-6 flex flex-wrap gap-4 justify-center">
         {primaryAction && (
           <Button
-            className="bg-orange-500 hover:bg-orange-600 text-white"
+            className={clsx(btnBg, "text-white")}
             onClick={primaryAction.onClick}
           >
             {primaryAction.icon && (

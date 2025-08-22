@@ -26,13 +26,20 @@ const UserManagement = () => {
   const [deletingUserId, setDeletingUserId] = useState<string>("");
   const [showMore, setShowMore] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showMoreLoading , setShowMoreLoading] = useState(false)
   useEffect(() => {
-    fetchUsers(1);
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchUsers(1);
+      setLoading(false);
+    };
+    fetchData();
   }, []);
 
   const fetchUsers = async (currentPage: number) => {
     const result = await getUsers(currentPage);
+    console.log(result)
     if (result && result.data) {
       setUsers((prev) =>{
         if(result.data){
@@ -40,16 +47,17 @@ const UserManagement = () => {
           return (currentPage === 1 ? result.data : updatedResult)
         }
         return prev
-        }
-      );
-      if(result.final) setShowMore(result.final);
+      });
+      setShowMore(result.final as boolean);
     }
   };
 
-  const handleShowMore = () => {
+  const handleShowMore = async () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchUsers(nextPage);
+    setShowMoreLoading(true);
+    await fetchUsers(nextPage);
+    setShowMoreLoading(false)
   };
 
   const filteredUsers = users?.filter(
@@ -113,7 +121,17 @@ const UserManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.length === 0 ? (
+              {
+                loading && (
+                  <tr>
+                    <td colSpan={6} className="text-center py-4">
+                      <LoadingSpinner size={40} />
+                    </td>
+                  </tr>
+                )
+              }
+
+              {filteredUsers.length === 0  && !loading ? (
                 <tr>
                   <td colSpan={6}>
                     <EmptyCase
@@ -123,6 +141,7 @@ const UserManagement = () => {
                           : "No Matches Found"
                       }
                       icon={<User />}
+                      color="blue"
                       description={
                         users.length === 0
                           ? "There are no users in the system yet."
@@ -182,7 +201,7 @@ const UserManagement = () => {
                     <TableCell>
                       <div className="flex items-center justify-end gap-2">
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => setSelectedUser(user)}
                           className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -190,7 +209,7 @@ const UserManagement = () => {
                           <Eye className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => setEditingUserId(user.clerk_id)}
                           className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
@@ -198,7 +217,7 @@ const UserManagement = () => {
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => setDeletingUserId(user.clerk_id)}
                           className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
@@ -217,7 +236,11 @@ const UserManagement = () => {
         {/* Show More */}
         {showMore && (
           <div className="flex justify-center mt-6">
-            <Button onClick={handleShowMore} variant="outline">
+            <Button 
+            
+            disabled={showMoreLoading}
+            
+            onClick={handleShowMore} variant="outline">
               Show More Users
             </Button>
           </div>
@@ -305,7 +328,7 @@ const EditModal = ({
             Edit User
           </h2>
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={onClose}
             className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -357,10 +380,10 @@ const EditModal = ({
 
         {/* Actions */}
         <div className="flex gap-3 mt-6">
-          <Button variant="outline" onClick={onClose} className="flex-1">
+          <Button variant="outline" onClick={onClose} className="flex-1 bg-gray-900">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={loading} className="flex-1">
+          <Button onClick={handleSubmit} disabled={loading} className="flex-1 bg-gray-900">
             {loading ? <LoadingSpinner size={16} thickness={2} /> : "Save"}
           </Button>
         </div>
@@ -385,7 +408,7 @@ const UserViewModal = ({
           User Details
         </h2>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={onClose}
           className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -456,7 +479,7 @@ const DeleteModal = ({
             Delete User
           </h2>
           <Button
-            variant="ghost"
+            variant="destructive"
             size="sm"
             onClick={onClose}
             className="h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -473,7 +496,9 @@ const DeleteModal = ({
 
         {/* Actions */}
         <div className="flex gap-3">
-          <Button variant="outline" onClick={onClose} className="flex-1">
+          <Button variant="destructive" 
+                    
+          onClick={onClose} className="flex-1 bg-gray-900">
             Cancel
           </Button>
           <Button

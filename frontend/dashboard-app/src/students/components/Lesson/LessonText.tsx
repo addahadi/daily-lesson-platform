@@ -1,3 +1,5 @@
+import { renderMarkdown } from "@/lib/utils";
+
 const LessonText = ({ text, heading }: { text: string; heading: string }) => {
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex flex-col p-4 sm:p-5 rounded-lg gap-4 mt-5 mb-5">
@@ -7,9 +9,14 @@ const LessonText = ({ text, heading }: { text: string; heading: string }) => {
         </span>
       </h1>
 
-      <div className="overflow-auto text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed whitespace-pre-wrap">
-        {text}
-      </div>
+      <div
+              className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6"
+              dangerouslySetInnerHTML={{
+                __html: text
+                  ? renderMarkdown(text)
+                  : '<p class="text-gray-500 italic">No content yet...</p>',
+              }}
+            />
 
       {heading === "Summary" && (
         <div className="mt-4">

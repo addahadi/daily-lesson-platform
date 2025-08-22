@@ -169,9 +169,11 @@ const getCoursesInFolder = async (req, res) => {
           FROM modules m
           JOIN lessons l ON l.topic_id = m.id
           WHERE m.course_id = c.id
-        ) AS total_duration
+        ) AS total_duration,
+        e.completed as completed_course
       FROM course_save cs
       JOIN courses c ON c.id = cs.course_id
+      LEFT JOIN enrollments e ON e.course_id = c.id AND e.user_id = ${userId}
       WHERE cs.folder_id = ${folderId}
       ORDER BY cs.saved_at DESC
     `;

@@ -103,6 +103,7 @@ const Folders = () => {
                 title="No created folders"
                 description="You haven't created any folder yet."
                 icon={<Save className="w-8 h-8" />}
+                color="orange"
               />
             </div>
           ) : (

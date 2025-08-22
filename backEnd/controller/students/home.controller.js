@@ -1,10 +1,10 @@
 const sql = require("../../db");
 
 async function getEnrolledCourses(req, res, next) {
-  const { userId } = req.params;
+  const { userId } = req.auth;
   try {
     const response = await sql`
-      SELECT c.title, c.id course_id , e.id as enrollment_id , count(c.id) as total_courses
+      SELECT c.title, c.id course_id  , c.slug as course_slug, e.id as enrollment_id , count(c.id) as total_courses
       FROM courses c
       JOIN enrollments e ON e.course_id = c.id
       WHERE e.user_id = ${userId} AND c.is_published = TRUE
@@ -106,6 +106,7 @@ async function getDailyStreak(req, res, next) {
 
 async function getNextLesson(req, res, next) {
   const { courseId, enrollmentId } = req.query;
+
   try {
     const lessons = await sql`
       SELECT 
@@ -113,11 +114,16 @@ async function getNextLesson(req, res, next) {
         l.level, 
         l.topic_id AS module_id, 
         l.id AS lesson_id, 
-        l.slug
+        l.slug,
+        l.title AS lesson_title,
+        m.title AS module_title
       FROM lessons l
-      JOIN modules m ON l.topic_id = m.id AND m.is_deleted = false
+      JOIN modules m 
+        ON l.topic_id = m.id 
+       AND m.is_deleted = false
       LEFT JOIN lesson_progress lp 
-        ON l.id = lp.lesson_id AND lp.enrollment_id = ${enrollmentId}
+        ON l.id = lp.lesson_id 
+       AND lp.enrollment_id = ${enrollmentId}
       WHERE 
         m.course_id = ${courseId}
         AND l.is_deleted = false
@@ -129,10 +135,11 @@ async function getNextLesson(req, res, next) {
     const progress = await sql`
       SELECT 
         COUNT(*) FILTER (WHERE m.is_deleted = false) AS total_modules,
-        COUNT(mp.id) AS total_progressed_modules
+        COUNT(DISTINCT mp.module_id) AS total_progressed_modules
       FROM modules m
       LEFT JOIN module_progress mp 
-        ON mp.module_id = m.id AND mp.enrollment_id = ${enrollmentId}
+        ON mp.module_id = m.id 
+       AND mp.enrollment_id = ${enrollmentId}
       WHERE m.course_id = ${courseId};
     `;
 
@@ -150,10 +157,10 @@ async function getNextLesson(req, res, next) {
         : 0;
 
     const response = {
-      lesson: lessons[0],
+      lesson: lessons[0], // already shaped nicely
       progressPercentage,
-      total_modules,
-      total_progressed_modules,
+      total_modules: Number(total_modules),
+      total_progressed_modules: Number(total_progressed_modules),
     };
 
     res.status(200).json({

@@ -23,7 +23,7 @@ export function useLessonDetails(
   const [lessonDetail, setLessonDetail] = useState<LessonDataType>();
   const [lessonSections, setLessonSections] = useState<LessonSectionProps[]>();
   const [quizz, setQuizz] = useState<QuizzProps>();
-  const [completed, setCompleted] = useState<boolean | undefined>(false);
+  const [completed, setCompleted] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -72,7 +72,7 @@ export function useLessonDetails(
         const isCompleted = await startLesson(enrollmentId, moduleId, lessonId);
         if(isCompleted === null) return;
         console.log(isCompleted)
-        setCompleted(isCompleted);
+        setCompleted(isCompleted as boolean);
       } catch (err) {
         console.error("Error starting lesson progress:", err);
       }

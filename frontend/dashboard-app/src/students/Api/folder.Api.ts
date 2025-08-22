@@ -154,7 +154,7 @@ const useFolderApiController = () => {
           }
         );
 
-        const data = await handleResponse<{ data: CourseCardProps[] }>(
+        const data = await handleResponse<CourseCardProps[]>(
           response
         );
         if (typeof data === "string") {
