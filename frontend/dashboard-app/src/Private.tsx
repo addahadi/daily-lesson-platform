@@ -3,6 +3,10 @@ import  { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminDashboard from "./admin/app/adminDashboard";
 
+
+
+
+
 const Private = () => {
   const navigate = useNavigate();
   const { user, isLoaded } = useUser();
@@ -12,7 +16,7 @@ const Private = () => {
     if (!isLoaded) return; 
     if (!user) {navigate("/");
         return;}
-    const userRole = user.publicMetadata?.role as string;
+    const userRole = user.publicMetadata?.role;
     setRole(userRole);
 
     if (userRole !== "admin") {
