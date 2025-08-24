@@ -36,7 +36,7 @@ const notificationRouteAdmin = require("../backEnd/routes/admin/notification.rou
 app.use(
   cors({
     origin:
-      process.env.FRONTEND_URL || "https://daily-lesson-platform.onrender.com",
+      process.env.FRONTEND_URL || "https://devlevelup-dashboard.vercel.app/",
     credentials: true,
   })
 );
