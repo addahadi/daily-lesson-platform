@@ -8,7 +8,7 @@ const useNoteApi = () => {
   const getAllNotes = useCallback(
     async (page: number) => {
       const token = await getToken();
-      const URL = `http://localhost:8090/note/all-notes?page=${page}`;
+      const URL = `https://daily-lesson-platform.onrender.com/note/all-notes?page=${page}`;
 
       try {
         const res = await fetch(URL, {
@@ -31,7 +31,7 @@ const useNoteApi = () => {
 
   const deleteNote = async (lessonId: string) => {
     const token = await getToken();
-    const URL = `http://localhost:8090/note/delete-note/${lessonId}`;
+    const URL = `https://daily-lesson-platform.onrender.com/note/delete-note/${lessonId}`;
     try {
       const res = await fetch(URL, {
         method: "DELETE",
@@ -52,7 +52,7 @@ const useNoteApi = () => {
   const getLessonNote = useCallback(
     async (lessonId: string) => {
       const token = await getToken();
-      const URL = `http://localhost:8090/note/lesson-note/${lessonId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/note/lesson-note/${lessonId}`;
 
       try {
         const res = await fetch(URL, {
@@ -82,7 +82,7 @@ const useNoteApi = () => {
       const body = JSON.stringify({ title, content, lessonId });
 
       try {
-        const res = await fetch(`http://localhost:8090/note/add-note`, {
+        const res = await fetch(`https://daily-lesson-platform.onrender.com/note/add-note`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

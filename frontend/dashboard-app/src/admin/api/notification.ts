@@ -16,7 +16,7 @@ const useNotificationApi = () => {
   }, [getToken]);
 
   const getCoursesId = useCallback(async () => {
-    const URL = `http://localhost:8090/admin/notifications/courses-ids`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/notifications/courses-ids`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
@@ -35,7 +35,7 @@ const useNotificationApi = () => {
 
   const getCourseNotifications = useCallback(
     async (page: number) => {
-      const URL = `http://localhost:8090/admin/notifications?page=${page}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/notifications?page=${page}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
@@ -63,7 +63,7 @@ const useNotificationApi = () => {
       content_type: string;
       course_id: string;
     }) => {
-      const URL = `http://localhost:8090/admin/notifications/`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/notifications/`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -98,7 +98,7 @@ const useNotificationApi = () => {
       },
       id: string
     ) => {
-      const URL = `http://localhost:8090/admin/notifications/${id}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/notifications/${id}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -123,7 +123,7 @@ const useNotificationApi = () => {
 
   const deleteNotification = useCallback(
     async (id: string) => {
-      const URL = `http://localhost:8090/admin/notifications/${id}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/notifications/${id}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -162,7 +162,7 @@ const useNotificationApi = () => {
         notificationId,
       };
       const response = await fetch(
-        "http://localhost:8090/admin/notifications/user-notifications",
+        "https://daily-lesson-platform.onrender.com/admin/notifications/user-notifications",
         {
           method: "POST",
           headers,

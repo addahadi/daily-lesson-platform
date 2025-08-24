@@ -13,7 +13,7 @@ const useAnalyticApi = () => {
   }, [getToken]);
 
   const getStreakAnalyticData = useCallback(async () => {
-    const URL = `http://localhost:8090/admin/analytics/streaks`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/analytics/streaks`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
@@ -30,7 +30,7 @@ const useAnalyticApi = () => {
   }, [getAuthHeader]);
 
   const getLessonAnalyticData = useCallback(async () => {
-    const URL = `http://localhost:8090/admin/analytics/lessons`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/analytics/lessons`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
@@ -47,7 +47,7 @@ const useAnalyticApi = () => {
   }, [getAuthHeader]);
 
   const getUserAnalyticData = useCallback(async () => {
-    const URL = `http://localhost:8090/admin/analytics/users`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/analytics/users`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
@@ -65,7 +65,7 @@ const useAnalyticApi = () => {
 
 
   const getChartData = useCallback(async () => {
-    const URL = `http://localhost:8090/admin/analytics/charts`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/analytics/charts`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });

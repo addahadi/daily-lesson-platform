@@ -17,7 +17,7 @@ const useLessonApi = () => {
 
   const getAllLessons = useCallback(
     async (moduleId: string) => {
-      const URL = `http://localhost:8090/admin/lesson/${moduleId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/${moduleId}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
@@ -40,7 +40,7 @@ const useLessonApi = () => {
       moduleId: string,
       requestBody: Record<string, string | number | null>
     ) => {
-      const URL = `http://localhost:8090/admin/lesson/${moduleId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/${moduleId}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -70,7 +70,7 @@ const useLessonApi = () => {
         order_index: number;
       }[]
     ) => {
-      const URL = `http://localhost:8090/admin/lesson/order/${moduleId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/order/${moduleId}`;
 
       try {
         const headers = await getAuthHeader();
@@ -97,7 +97,7 @@ const useLessonApi = () => {
 
   const updateLessonContent = useCallback(
     async (lessonId: string, requestBody: { sections: section[] }) => {
-      const URL = `http://localhost:8090/admin/lesson/content/${lessonId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/content/${lessonId}`;
 
       try {
         const headers = await getAuthHeader();
@@ -123,7 +123,7 @@ const useLessonApi = () => {
 
   const updateAddLessonQuizz = useCallback(
     async (lessonId: string, requestBody: QuizzProps) => {
-      const URL = `http://localhost:8090/admin/lesson/quizz/${lessonId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/quizz/${lessonId}`;
 
       try {
         const headers = await getAuthHeader();
@@ -148,7 +148,7 @@ const useLessonApi = () => {
   );
 
   const deleteLesson = async (lessonId: string) => {
-    const URL = `http://localhost:8090/admin/lesson/delete/${lessonId}`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/delete/${lessonId}`;
     try {
       const headers = await getAuthHeader();
       const res = await fetch(URL, {

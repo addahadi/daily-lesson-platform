@@ -19,7 +19,7 @@ const useCourseApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/course/getall?page=${page}`,
+          `https://daily-lesson-platform.onrender.com/course/getall?page=${page}`,
           {
             method: "GET",
             headers,
@@ -45,7 +45,7 @@ const useCourseApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/course/filtered-courses?${filter}`,
+          `https://daily-lesson-platform.onrender.com/course/filtered-courses?${filter}`,
           {
             method: "GET",
             headers,
@@ -71,7 +71,7 @@ const useCourseApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/course/getmodules/${id}`,
+          `https://daily-lesson-platform.onrender.com/course/getmodules/${id}`,
           {
             method: "GET",
             headers,
@@ -97,7 +97,7 @@ const useCourseApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/course/getbyslug?slug=${slug}`,
+          `https://daily-lesson-platform.onrender.com/course/getbyslug?slug=${slug}`,
           {
             method: "GET",
             headers,
@@ -123,7 +123,7 @@ const useCourseApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/course/getlessons/${id}`,
+          `https://daily-lesson-platform.onrender.com/course/getlessons/${id}`,
           {
             method: "GET",
             headers,

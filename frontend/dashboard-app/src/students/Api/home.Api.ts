@@ -15,7 +15,7 @@ const useHomeApi = () => {
   }, [getToken]);
 
   const getEnrolledCourses = useCallback(async () => {
-    const URL = `http://localhost:8090/home/enrolled-courses`;
+    const URL = `https://daily-lesson-platform.onrender.com/home/enrolled-courses`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
@@ -36,7 +36,7 @@ const useHomeApi = () => {
 
   const getEnrolledCoursesNumber = useCallback(
     async () => {
-      const URL = `http://localhost:8090/home/total-enrolled-courses/`;
+      const URL = `https://daily-lesson-platform.onrender.com/home/total-enrolled-courses/`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
@@ -57,7 +57,7 @@ const useHomeApi = () => {
 
   const getNextLesson = useCallback(
     async (courseId: string, enrollmentId: string) => {
-      const URL = `http://localhost:8090/home/next-lessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/home/next-lessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
@@ -78,7 +78,7 @@ const useHomeApi = () => {
 
   const getTotalLessons = useCallback(
     async () => {
-      const URL = `http://localhost:8090/home/total-lessons/`;
+      const URL = `https://daily-lesson-platform.onrender.com/home/total-lessons/`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
@@ -102,7 +102,7 @@ const useHomeApi = () => {
 
   const getDailyStreak = useCallback(
     async () => {
-      const URL = `http://localhost:8090/home/streak-days/`;
+      const URL = `https://daily-lesson-platform.onrender.com/home/streak-days/`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });

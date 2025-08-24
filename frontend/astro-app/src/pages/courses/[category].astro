@@ -23,7 +23,7 @@ const { category } = Astro.params;
 
 const fetchCoursesApi = async (category: string) => {
   try {
-    const response = await fetch(`http://localhost:8090/public/courses/category/${category}` , {
+    const response = await fetch(`https://daily-lesson-platform.onrender.com/public/courses/category/${category}` , {
       method : "GET",
       headers : {
         "Content-Type": "application/json",

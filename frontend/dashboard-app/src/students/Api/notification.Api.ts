@@ -17,7 +17,7 @@ export const useNotificationApi = () => {
   const getUserNotifications = useCallback(async () => {
     const headers = await getAuthHeader();
     try {
-      const response = await fetch(`http://localhost:8090/notifications/`, {
+      const response = await fetch(`https://daily-lesson-platform.onrender.com/notifications/`, {
         method: "GET",
         headers,
       });
@@ -39,7 +39,7 @@ export const useNotificationApi = () => {
     const headers = await getAuthHeader();
     try {
       const response = await fetch(
-        `http://localhost:8090/notifications/mark-all-read`,
+        `https://daily-lesson-platform.onrender.com/notifications/mark-all-read`,
         {
           method: "PATCH",
           headers,
@@ -62,7 +62,7 @@ export const useNotificationApi = () => {
     const headers = await getAuthHeader();
     try {
       const response = await fetch(
-        `http://localhost:8090/notifications/${notificationId}`,
+        `https://daily-lesson-platform.onrender.com/notifications/${notificationId}`,
         {
           method: "PATCH",
           headers,

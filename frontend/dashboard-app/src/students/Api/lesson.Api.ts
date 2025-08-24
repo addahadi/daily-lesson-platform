@@ -16,7 +16,7 @@ const useLessonApiController = () => {
 
   const getLessonDetails = useCallback(
     async (lessonId: string, moduleId: string) => {
-      const URL = `http://localhost:8090/lesson/${lessonId}/${moduleId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/lesson/${lessonId}/${moduleId}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -39,7 +39,7 @@ const useLessonApiController = () => {
 
   const getLessonsDetails = useCallback(
     async (courseId: string, enrollmentId: string) => {
-      const URL = `http://localhost:8090/lesson/all-lessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/lesson/all-lessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -63,7 +63,7 @@ const useLessonApiController = () => {
 
   const startLesson = useCallback(
     async (enrollmentId: string, moduleId: string, lessonId: string) => {
-      const URL = `http://localhost:8090/lesson/start-lesson`;
+      const URL = `https://daily-lesson-platform.onrender.com/lesson/start-lesson`;
       const requestBody = { enrollmentId, moduleId, lessonId };
       try {
         const headers = await getAuthHeader();
@@ -102,7 +102,7 @@ const useLessonApiController = () => {
         correct: is_correct.toString(),
         module_id,
       });
-      const URL = `http://localhost:8090/lesson/answer-submit?${queryParams}`;
+      const URL = `https://daily-lesson-platform.onrender.com/lesson/answer-submit?${queryParams}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -125,7 +125,7 @@ const useLessonApiController = () => {
 
   const getNextLesson = useCallback(
     async (order_index: number, module_id: string) => {
-      const URL = `http://localhost:8090/lesson/next-lesson/${module_id}/${order_index}`;
+      const URL = `https://daily-lesson-platform.onrender.com/lesson/next-lesson/${module_id}/${order_index}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
@@ -148,7 +148,7 @@ const useLessonApiController = () => {
 
   const markAsComplete = useCallback(
     async (enrollmentId: string, moduleId: string, lessonId: string) => {
-      const URL = `http://localhost:8090/lesson/completed`;
+      const URL = `https://daily-lesson-platform.onrender.com/lesson/completed`;
       const requestBody = {
         enrollmentId,
         moduleId,

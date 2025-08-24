@@ -3,7 +3,7 @@ import { handleResponse } from "../utils/util"
 
 async function getAllCourses() {
     try {
-        const response = await fetch("http://localhost:8090/public/courses", {
+        const response = await fetch("https://daily-lesson-platform.onrender.com/public/courses", {
             method : "GET"
         })
         const data = await  handleResponse<{
@@ -24,7 +24,7 @@ async function getAllCourses() {
 
 async function getCourseInfoBySlug(slug: string) {
     try {
-        const response = await fetch(`http://localhost:8090/public/courses/${slug}`, {
+        const response = await fetch(`https://daily-lesson-platform.onrender.com/public/courses/${slug}`, {
             method: "GET"
         });
         const data = await handleResponse<{
@@ -69,7 +69,7 @@ async function getCourseInfoBySlug(slug: string) {
 
 async function getFeaturedCourses() {
     try {
-        const response = await fetch("http://localhost:8090/public/courses/featured", {
+        const response = await fetch("https://daily-lesson-platform.onrender.com/public/courses/featured", {
             method: "GET"
         });
         console.log(response)

@@ -69,6 +69,7 @@ console.log(data)
           What You'll Learn
         </h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          {/*@ts-ignore*/}
           {course?.content.map((items: string, index: number) => (
             <div
               class="flex items-start space-x-3 p-3 sm:p-4 rounded-lg bg-gray-50 border border-gray-100"

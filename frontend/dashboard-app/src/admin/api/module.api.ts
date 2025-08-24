@@ -12,7 +12,7 @@ const useModuleApi = () => {
   };
 
   const getCourseModules = async (courseId: string) => {
-    const URL = `http://localhost:8090/admin/course/course-modules/${courseId}`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/course/course-modules/${courseId}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
@@ -31,7 +31,7 @@ const useModuleApi = () => {
     const requestBody = {
       title: title,
     };
-    const URL = `http://localhost:8090/admin/course/modules/${courseId}`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/course/modules/${courseId}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, {
@@ -53,7 +53,7 @@ const useModuleApi = () => {
     const requestBody = {
       title: title,
     };
-    const URL = `http://localhost:8090/admin/course/modules/${moduleId}`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/course/modules/${moduleId}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, {
@@ -75,7 +75,7 @@ const useModuleApi = () => {
     courseId: string,
     orderedModules: { id: string; order_index: number }[]
   ) => {
-    const URL = `http://localhost:8090/admin/course/module-order/${courseId}`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/course/module-order/${courseId}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, {
@@ -95,7 +95,7 @@ const useModuleApi = () => {
   };
 
   const deleteModule = async (moduleId: string) => {
-    const URL = `http://localhost:8090/admin/course/modules/${moduleId}`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/course/modules/${moduleId}`;
     try {
       const headers = await getAuthHeader();
       const res = await fetch(URL, {

@@ -13,7 +13,7 @@ const useCourseApi = () => {
   };
 
   const getCourses = async (page: number) => {
-    const URL = `http://localhost:8090/admin/course?page=${page}`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/course?page=${page}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
@@ -31,7 +31,7 @@ const useCourseApi = () => {
     }
   };
   const UpdateCourse = async (courseData: Partial<Course>) => {
-    const URL = `http://localhost:8090/admin/course/`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/course/`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, {
@@ -51,7 +51,7 @@ const useCourseApi = () => {
   };
 
   const ToggleCourseView = async (courseId: string) => {
-    const URL = `http://localhost:8090/admin/course/${courseId}`;
+    const URL = `https://daily-lesson-platform.onrender.com/admin/course/${courseId}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, {

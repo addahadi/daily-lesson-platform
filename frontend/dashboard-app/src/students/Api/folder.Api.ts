@@ -22,7 +22,7 @@ const useFolderApiController = () => {
     async (title: string) => {
       try {
         const headers = await getAuthHeader();
-        const response = await fetch("http://localhost:8090/folder", {
+        const response = await fetch("https://daily-lesson-platform.onrender.com/folder", {
           method: "POST",
           headers,
           body: JSON.stringify({ title }),
@@ -45,7 +45,7 @@ const useFolderApiController = () => {
   const getAllFolders = useCallback(async () => {
     try {
       const headers = await getAuthHeader();
-      const response = await fetch(`http://localhost:8090/folder`, {
+      const response = await fetch(`https://daily-lesson-platform.onrender.com/folder`, {
         method: "GET",
         headers,
       });
@@ -66,7 +66,7 @@ const useFolderApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/folder/${folderId}`,
+          `https://daily-lesson-platform.onrender.com/folder/${folderId}`,
           {
             method: "DELETE",
             headers,
@@ -91,7 +91,7 @@ const useFolderApiController = () => {
     async (course_id: string, folder_id: string) => {
       try {
         const headers = await getAuthHeader();
-        const response = await fetch("http://localhost:8090/folder/save", {
+        const response = await fetch("https://daily-lesson-platform.onrender.com/folder/save", {
           method: "POST",
           headers,
           body: JSON.stringify({ course_id, folder_id }),
@@ -117,7 +117,7 @@ const useFolderApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/folder/save/${course_id}/${folder_id}`,
+          `https://daily-lesson-platform.onrender.com/folder/save/${course_id}/${folder_id}`,
           {
             method: "DELETE",
             headers,
@@ -142,7 +142,7 @@ const useFolderApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/folder/${folderId}/courses`,
+          `https://daily-lesson-platform.onrender.com/folder/${folderId}/courses`,
           {
             method: "GET",
             headers,

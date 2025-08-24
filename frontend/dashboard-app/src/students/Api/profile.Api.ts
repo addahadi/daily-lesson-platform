@@ -19,7 +19,7 @@ const useProfileApiController = () => {
   const getUserInfo = useCallback(async () => {
     const headers = await getAuthHeader();
     try {
-      const response = await fetch(`http://localhost:8090/auth/user-info/`, {
+      const response = await fetch(`https://daily-lesson-platform.onrender.com/auth/user-info/`, {
         method: "GET",
         headers: headers,
       });
@@ -41,7 +41,7 @@ const useProfileApiController = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8090/auth/user-achievements/`,
+        `https://daily-lesson-platform.onrender.com/auth/user-achievements/`,
         {
           method: "GET",
           headers: headers,
@@ -63,7 +63,7 @@ const useProfileApiController = () => {
   const getXpLogs = useCallback(async () => {
     const headers = await getAuthHeader();
     try {
-      const response = await fetch(`http://localhost:8090/auth/xp-logs/`, {
+      const response = await fetch(`https://daily-lesson-platform.onrender.com/auth/xp-logs/`, {
         method: "GET",
         headers: headers,
       });

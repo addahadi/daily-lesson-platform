@@ -19,7 +19,7 @@ const useUserApiController = () => {
 
       try {
         const headers = await getAuthHeader();
-        const response = await fetch(`http://localhost:8090/auth/enroll`, {
+        const response = await fetch(`https://daily-lesson-platform.onrender.com/auth/enroll`, {
           method: "POST",
           headers,
           body: JSON.stringify(requestBody),
@@ -45,7 +45,7 @@ const useUserApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/auth/is-enroll?courseSlug=${courseSlug}&userId=${userId}`,
+          `https://daily-lesson-platform.onrender.com/auth/is-enroll?courseSlug=${courseSlug}&userId=${userId}`,
           {
             method: "GET",
             headers,
@@ -77,7 +77,7 @@ const useUserApiController = () => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
-          `http://localhost:8090/auth/getenroll?courseId=${courseId}&userId=${userId}`,
+          `https://daily-lesson-platform.onrender.com/auth/getenroll?courseId=${courseId}&userId=${userId}`,
           {
             method: "GET",
             headers,

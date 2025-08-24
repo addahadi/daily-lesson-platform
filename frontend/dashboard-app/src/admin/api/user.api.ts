@@ -16,7 +16,7 @@ const useUserApi = () => {
 
   const getUsers = useCallback(
     async (page: number) => {
-      const URL = `http://localhost:8090/admin/user?page=${page}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/user?page=${page}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
@@ -36,7 +36,7 @@ const useUserApi = () => {
 
   const deleteUser = useCallback(
     async (userId: string) => {
-      const URL = `http://localhost:8090/admin/user/${userId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/user/${userId}`;
       try {
         const headers = await getAuthHeader();
         await fetch(URL, { method: "DELETE", headers });
@@ -50,7 +50,7 @@ const useUserApi = () => {
   const updateUser = useCallback(
     async (userId: string, role: string, status: string) => {
       const requestBody = { role, status };
-      const URL = `http://localhost:8090/admin/user/${userId}`;
+      const URL = `https://daily-lesson-platform.onrender.com/admin/user/${userId}`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, {
