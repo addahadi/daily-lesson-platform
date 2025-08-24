@@ -12,7 +12,7 @@ const Private = () => {
     if (!isLoaded) return; 
     if (!user) {navigate("/");
         return;}
-    const userRole = user.publicMetadata?.role;
+    const userRole = user.publicMetadata?.role as string;
     setRole(userRole);
 
     if (userRole !== "admin") {
