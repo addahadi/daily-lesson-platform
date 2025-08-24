@@ -1,31 +1,36 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Shared/components/ui/button";
 import { BookCopyIcon, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import AdminCourseCard from "../components/AdminCourseCard";
-import type { Course } from "@/lib/adminType";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import type { Course } from "@/Shared/lib/adminType";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Shared/components/ui/card";
+import { Input } from "@/Shared/components/ui/input";
+import { Label } from "@/Shared/components/ui/label";
 import useCourseApi from "../api/course.api";
-import LoadingSpinner from "@/components/ui/loading";
+import LoadingSpinner from "@/Shared/components/ui/loading";
 import uploadImageToCloudinary from "../api/Cloudinary";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/Shared/components/ui/sonner";
 import { toast } from "sonner";
-import EmptyCase from "@/components/empty/EmptyCase";
-import { Select, SelectContent, SelectItem, SelectTrigger , SelectValue } from "@/components/ui/select";
+import EmptyCase from "@/Shared/components/empty/EmptyCase";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/Shared/components/ui/select";
 
 const CourseManegement = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
   const [editedCourse, setEditedCourse] = useState<Course | null>(null);
   const [isCreate, setIsCreate] = useState(false);
-  const [page , setPage] = useState(1);
-  const [showMore , setShowMore] = useState(false)
-  const [showMoreLoading , setShowMoreLoading] = useState(false)
+  const [page, setPage] = useState(1);
+  const [showMore, setShowMore] = useState(false);
+  const [showMoreLoading, setShowMoreLoading] = useState(false);
   const { getCourses } = useCourseApi();
 
-  
-  const fetchCourses = async (currentPage: number) => {    
+  const fetchCourses = async (currentPage: number) => {
     const result = await getCourses(currentPage);
     if (result && result.data) {
       setCourses((prev) => {
@@ -35,10 +40,10 @@ const CourseManegement = () => {
         }
         return prev;
       });
-      if (result.final !== undefined) setShowMore(result.final);  
+      if (result.final !== undefined) setShowMore(result.final);
     }
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -51,9 +56,9 @@ const CourseManegement = () => {
   const handleShowMore = async () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    setShowMoreLoading(true)
+    setShowMoreLoading(true);
     await fetchCourses(nextPage);
-    setShowMoreLoading(false)
+    setShowMoreLoading(false);
   };
 
   return (
@@ -116,9 +121,10 @@ const CourseManegement = () => {
       {showMore && (
         <div className="flex justify-center mt-6">
           <Button
-          disabled={showMoreLoading}
-          className=" hover:bg-gray-700"
-          onClick={handleShowMore} variant="outline">
+            disabled={showMoreLoading}
+            onClick={handleShowMore}
+            variant="outline"
+          >
             Show More Users
           </Button>
         </div>
@@ -162,7 +168,7 @@ function EditCourse({ editedCourse = {}, close, isCreate }: any) {
   const removeContentReason = (index: number) => {
     setCourseInfo({
       ...courseInfo,
-      content: courseInfo.content.filter((_ : any, i: number) => i !== index),
+      content: courseInfo.content.filter((_: any, i: number) => i !== index),
     });
   };
 

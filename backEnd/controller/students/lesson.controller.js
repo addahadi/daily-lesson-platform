@@ -68,31 +68,36 @@ async function getLessonDetails(req, res, next) {
 
 
 
-
 async function getLessonsDetails(req, res, next) {
   try {
-    const { courseId : Courseslug, enrollmentId } = req.query;
-    
+    const { courseId: Courseslug, enrollmentId } = req.query;
+    const {userId} = req.auth
     const courseResponse = await sql`
-      SELECT id, slug, title FROM courses WHERE slug = ${Courseslug}
+      SELECT id, slug, title 
+      FROM courses 
+      WHERE slug = ${Courseslug}
     `;
+
     if (courseResponse.length === 0) {
-     if (courseResponse.length === 0) {
-       return res.status(404).json({
-         status: false,
-         message: "The course you're looking for does not exist.",
-       });
-     }
+      return res.status(404).json({
+        status: false,
+        message: "The course you're looking for does not exist.",
+      });
     }
 
     const course = courseResponse[0];
-    const modulesResponse = await sql`
-      SELECT id, title, order_index FROM modules   WHERE course_id = ${course.id} AND is_deleted = false
 
+    // Fetch all modules ordered
+    const modulesResponse = await sql`
+      SELECT id, title, order_index 
+      FROM modules   
+      WHERE course_id = ${course.id} AND is_deleted = false
+      ORDER BY order_index ASC
     `;
 
-    const moduleIds = modulesResponse.map((module) => module.id);
+    const moduleIds = modulesResponse.map((m) => m.id);
 
+    // Fetch all lessons with completion
     const lessonsResponse = await sql`
       SELECT 
         l.id, 
@@ -102,33 +107,69 @@ async function getLessonsDetails(req, res, next) {
         l.topic_id,
         COALESCE(p.completed, false) AS completed
       FROM lessons l
-      LEFT JOIN lesson_progress p ON (l.id = p.lesson_id AND p.enrollment_id = ${enrollmentId})
-      WHERE l.topic_id = ANY(${moduleIds}) AND l.is_deleted = false
+      LEFT JOIN lesson_progress p 
+        ON (l.id = p.lesson_id AND p.enrollment_id = ${enrollmentId})
+      WHERE l.topic_id = ANY(${moduleIds}) 
+        AND l.is_deleted = false
       ORDER BY l.topic_id, l.order_index
     `;
 
-    const structuredModules = modulesResponse.map((module) => ({
-      module_id: module.id,
-      title: module.title,
-      order_index: module.order_index,
-      lessons: lessonsResponse
-        .filter((lesson) => lesson.topic_id === module.id)
-        .map((lesson) => ({
-          id: lesson.id,
-          title: lesson.title,
-          order_index: lesson.order_index,
-          slug: lesson.slug,
-          completed: lesson.completed,
-        })),
-    }));
+    // Fetch module progress (for accessibility checks)
+    const moduleProgress = await sql`
+      SELECT module_id, progress 
+      FROM module_progress mp
+      JOIN enrollments e ON mp.enrollment_id = e.id
+      WHERE e.user_id = ${userId}
+        AND e.course_id = ${course.id}
+    `;
 
-    res
-      .status(200)
-      .json({ status: true, data: { course, modules: structuredModules } });
+    const progressMap = Object.fromEntries(
+      moduleProgress.map((m) => [m.module_id, m.progress])
+    );
+
+    // Build structured modules
+    const structuredModules = modulesResponse.map((module, idx) => {
+      // First module always accessible
+      let isAccessible = idx === 0;
+
+      if (idx > 0) {
+        const prevModuleId = modulesResponse[idx - 1].id;
+        isAccessible = progressMap[prevModuleId] === 100;
+      }
+
+      return {
+        module_id: module.id,
+        title: module.title,
+        order_index: module.order_index,
+        isAccessible,
+        lessons: lessonsResponse
+          .filter((lesson) => lesson.topic_id === module.id)
+          .map((lesson) => ({
+            id: lesson.id,
+            title: lesson.title,
+            order_index: lesson.order_index,
+            slug: lesson.slug,
+            completed: lesson.completed,
+          })),
+      };
+    });
+
+    return res.status(200).json({
+      status: true,
+      data: {
+        course,
+        modules: structuredModules,
+      },
+    });
   } catch (err) {
     next(err);
   }
 }
+
+
+
+
+
 
 async function getFirstLesson(client, courseId, res) {
   const firstLesson = await client`
@@ -154,74 +195,6 @@ async function getFirstLesson(client, courseId, res) {
     action: "start the first lesson",
   });
 }
-async function isModuleAccessible(req, res, next) {
-  const { userId, courseId, moduleId } = req.body;
-
-  try {
-    const courseResponse = await sql`
-      SELECT id FROM courses WHERE slug = ${courseId}
-    `;
-
-    if (courseResponse.length === 0) {
-      return res
-        .status(404)
-        .json({ status: false, error: "Course not found." });
-    }
-
-    const course = courseResponse[0];
-
-    // Get all non-deleted modules in order
-    const modules = await sql`
-      SELECT id
-      FROM modules
-      WHERE course_id = ${course.id} AND is_deleted = false
-      ORDER BY order_index ASC
-    `;
-
-    const index = modules.findIndex((m) => m.id === moduleId);
-
-    if (index === -1) {
-      return res
-        .status(404)
-        .json({ status: false, error: "Module not found." });
-    }
-
-    // First active module → always accessible
-    if (index === 0) {
-      return res.status(200).json({
-        status: true,
-        message: "Module is accessible.",
-        isAccessible: true,
-      });
-    }
-
-    const previousModuleId = modules[index - 1].id;
-
-    // Check progress on previous active module
-    const [accessCheck] = await sql`
-      SELECT EXISTS (
-        SELECT 1
-        FROM module_progress mp
-        JOIN enrollments e ON mp.enrollment_id = e.id
-        WHERE e.user_id = ${userId}
-          AND e.course_id = ${course.id}
-          AND mp.module_id = ${previousModuleId}
-          AND mp.progress = 100
-      ) AS is_accessible
-    `;
-
-    return res.status(200).json({
-      status: true,
-      message: accessCheck.is_accessible
-        ? "Module is accessible."
-        : "Previous module is not completed yet.",
-      isAccessible: accessCheck.is_accessible,
-    });
-  } catch (err) {
-    next(err);
-  }
-}
-
 async function startLesson(req, res, next) {
   const { enrollmentId, moduleId, lessonId: lessonSlug } = req.body;
 
@@ -519,7 +492,6 @@ module.exports = {
   getLessonDetails,
   getLessonsDetails,
   getFirstLesson,
-  isModuleAccessible,
   startLesson,
   SubmitQuizzAnswer,
   getNextLesson,

@@ -1,31 +1,38 @@
-import type { NotificationData } from "@/lib/type"
-import { formatDuration, formatTimestamp } from "@/lib/utils"
-import { BookOpen, Check, Megaphone } from "lucide-react"
-import { useEffect, useState } from "react"
-
+import type { NotificationData } from "@/Shared/lib/type";
+import { formatTimestamp } from "@/Shared/lib/utils";
+import { useNotificationApi } from "@/students/Api/notification.Api";
+import { BookOpen, Check, Megaphone } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 type NotificationItemProps = {
   notification: NotificationData;
-  onMarkAsRead: (notificationId: string) => void;
+  setNotifications: React.Dispatch<
+    React.SetStateAction<NotificationData[] | null>
+  >;
 };
 
 const NotificationItem = ({
   notification,
-  onMarkAsRead,
+  setNotifications,
 }: NotificationItemProps) => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const { markAsRead } = useNotificationApi();
   const handleMarkAsRead = async () => {
     if (notification.is_read) return;
 
     setIsLoading(true);
-    try {
-      await onMarkAsRead(notification.id);
-    } catch (error) {
-      console.error("Error marking as read:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    const result = await markAsRead(notification.id);
+    if (!result) return setIsLoading(false);
+    setNotifications(
+      (prev) =>
+        prev?.map((item) =>
+          item.id === notification.id ? { ...item, is_read: true } : item
+        ) || null
+    );
+
+    toast.success(result?.message);
+    setIsLoading(false);
   };
 
   const getIcon = () => {

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Shared/components/ui/button";
 import clsx from "clsx";
 
 type EmptyCaseProps = {

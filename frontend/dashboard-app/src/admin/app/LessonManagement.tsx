@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import type { Lesson, Module } from "@/lib/adminType";
+import { Button } from "@/Shared/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Shared/components/ui/card";
+import { Input } from "@/Shared/components/ui/input";
+import { Label } from "@/Shared/components/ui/label";
+import type { Lesson, Module } from "@/Shared/lib/adminType";
 import { Clock, FileText, X } from "lucide-react";
 import React, { useEffect, useState, type SetStateAction } from "react";
 import { useLocation, useParams } from "react-router-dom";
@@ -14,12 +14,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { formatDuration } from "@/lib/utils";
+} from "@/Shared/components/ui/select";
+import { formatDuration } from "@/Shared/lib/utils";
 import useLessonApi from "../api/lesson.api";
-import LoadingSpinner from "@/components/ui/loading";
+import LoadingSpinner from "@/Shared/components/ui/loading";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/Shared/components/ui/sonner";
 import {
   closestCenter,
   DndContext,
@@ -33,7 +33,6 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import DraggableAdminCard from "../components/DraggbleAdminCard";
-import BackTo from "../components/ui/BackTo";
 
 const LessonManagement = () => {
   const [isCreate, setIsCreate] = useState(false);
@@ -85,7 +84,6 @@ const LessonManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6">
-      <BackTo title="back to course" URL={`/admin/course-management`} />
       <Card className="mb-14 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <CardContent className="flex flex-row gap-2 p-6">
           <div>
@@ -241,7 +239,7 @@ const EditLesson = ({
       setLessons((prev) => {
         const updated = prev.some((l) => l.id === result.id)
           ? prev.map((l) => (l.id === result.id ? result : l))
-          : [...prev, result]; 
+          : [...prev, result];
 
         return updated.sort((a, b) => a.order_index - b.order_index);
       });
@@ -251,7 +249,7 @@ const EditLesson = ({
       setLoading(false);
       toast.success("unsuccessful inserting");
     }
-    close()
+    close();
   }
 
   return (

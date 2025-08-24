@@ -29,20 +29,17 @@ router.get(
 );
 
 router.get(
-  "/total-enrolled-courses/:userId",
-  validate({ userId: "string" }, "params"),
+  "/total-enrolled-courses",
   getEnrolledCoursesNumber
 );
 
 router.get(
-  "/total-lessons/:userId",
-  validate({ userId: "string" }, "params"),
+  "/total-lessons",
   getTotalLessons
 );
 
 router.get(
-  "/streak-days/:userId",
-  validate({ userId: "string" }, "params"),
+  "/streak-days",
   getDailyStreak
 );
 

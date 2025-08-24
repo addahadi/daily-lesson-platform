@@ -1,23 +1,30 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/Shared/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/Shared/components/ui/card";
+import { Label } from "@/Shared/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import type { CourseCardProps, FolderType } from "@/lib/type";
-import { FOLDER_CACHE_KEY, getLevelColor } from "@/lib/utils";
+} from "@/Shared/components/ui/select";
+import type { CourseCardProps, FolderType } from "@/Shared/lib/type";
+import { FOLDER_CACHE_KEY, getLevelColor } from "@/Shared/lib/utils";
 import useFolderApiController from "@/students/Api/folder.Api";
-import { Bookmark, BookmarkCheck, CheckCheck, Clock, Play, X } from "lucide-react";
+import {
+  Bookmark,
+  BookmarkCheck,
+  CheckCheck,
+  Clock,
+  Play,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { CACHE_KEY_DISCOVER } from "@/lib/utils";
-import LoadingSpinner from "@/components/ui/loading";
-import { Toaster } from "@/components/ui/sonner";
+import { CACHE_KEY_DISCOVER } from "@/Shared/lib/utils";
+import LoadingSpinner from "@/Shared/components/ui/loading";
+import { Toaster } from "@/Shared/components/ui/sonner";
 
 export default function CourseCard({
   slug,
@@ -31,12 +38,12 @@ export default function CourseCard({
   is_completed,
   handleDelete,
   deleteState,
-}: CourseCardProps & { is_saved: boolean  , is_completed: boolean } & {
+}: CourseCardProps & { is_saved: boolean; is_completed: boolean } & {
   handleDelete?: (course_id: string) => void;
 } & { deleteState: boolean }) {
   const navigate = useNavigate();
   const [openModel, setOpenModel] = useState(false);
-  const [Saved , setIsSaved] = useState(is_saved)
+  const [Saved, setIsSaved] = useState(is_saved);
   return (
     <div className="relative">
       <div className="bg-white lg:h-[250px] dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl dark:shadow-gray-900/25 dark:hover:shadow-gray-900/40 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col lg:flex-row border border-gray-200 dark:border-gray-700">
@@ -120,16 +127,14 @@ export default function CourseCard({
             </div>
           </div>
           {/* better design please for is_completed */}
-          {
-            is_completed && (
-              <div className="flex items-center mb-2 gap-1">
-                <CheckCheck className=" w-3 h-3 text-orange-500 dark:text-orange-400" />
-                <span className="text-xs text-orange-500 dark:text-orange-400">
-                  Completed
-                </span>
-              </div>
-            )
-          }
+          {is_completed && (
+            <div className="flex items-center mb-2 gap-1">
+              <CheckCheck className=" w-3 h-3 text-orange-500 dark:text-orange-400" />
+              <span className="text-xs text-orange-500 dark:text-orange-400">
+                Completed
+              </span>
+            </div>
+          )}
           {/* Action Button */}
           <div className="flex items-center justify-between mt-auto">
             <button

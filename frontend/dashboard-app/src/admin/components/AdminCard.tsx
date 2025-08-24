@@ -1,6 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Lesson, Module } from "@/lib/adminType";
+import { Button } from "@/Shared/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/Shared/components/ui/card";
+import type { Lesson, Module } from "@/Shared/lib/adminType";
 import { Edit, GripVertical, Trash2 } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,8 +18,8 @@ type AdminCardProps = {
   handleDeleteModule: () => void;
   State: Module | Lesson;
   children: React.ReactNode;
-  loading : boolean
-  manageTitle : string
+  loading: boolean;
+  manageTitle: string;
 };
 
 const AdminCard = ({
@@ -26,7 +31,7 @@ const AdminCard = ({
   handleDeleteModule,
   children,
   loading,
-  manageTitle
+  manageTitle,
 }: AdminCardProps) => {
   const navigate = useNavigate();
 

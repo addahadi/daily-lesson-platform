@@ -5,10 +5,8 @@ const {
   startLesson,
   SubmitQuizzAnswer,
   getNextLesson,
-  MarkAsComplete,
   getLessonsDetails,
   markLessonComplete,
-  isModuleAccessible
 } = require("../../controller/students/lesson.controller");
 
 const { validate } = require("../../middleware/validate.middleware");
@@ -17,19 +15,6 @@ const router = express.Router();
 
 
 router.get("/getfirstlesson/:courseId", getFirstLesson);
-
-router.post(
-  "/is-lesson",
-  validate(
-    {
-      userId: "string",
-      courseId: "string",
-      moduleId: "string",
-    },
-    "body"
-  ),
-  isModuleAccessible
-);
 
 router.post(
   "/start-lesson",

@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Toast } from "@/components/ui/Toast";
-import type { QuizzProps } from "@/lib/type";
+import { Button } from "@/Shared/components/ui/button";
+import type { QuizzProps } from "@/Shared/lib/type";
 import useLessonApiController from "@/students/Api/lesson.Api";
 import { Trophy } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -13,7 +12,7 @@ const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const { SubmitQuizzAnswer } = useLessonApiController();
-  const [loading ,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (
       quizz &&
@@ -34,9 +33,10 @@ const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
         !quizz.quizz_id ||
         selectedAnswer === null ||
         selectedAnswer === undefined
-      ) return;
+      )
+        return;
       const isAnswerCorrect = selectedAnswer === quizz.correct_option_index;
-      setLoading(true)
+      setLoading(true);
       const message = await SubmitQuizzAnswer(
         quizz.quizz_id,
         lessonId,
@@ -44,14 +44,14 @@ const LessonQuizz = ({ quizz }: { quizz: QuizzProps }) => {
         isAnswerCorrect,
         moduleId
       );
-      if(message){
+      if (message) {
         if (isAnswerCorrect) {
-          toast.success(message)
+          toast.success(message);
         }
         setIsCorrect(isAnswerCorrect);
         setIsSubmitted(true);
       }
-      setLoading(false)
+      setLoading(false);
     } catch (err) {
       console.error(err);
     }

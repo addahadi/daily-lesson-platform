@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import useLessonApiController from "@/students/Api/lesson.Api";
-import type { LessonBarProps } from "@/lib/type";
+import type { LessonBarProps } from "@/Shared/lib/type";
 import LessonsList from "./LessonsList";
 import { ChevronUp, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Shared/components/ui/button";
 
 const LessonBarComponent = ({
   courseId,

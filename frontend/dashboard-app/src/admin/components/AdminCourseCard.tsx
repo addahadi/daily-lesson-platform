@@ -1,12 +1,8 @@
-import type { Course } from "@/lib/adminType";
-import {
-  Card,
-  CardDescription,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { formatDuration, getLevelColor } from "@/lib/utils";
+import type { Course } from "@/Shared/lib/adminType";
+import { Card, CardDescription, CardTitle } from "@/Shared/components/ui/card";
+import { Button } from "@/Shared/components/ui/button";
+import { Badge } from "@/Shared/components/ui/badge";
+import { formatDuration, getLevelColor } from "@/Shared/lib/utils";
 import { BookOpen, Clock, Edit, Eye, EyeOff, Users } from "lucide-react";
 import { useState, type SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
@@ -21,11 +17,10 @@ const AdminCourseCard = ({
   setEditedCourse: React.Dispatch<SetStateAction<Course | null>>;
 }) => {
   const navigate = useNavigate();
-  const [loading ,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const { ToggleCourseView } = useCourseApi();
-  const [is_published , setIs_published] = useState(course.is_published)
-  
-  
+  const [is_published, setIs_published] = useState(course.is_published);
+
   const handleEditCourse = () => {
     setEditedCourse(course);
   };
@@ -35,7 +30,7 @@ const AdminCourseCard = ({
     const result = await ToggleCourseView(course.id);
     if (result) {
       toast.success(result);
-      setIs_published(!is_published)
+      setIs_published(!is_published);
       setLoading(false);
     }
     setLoading(false);

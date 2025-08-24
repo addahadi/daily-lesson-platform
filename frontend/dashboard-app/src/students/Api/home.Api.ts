@@ -1,6 +1,7 @@
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
-import { handleResponse, toastOnce } from "@/lib/utils"; 
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
+import type { EnrolledLessons } from "@/Shared/lib/type";
 
 const useHomeApi = () => {
   const { getToken } = useAuth();
@@ -13,35 +14,34 @@ const useHomeApi = () => {
     };
   }, [getToken]);
 
-  const getEnrolledCourses = useCallback(
-    async () => {
-      const URL = `http://localhost:8090/home/enrolled-courses`;
-      try {
-        const headers = await getAuthHeader();
-        const response = await fetch(URL, { method: "GET", headers });
+  const getEnrolledCourses = useCallback(async () => {
+    const URL = `http://localhost:8090/home/enrolled-courses`;
+    try {
+      const headers = await getAuthHeader();
+      const response = await fetch(URL, { method: "GET", headers });
 
-        const data = await handleResponse<{title: string; course_id: string; enrollment_id: string }[]>(response);
-        if (typeof data === "string") {
-          toastOnce(data);
-          return null;
-        }
-        return data.data;
-      } catch (err: any) {
-        toastOnce(err.message || "Something went wrong");
+      const data = await handleResponse<
+        { title: string; course_id: string; enrollment_id: string }[]
+      >(response);
+      if (typeof data === "string") {
+        toastOnce(data);
         return null;
       }
-    },
-    [getAuthHeader]
-  );
+      return data.data;
+    } catch (err: any) {
+      toastOnce(err.message || "Something went wrong");
+      return null;
+    }
+  }, [getAuthHeader]);
 
   const getEnrolledCoursesNumber = useCallback(
-    async (userId: string) => {
-      const URL = `http://localhost:8090/home/total-enrolled-courses/${userId}`;
+    async () => {
+      const URL = `http://localhost:8090/home/total-enrolled-courses/`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        const data = await handleResponse<{ data: number }>(response);
+        const data = await handleResponse<{total_courses: number}[]>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
@@ -62,7 +62,7 @@ const useHomeApi = () => {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        const data = await handleResponse<{ data: any }>(response);
+        const data = await handleResponse<EnrolledLessons>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
@@ -77,13 +77,16 @@ const useHomeApi = () => {
   );
 
   const getTotalLessons = useCallback(
-    async (userId: string) => {
-      const URL = `http://localhost:8090/home/total-lessons/${userId}`;
+    async () => {
+      const URL = `http://localhost:8090/home/total-lessons/`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        const data = await handleResponse<{ data: number }>(response);
+        const data = await handleResponse<{
+          completed_lessons: string;
+          total_lessons: string;
+        }[]>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
@@ -98,13 +101,13 @@ const useHomeApi = () => {
   );
 
   const getDailyStreak = useCallback(
-    async (userId: string) => {
-      const URL = `http://localhost:8090/home/streak-days/${userId}`;
+    async () => {
+      const URL = `http://localhost:8090/home/streak-days/`;
       try {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        const data = await handleResponse<{ data: number }>(response);
+        const data = await handleResponse<{streak_count:number}[]>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;

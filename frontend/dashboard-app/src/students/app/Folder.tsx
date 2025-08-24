@@ -1,17 +1,17 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import LoadingSpinner from "@/components/ui/loading";
-import type { FolderType } from "@/lib/type";
-import { getCach, setCache } from "@/lib/utils";
+import { Button } from "@/Shared/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/Shared/components/ui/card";
+import { Input } from "@/Shared/components/ui/input";
+import { Label } from "@/Shared/components/ui/label";
+import LoadingSpinner from "@/Shared/components/ui/loading";
+import type { FolderType } from "@/Shared/lib/type";
+import { getCach, setCache } from "@/Shared/lib/utils";
 import useFolderApiController from "@/students/Api/folder.Api";
-import EmptyCase from "@/components/empty/EmptyCase";
+import EmptyCase from "@/Shared/components/empty/EmptyCase";
 import FolderCard from "@/students/components/library/FolderCard";
 import { Folder, Plus, Save, X } from "lucide-react";
 import { useEffect, useState, type SetStateAction } from "react";
 import { toast, Toaster } from "sonner";
-import { FOLDER_CACHE_KEY } from "@/lib/utils";
+import { FOLDER_CACHE_KEY } from "@/Shared/lib/utils";
 
 const TTL = 1000 * 60 * 60;
 
@@ -27,13 +27,14 @@ const Folders = () => {
     const fetchData = async () => {
       setLoading(true);
       const data = await getAllFolders();
-      if (data?.length === 0) {
+      console.log(data);
+      if (data === null) {
         setLoading(false);
         setNoFolders(true);
         return;
       }
       setLoading(false);
-      setFolders(data);
+      setFolders(data as FolderType[]);
       setCache(FOLDER_CACHE_KEY, data, TTL);
     };
 
@@ -45,6 +46,11 @@ const Folders = () => {
     }
   }, [getAllFolders]);
 
+  useEffect(() => {
+    if (folders?.length === 0) {
+      setNoFolders(true);
+    }
+  }, [folders]);
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200 p-4 sm:p-6">
       {/* Header Section - Responsive */}
@@ -153,6 +159,7 @@ const NewFolder = ({ close, setFolders, setNoFolders }: NewFolderProps) => {
     const data = await createFolder(title);
     if (data) {
       toast.message("folder created successfully");
+      //@ts-ignore
       setFolders((prev) => {
         if (prev === null) {
           return [data];

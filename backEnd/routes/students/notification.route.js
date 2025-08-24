@@ -4,12 +4,9 @@ const { validate } = require("../../middleware/validate.middleware")
 const router = express.Router()
 
 
-router.get("/:user_id", validate(
-    {user_id : "string"}, "params"
-) , getUserNotifications)
+router.get("/", getUserNotifications)
 router.patch(
-  "/:user_id",
-  validate({ user_id: "string" }, "params"),
+  "/mark-all-read",
   MarkAllRead
 );
 router.patch("/:notificationId" , MarkAsRead)

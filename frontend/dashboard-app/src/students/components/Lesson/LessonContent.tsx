@@ -1,60 +1,59 @@
-import{ useState } from 'react'
-import LessonNote from './LessonNote';
-import { BookOpen, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import LessonQuizz from './LessonQuizz';
-import LessonSummary from './LessonSummary';
-import { useLessonDetails } from '@/hook/useLessonDetails';
-import LessonText from './LessonText';
-import LessonCode from './LessonCode';
+import { useState } from "react";
+import LessonNote from "./LessonNote";
+import { BookOpen, ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { Button } from "@/Shared/components/ui/button";
+import LessonQuizz from "./LessonQuizz";
+import LessonSummary from "./LessonSummary";
+import { useLessonDetails } from "@/Shared/hook/useLessonDetails";
+import LessonText from "./LessonText";
+import LessonCode from "./LessonCode";
 
 const LessonContent = ({
-    lessonId,
-    moduleId,
-    courseId,
-    enrollmentId,
-    setCourseCompleted
-}:  {
-    lessonId: string;
-    moduleId: string;
-    courseId: string;
-    enrollmentId: string;
-    setCourseCompleted: React.Dispatch<React.SetStateAction<boolean>>;
+  lessonId,
+  moduleId,
+  courseId,
+  enrollmentId,
+  setCourseCompleted,
+}: {
+  lessonId: string;
+  moduleId: string;
+  courseId: string;
+  enrollmentId: string;
+  setCourseCompleted: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-    
-    const [clickedNavigationButton, setClickedNavigationButton] = useState({
-      previous: false,
-      next: false,
-    });
+  const [clickedNavigationButton, setClickedNavigationButton] = useState({
+    previous: false,
+    next: false,
+  });
 
-    const {
-      lessonDetail,
-      lessonSections,
-      quizz,
-      completed,
-      handleNext,
-      handlePrevious,
-      setCompleted,
-      loading,
-    } = useLessonDetails(
-      lessonId!,
-      moduleId!,
-      courseId!,
-      enrollmentId!,
-      setClickedNavigationButton
+  const {
+    lessonDetail,
+    lessonSections,
+    quizz,
+    completed,
+    handleNext,
+    handlePrevious,
+    setCompleted,
+    loading,
+  } = useLessonDetails(
+    lessonId!,
+    moduleId!,
+    courseId!,
+    enrollmentId!,
+    setClickedNavigationButton
+  );
+
+  const Summary = lessonSections?.filter(
+    (section) => section.heading === "Summary"
+  );
+
+  if (loading || !lessonDetail) {
+    return (
+      <div className="min-h-screen w-full flex justify-center items-center">
+        Loading lesson...
+      </div>
     );
-
-    const Summary = lessonSections?.filter(
-      (section) => section.heading === "Summary"
-    );
-
-    if (loading || !lessonDetail) {
-      return (
-        <div className="min-h-screen w-full flex justify-center items-center">
-          Loading lesson...
-        </div>
-      );
-    }
+  }
   return (
     <div className="flex-1 px-5">
       <LessonNote />
@@ -148,6 +147,6 @@ const LessonContent = ({
       ))}
     </div>
   );
-}
+};
 
-export default LessonContent
+export default LessonContent;

@@ -1,33 +1,30 @@
 import useHomeApi from "@/students/Api/home.Api";
-import { useUser } from "@clerk/clerk-react";
 import { BookOpen, CheckCircle, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const Activities = () => {
-  const [total, setTotal] = useState<string>();
+  const [total, setTotal] = useState<number>(0);
   const [LessonActivity, setLessonActivity] = useState<{
     completed_lessons: string;
     total_lessons: string;
   }>();
-  const { user } = useUser();
 
   const { getTotalLessons, getEnrolledCoursesNumber } = useHomeApi();
   useEffect(() => {
     async function fetchData() {
-      if (!user) return;
-      const result = await getEnrolledCoursesNumber(user?.id);
+      const result = await getEnrolledCoursesNumber();
+      if(!result) return;
       const { total_courses } = result[0];
-      console.log(result);
       setTotal(total_courses);
     }
     async function fetchLessons() {
-      if (!user) return;
-      const result = await getTotalLessons(user?.id);
+      const result = await getTotalLessons();
+      if(!result) return
       setLessonActivity(result[0]);
     }
     fetchLessons();
     fetchData();
-  }, [user]);
+  }, [getTotalLessons , getEnrolledCoursesNumber]);
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full mb-4 sm:mb-6">
       <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700 w-full transition-colors">
@@ -42,12 +39,12 @@ const Activities = () => {
           </div>
           <div
             className={`w-10 h-10 sm:w-12 sm:h-12 ml-3 flex-shrink-0 ${
-              total && parseInt(total)
+              total && total
                 ? "bg-blue-100 dark:bg-blue-900/30"
                 : "bg-gray-100 dark:bg-gray-700"
             } rounded-lg flex items-center justify-center transition-colors`}
           >
-            {total && parseInt(total) ? (
+            {total && total ? (
               <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
             ) : (
               <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 dark:text-gray-500" />

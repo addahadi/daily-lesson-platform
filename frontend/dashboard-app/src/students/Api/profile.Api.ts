@@ -1,7 +1,11 @@
 import { useCallback } from "react";
-import { handleResponse, toastOnce } from "@/lib/utils"; 
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
-import type { achievementsProps, UserInfoProps, XpData } from "@/lib/type";
+import type {
+  achievementsProps,
+  UserInfoProps,
+  XpData,
+} from "@/Shared/lib/type";
 
 const useProfileApiController = () => {
   const { getToken } = useAuth();
@@ -13,15 +17,12 @@ const useProfileApiController = () => {
     };
   };
   const getUserInfo = useCallback(async () => {
-    const headers = await getAuthHeader()
+    const headers = await getAuthHeader();
     try {
-      const response = await fetch(
-        `http://localhost:8090/auth/user-info/`,
-        {
-          method: "GET",
-          headers : headers
-        }
-      );
+      const response = await fetch(`http://localhost:8090/auth/user-info/`, {
+        method: "GET",
+        headers: headers,
+      });
 
       const data = await handleResponse<UserInfoProps>(response);
       if (typeof data === "string") {
@@ -43,7 +44,7 @@ const useProfileApiController = () => {
         `http://localhost:8090/auth/user-achievements/`,
         {
           method: "GET",
-          headers:headers
+          headers: headers,
         }
       );
 
@@ -62,13 +63,10 @@ const useProfileApiController = () => {
   const getXpLogs = useCallback(async () => {
     const headers = await getAuthHeader();
     try {
-      const response = await fetch(
-        `http://localhost:8090/auth/xp-logs/`,
-        {
-          method: "GET",
-          headers: headers
-        }
-      );
+      const response = await fetch(`http://localhost:8090/auth/xp-logs/`, {
+        method: "GET",
+        headers: headers,
+      });
 
       const data = await handleResponse<XpData[]>(response);
       if (typeof data === "string") {

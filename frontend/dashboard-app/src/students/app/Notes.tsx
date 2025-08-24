@@ -1,5 +1,5 @@
-import type {notesProps} from "@/lib/type";
-import { renderMarkdown } from "@/lib/utils";
+import type { notesProps } from "@/Shared/lib/type";
+import { renderMarkdown } from "@/Shared/lib/utils";
 import {
   X,
   FileText,
@@ -13,9 +13,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useNoteApi from "@/students/Api/note.Api";
 import { toast, Toaster } from "sonner";
-import LoadingSpinner from "@/components/ui/loading";
-import { Button } from "@/components/ui/button";
-
+import LoadingSpinner from "@/Shared/components/ui/loading";
+import { Button } from "@/Shared/components/ui/button";
 
 const Notes = () => {
   const [notes, setNotes] = useState<notesProps[]>();
@@ -26,37 +25,36 @@ const Notes = () => {
   const [hasMore, setHasMore] = useState(false);
   const { getAllNotes, deleteNote } = useNoteApi();
   const [isDeleteState, setIsDeleteState] = useState(false);
-  const [showMoreLoading, setShowMoreLoading] = useState(false)
-
+  const [showMoreLoading, setShowMoreLoading] = useState(false);
 
   useEffect(() => {
     const fetchNotes = async () => {
-      setLoading(true)
+      setLoading(true);
       const result = await getAllNotes(1);
-      if(result === null){
+      if (result === null) {
         setNoNotes(true);
-        setHasMore(false)
+        setHasMore(false);
+        setLoading(false);
         return;
       }
       setNotes(result.data);
       setHasMore(result.final as boolean);
       setPage((prev) => prev + 1);
       setLoading(false);
-
-    }
-    fetchNotes()
-  },[])
+    };
+    fetchNotes();
+  }, []);
   const showMore = async () => {
     setShowMoreLoading(true);
     const result = await getAllNotes(page);
-    if (result){
+    if (result) {
       setHasMore(result.final as boolean);
-      setNotes((prev) => [...(prev || []), ...result.data as notesProps[]]);
+      setNotes((prev) => [...(prev || []), ...(result.data as notesProps[])]);
       setPage((prev) => prev + 1);
     }
     setShowMoreLoading(false);
   };
-    
+
   const handleDelete = async (lesson_slug: string) => {
     setIsDeleteState(true);
     const message = await deleteNote(lesson_slug);
@@ -69,33 +67,40 @@ const Notes = () => {
     setIsDeleteState(false);
   };
 
-  const EmptyNotesState = () => (
-    <div className="flex flex-col items-center justify-center py-16 px-4">
-      <div className="bg-orange-50 rounded-full p-6 mb-6">
-        <FileText className="w-12 h-12 text-orange-500" />
+  useEffect(() => {
+    if (notes && notes.length === 0) {
+      setNoNotes(true);
+    }
+  }, [notes]);
+  const EmptyNotesState = () => {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+        <div className="bg-orange-50 dark:bg-gray-800 rounded-full p-6 mb-6">
+          <FileText className="w-12 h-12 text-orange-500" />
+        </div>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+          No notes yet
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 text-center mb-8 max-w-md">
+          Start taking notes while learning to capture important insights and
+          key concepts. Your notes will appear here for easy access.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors"
+          >
+            <PlusCircle className="w-5 h-5" />
+            Start Learning
+          </Link>
+          <button className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors">
+            <FileText className="w-5 h-5" />
+            Learn About Notes
+          </button>
+        </div>
       </div>
-      <h2 className="text-2xl font-semibold text-gray-900 mb-3">
-        No notes yet
-      </h2>
-      <p className="text-gray-600 text-center mb-8 max-w-md">
-        Start taking notes while learning to capture important insights and key
-        concepts. Your notes will appear here for easy access.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-4">
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors"
-        >
-          <PlusCircle className="w-5 h-5" />
-          Start Learning
-        </Link>
-        <button className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 hover:border-gray-400 text-gray-700 rounded-lg font-medium transition-colors">
-          <FileText className="w-5 h-5" />
-          Learn About Notes
-        </button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   if (loading && page === 1) {
     return (

@@ -1,4 +1,4 @@
-import type { achievementsProps } from "@/lib/type";
+import type { achievementsProps } from "@/Shared/lib/type";
 import { Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import useProfileApiController from "@/students/Api/profile.Api";
@@ -9,7 +9,7 @@ const AchievementBadges = () => {
   useEffect(() => {
     const fetchData = async () => {
       const result = await getUserAchievements();
-      if(result){
+      if (result) {
         setAchievements(result);
       }
     };

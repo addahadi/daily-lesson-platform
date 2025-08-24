@@ -1,69 +1,18 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   BookCheck,
   Telescope,
   UserRound,
   Save,
-  Moon,
-  Sun,
-  Bell,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { UserButton, useUser } from "@clerk/clerk-react";
-import NotificationModel from "@/students/components/notification/NotificationModel";
-import type { NotificationData } from "@/lib/type";
-import { useNotificationApi } from "@/students/Api/notification.Api";
-import LogOutButton from "@/components/ui/LogOutButton";
+
+import LogOutButton from "@/Shared/components/ui/LogOutButton";
+import Navbar from "../components/Navbar";
 
 const Dashboard = () => {
   const location = useLocation();
-  const [isDark, setIsDark] = useState(false);
-  const [openModel ,setOpenModel] = useState(false)
-  const [notifications , setNotifications] = useState<NotificationData[] | null>(null)
-  const [loading , setLoading] = useState(false)
- 
-  const {user} = useUser()
-  const {getUserNotifications} = useNotificationApi()
   
-  
-  useEffect(() => {
-    
-    const fetchData = async () => {
-      if(!user?.id) return
-      setLoading(true)
-      const result = await getUserNotifications(user.id);
-      if(result){
-        setNotifications(result)
-        setLoading(false)
-      }
-      setLoading(false)
-    }
-    fetchData()
-
-  },[user])
-  
-  
-  
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    const systemPrefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    const shouldBeDark =
-      savedTheme === "dark" || (!savedTheme && systemPrefersDark);
-
-    setIsDark(shouldBeDark);
-    document.documentElement.classList.toggle("dark", shouldBeDark);
-  }, []);
-
-  const toggleTheme = () => {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    document.documentElement.classList.toggle("dark", newIsDark);
-    localStorage.setItem("theme", newIsDark ? "dark" : "light");
-  };
 
   const isActiveLink = (path: string) => location.pathname === path;
   const isLessonPage = location.pathname.includes("lesson");
@@ -89,7 +38,7 @@ const Dashboard = () => {
           <img src="/icon/logo.svg" alt="logo" width={40} height={40} />
           {!isLessonPage && (
             <h2 className="ml-3 text-xl text-gray-800 dark:text-gray-100 hidden md:block">
-              Learn Dz
+              DevLevelUp
             </h2>
           )}
         </div>
@@ -190,43 +139,9 @@ const Dashboard = () => {
       </aside>
 
       <div className="col-start-2 col-end-3 flex flex-col">
-        <header className="w-full sticky top-0 z-10 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 md:px-6 flex items-center justify-between md:justify-end gap-2 md:gap-4">
-
-          <div className="flex items-center gap-2 md:gap-4">
-            <Button
-              onClick={toggleTheme}
-              variant="ghost"
-              size="icon"
-              className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
-            >
-              {isDark ? (
-                <Sun className="w-4 h-4" />
-              ) : (
-                <Moon className="w-4 h-4" />
-              )}
-            </Button>
-            <div className=" relative">
-              <button
-                onClick={() => setOpenModel(true)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                <Bell className=" text-white w-5 h-5 md:w-6 md:h-6" />
-              </button>
-              <div className=" absolute top-10 right-10">
-                {openModel && (
-                  <NotificationModel
-                    loading={loading}
-                    notifications={notifications}
-                    close={() => setOpenModel(false)}
-                  />
-                )}
-              </div>
-            </div>
-            <div className="scale-75 md:scale-100">
-              <UserButton />
-            </div>
-          </div>
-        </header>
+        <Navbar 
+        
+        />
 
         <main className="flex-1 bg-gray-50 dark:bg-gray-900 h-screen">
           <Outlet />

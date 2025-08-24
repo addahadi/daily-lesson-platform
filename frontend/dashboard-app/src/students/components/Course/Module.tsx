@@ -1,4 +1,4 @@
-import type { LessonCardProps, ModuleCardProps } from "@/lib/type";
+import type { LessonCardProps, ModuleCardProps } from "@/Shared/lib/type";
 import useCourseApiController from "@/students/Api/course.Api";
 import {
   ChevronDown,
@@ -49,7 +49,6 @@ const Modules = ({
 
   return (
     <div className="w-full">
-      
       <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div className="flex-1 min-w-0">
@@ -139,7 +138,6 @@ const Modules = ({
                   className="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
                 >
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-      
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start gap-3">
                         <div className="flex-shrink-0 w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mt-0.5">
@@ -153,7 +151,9 @@ const Modules = ({
                             <span className="flex items-center gap-1">
                               <Clock className="w-3.5 h-3.5" />
                               {lesson.duration_minutes} min
-                              {parseInt(lesson.duration_minutes) !== 1 ? "s" : ""}
+                              {parseInt(lesson.duration_minutes) !== 1
+                                ? "s"
+                                : ""}
                             </span>
                             <span className="text-gray-400 dark:text-gray-600">
                               •
@@ -166,8 +166,6 @@ const Modules = ({
                         </div>
                       </div>
                     </div>
-
-                    
                   </div>
                 </div>
               ))}

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import LoadingSpinner from "@/components/ui/loading";
-import EmptySearch from "@/components/empty/EmptySearch";
-import type { CourseCardProps } from "@/lib/type";
+import { Button } from "@/Shared/components/ui/button";
+import LoadingSpinner from "@/Shared/components/ui/loading";
+import EmptySearch from "@/Shared/components/empty/EmptySearch";
+import type { CourseCardProps } from "@/Shared/lib/type";
 import useCourseApiController from "@/students/Api/course.Api";
 import CourseCard from "./CourseCard";
 
@@ -66,7 +66,7 @@ const FilteredCourseList = ({
     const result = await getFilteredCourses(query);
     setShowMoreLoading(false);
     if (!result) return;
-    setCourses((prev) => [...prev, ...result.data as CourseCardProps[]]);
+    setCourses((prev) => [...prev, ...(result.data as CourseCardProps[])]);
     setShowMore(result.final as boolean);
     setPage((prev) => prev + 1);
   }
@@ -90,6 +90,7 @@ const FilteredCourseList = ({
               key={course.id}
               {...course}
               is_saved={course.is_saved as boolean}
+              is_completed={course.completed_course}
               deleteState={false}
             />
           ))}

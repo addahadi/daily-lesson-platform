@@ -1,54 +1,45 @@
-import type { NotificationData } from "@/lib/type";
-import { handleResponse, toastOnce } from "@/lib/utils";
+import type { NotificationData } from "@/Shared/lib/type";
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
-
-
 
 export const useNotificationApi = () => {
   const { getToken } = useAuth();
 
-  const getAuthHeader = async () => {
+  const getAuthHeader = useCallback(async () => {
     const token = await getToken();
     return {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     };
-  };
+  }, [getToken]);
 
-  const getUserNotifications = useCallback(
-    async (userId: string) => {
-      const headers = await getAuthHeader();
-      try {
-        const response = await fetch(
-          `http://localhost:8090/notifications/${userId}`,
-          {
-            method: "GET",
-            headers,
-          }
-        );
+  const getUserNotifications = useCallback(async () => {
+    const headers = await getAuthHeader();
+    try {
+      const response = await fetch(`http://localhost:8090/notifications/`, {
+        method: "GET",
+        headers,
+      });
 
-        const data = await handleResponse< NotificationData[] >(
-          response
-        );
-        if (typeof data === "string") {
-          toastOnce(data);
-          return null;
-        }
-        return data.data;
-      } catch (error: any) {
-        toastOnce(error.message || "Failed to fetch notifications");
+      const data = await handleResponse<NotificationData[]>(response);
+      if (typeof data === "string") {
+        toastOnce(data);
         return null;
       }
-    },
-    [getAuthHeader]
-  );
+      return data.data;
+    } catch (error: any) {
+      toastOnce(error.message || "Failed to fetch notifications");
+      return null;
+    }
+  }, [getAuthHeader]);
 
-  const markAllRead = async (userId: string) => {
+
+  const markAllRead = async () => {
     const headers = await getAuthHeader();
     try {
       const response = await fetch(
-        `http://localhost:8090/notifications/${userId}`,
+        `http://localhost:8090/notifications/mark-all-read`,
         {
           method: "PATCH",
           headers,

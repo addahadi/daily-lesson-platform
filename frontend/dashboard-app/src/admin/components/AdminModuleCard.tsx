@@ -1,6 +1,6 @@
 import { FileText, Clock } from "lucide-react";
-import { formatDuration } from "@/lib/utils";
-import type { Module } from "@/lib/adminType";
+import { formatDuration } from "@/Shared/lib/utils";
+import type { Module } from "@/Shared/lib/adminType";
 import AdminCard from "./AdminCard";
 import React, { useState, type SetStateAction } from "react";
 import { toast } from "sonner";
@@ -10,17 +10,16 @@ const AdminModuleCard = ({
   module,
   course_id,
   setEditModel,
-  setModules
+  setModules,
 }: {
   module: Module;
   course_id: string;
   setEditModel: (module: Module | null) => void;
-  setModules : React.Dispatch<SetStateAction<Module[]>>
+  setModules: React.Dispatch<SetStateAction<Module[]>>;
 }) => {
+  const [loading, setLoading] = useState(false);
+  const { deleteModule } = useModuleApi();
 
-  const [loading , setLoading] = useState(false)
-  const {deleteModule} = useModuleApi()
-  
   function handleEditModule() {
     setEditModel(module);
   }

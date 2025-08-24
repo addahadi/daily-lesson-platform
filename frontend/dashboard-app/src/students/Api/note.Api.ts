@@ -1,12 +1,12 @@
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
-import { handleResponse, toastOnce } from "@/lib/utils";
-import type { notesProps } from "@/lib/type";
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
+import type { notesProps } from "@/Shared/lib/type";
 
 const useNoteApi = () => {
   const { getToken } = useAuth();
   const getAllNotes = useCallback(
-    async ( page: number) => {
+    async (page: number) => {
       const token = await getToken();
       const URL = `http://localhost:8090/note/all-notes?page=${page}`;
 
@@ -29,29 +29,26 @@ const useNoteApi = () => {
     [getToken]
   );
 
-
-
-
   const deleteNote = async (lessonId: string) => {
-      const token = await getToken();
-      const URL = `http://localhost:8090/note/delete-note/${lessonId}`;
-      try {
-        const res = await fetch(URL, {
-          method : "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        });
+    const token = await getToken();
+    const URL = `http://localhost:8090/note/delete-note/${lessonId}`;
+    try {
+      const res = await fetch(URL, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        const data = await handleResponse<any>(res);
-        if (typeof data === "string") {
-          toastOnce(data);
-          return null;
-        }
-        return data.message;
-      } catch (err: any) {
-        toastOnce(err.message || "Something went wrong");
+      const data = await handleResponse<any>(res);
+      if (typeof data === "string") {
+        toastOnce(data);
         return null;
       }
-  }
+      return data.message;
+    } catch (err: any) {
+      toastOnce(err.message || "Something went wrong");
+      return null;
+    }
+  };
   const getLessonNote = useCallback(
     async (lessonId: string) => {
       const token = await getToken();
@@ -62,9 +59,9 @@ const useNoteApi = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         type note = {
-          title : string
-          content : string
-        }
+          title: string;
+          content: string;
+        };
         const data = await handleResponse<note>(res);
         if (typeof data === "string") {
           toastOnce(data);
@@ -80,13 +77,9 @@ const useNoteApi = () => {
   );
 
   const addNote = useCallback(
-    async (
-      title: string,
-      content: string,
-      lessonId: string,
-    ) => {
+    async (title: string, content: string, lessonId: string) => {
       const token = await getToken();
-      const body = JSON.stringify({ title, content, lessonId});
+      const body = JSON.stringify({ title, content, lessonId });
 
       try {
         const res = await fetch(`http://localhost:8090/note/add-note`, {
@@ -116,7 +109,7 @@ const useNoteApi = () => {
     getAllNotes,
     getLessonNote,
     addNote,
-    deleteNote
+    deleteNote,
   };
 };
 

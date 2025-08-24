@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useAuth } from "@clerk/clerk-react";
-import { handleResponse, toastOnce } from "@/lib/utils";
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 
 const useUserApiController = () => {
   const { getToken } = useAuth();
@@ -57,7 +57,7 @@ const useUserApiController = () => {
           module_id: string;
         }>(response);
         if (typeof data === "string") {
-          console.log(data)
+          console.log(data);
           toastOnce(data);
           return null;
         }
@@ -84,7 +84,7 @@ const useUserApiController = () => {
           }
         );
 
-        const data = await handleResponse<{ data: any }>(response);
+        const data = await handleResponse<{ enrollmentid: string }[]>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;

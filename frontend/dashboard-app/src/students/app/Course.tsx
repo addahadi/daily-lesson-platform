@@ -2,17 +2,14 @@ import { Award, BookCheck, BookOpen, Clock, Globe } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ModuleSection from "@/students/components/Course/ModuleSection";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Shared/components/ui/button";
 import { useUser } from "@clerk/clerk-react";
 import useUserApiController from "@/students/Api/user.Api";
-import { useCourseAndEnrollment } from "@/hook/useFetchedData";
-import { Toaster } from "@/components/ui/sonner";
-import LoadingSpinner from "@/components/ui/loading";
+import { useCourseAndEnrollment } from "@/Shared/hook/useFetchedData";
+import { Toaster } from "@/Shared/components/ui/sonner";
+import LoadingSpinner from "@/Shared/components/ui/loading";
 import { toast } from "sonner";
-import { formatDuration } from "@/lib/utils";
-
-
-
+import { formatDuration } from "@/Shared/lib/utils";
 
 const Course = () => {
   const { user } = useUser();
@@ -25,7 +22,7 @@ const Course = () => {
   const navigate = useNavigate();
 
   async function Enroll() {
-    console.log(buttonAction)
+    console.log(buttonAction);
     switch (buttonAction) {
       case "enroll":
         if (!slug || !user?.id) return;
@@ -36,7 +33,7 @@ const Course = () => {
         if (result && result.action) {
           setButtonAction(result.action);
           setUrl(result.data);
-          toast.success(result.message)
+          toast.success(result.message);
         }
         break;
       case "continue learning":
@@ -70,13 +67,10 @@ const Course = () => {
             <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight">
               {CourseData?.title}
             </h1>
-            <p className="text-sm sm:text-base lg:text-lg opacity-90 max-w-2xl line-clamp-3">
-              {CourseData?.description}
-            </p>
           </div>
         </div>
 
-        <section className="px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-8 relative z-10">
+        <section className="px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-8 relative ">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 shadow-lg dark:shadow-gray-900/20">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               {/* Level */}
@@ -106,7 +100,9 @@ const Course = () => {
                     Duration
                   </p>
                   <p className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
-                    {formatDuration(parseInt(CourseData?.total_duration as string))}
+                    {formatDuration(
+                      parseInt(CourseData?.total_duration as string)
+                    )}
                   </p>
                 </div>
               </div>
@@ -146,6 +142,16 @@ const Course = () => {
         </section>
       </div>
 
+      {/*design a good  course description section */}
+      <div className=" sm:px-6 lg:px-8 py-6 w-full">
+        <h2 className="text-xl sm:text-2xl font-semibold  text-gray-900 dark:text-white mb-5">
+          Course Description
+        </h2>
+        <p className="text-sm sm:text-base lg:text-lg opacity-90 line-clamp-3">
+          {CourseData?.description}
+        </p>
+      </div>
+
       <section className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
           What You'll Learn
@@ -169,13 +175,13 @@ const Course = () => {
 
       <ModuleSection Course_Id={slug ? slug : ""} />
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex justify-end">
             <Button
               onClick={Enroll}
               disabled={loading}
-              className="w-full sm:w-auto min-w-[160px] h-11 sm:h-12 text-sm sm:text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-blue-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200"
+              className="w-full sm:w-auto min-w-[160px] h-11 sm:h-12 text-sm sm:text-base font-medium bg-orange-500 text-white border-0  transition-all duration-200"
             >
               {loading ? (
                 <LoadingSpinner size={20} />

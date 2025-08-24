@@ -12,7 +12,7 @@ const useEnroll = (
       try {
         if (!courseId || !userId) return;
         const data = await getEnroll(courseId, userId);
-
+        if(!data) return
         setEnrollmentId(data[0].enrollmentid);
       } catch (err) {
         console.log(err);

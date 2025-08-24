@@ -1,4 +1,4 @@
-import type { UserInfoProps } from "@/lib/type";
+import type { UserInfoProps } from "@/Shared/lib/type";
 import { User } from "lucide-react";
 
 const UserInfo = ({ userData }: { userData: UserInfoProps | undefined }) => {

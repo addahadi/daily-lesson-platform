@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/Shared/components/ui/card";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
 type AdminActivityProps = {

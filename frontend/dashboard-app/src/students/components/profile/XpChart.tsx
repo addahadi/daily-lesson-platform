@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import useProfileApiController from "@/students/Api/profile.Api";
-import type { XpData } from "@/lib/type";
+import type { XpData } from "@/Shared/lib/type";
 
 export default function XpChart() {
   const [data, setData] = useState<XpData[]>([]);

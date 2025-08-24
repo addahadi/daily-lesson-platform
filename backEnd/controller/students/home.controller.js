@@ -27,7 +27,7 @@ async function getEnrolledCourses(req, res, next) {
 }
 
 async function getEnrolledCoursesNumber(req, res, next) {
-  const { userId } = req.params;
+  const { userId } = req.auth;
   try {
     const totalCourses = await sql`
       SELECT COUNT(*) AS total_courses
@@ -43,29 +43,39 @@ async function getEnrolledCoursesNumber(req, res, next) {
     next(err);
   }
 }
-
 async function getTotalLessons(req, res, next) {
   try {
-    const { userId } = req.params;
+    const { userId } = req.auth;
 
     const result = await sql`
       SELECT 
-        (SELECT COUNT(*) 
-         FROM modules m
-         JOIN lessons l ON m.id = l.topic_id AND l.is_deleted = false
-         WHERE m.course_id IN (
-           SELECT course_id FROM enrollments WHERE user_id = ${userId}
-         )) AS total_lessons AND m.is_deleted = false ,  
+        (
+          SELECT COUNT(*) 
+          FROM modules m
+          JOIN lessons l 
+            ON m.id = l.topic_id
+          WHERE l.is_deleted = false
+            AND m.is_deleted = false
+            AND m.course_id IN (
+              SELECT course_id 
+              FROM enrollments 
+              WHERE user_id = ${userId}
+            )
+        ) AS total_lessons,  
 
-        (SELECT COUNT(*) 
-         FROM lesson_progress lp
-         WHERE lp.completed = true
-           AND lp.enrollment_id IN (
-             SELECT id FROM enrollments WHERE user_id = ${userId}
-           )) AS completed_lessons;
+        (
+          SELECT COUNT(*) 
+          FROM lesson_progress lp
+          WHERE lp.completed = true
+            AND lp.enrollment_id IN (
+              SELECT id 
+              FROM enrollments 
+              WHERE user_id = ${userId}
+            )
+        ) AS completed_lessons;
     `;
 
-    if (result.length === 0) {
+    if (!result || result.length === 0) {
       return res.status(404).json({
         status: false,
         message: "Progress data not found.",
@@ -81,8 +91,9 @@ async function getTotalLessons(req, res, next) {
   }
 }
 
+
 async function getDailyStreak(req, res, next) {
-  const { userId } = req.params;
+  const { userId } = req.auth;
   try {
     const user = await sql`
       SELECT streak_count , last_study_date
@@ -157,7 +168,7 @@ async function getNextLesson(req, res, next) {
         : 0;
 
     const response = {
-      lesson: lessons[0], // already shaped nicely
+      lesson: lessons[0],
       progressPercentage,
       total_modules: Number(total_modules),
       total_progressed_modules: Number(total_progressed_modules),

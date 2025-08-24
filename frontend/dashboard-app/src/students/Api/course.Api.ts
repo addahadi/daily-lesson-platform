@@ -1,7 +1,7 @@
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
-import type { CourseCardProps, CourseProps } from "@/lib/type";
-import { handleResponse, toastOnce } from "@/lib/utils"; 
+import type { CourseCardProps, CourseProps, LessonCardProps, ModuleCardProps } from "@/Shared/lib/type";
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 
 const useCourseApiController = () => {
   const { getToken } = useAuth();
@@ -14,27 +14,31 @@ const useCourseApiController = () => {
     };
   }, [getToken]);
 
-  const getAllCourses = useCallback(async (
-    page: number = 1
-  ) => {
-    try {
-      const headers = await getAuthHeader();
-      const response = await fetch(`http://localhost:8090/course/getall?page=${page}`, {
-        method: "GET",
-        headers,
-      });
+  const getAllCourses = useCallback(
+    async (page: number = 1) => {
+      try {
+        const headers = await getAuthHeader();
+        const response = await fetch(
+          `http://localhost:8090/course/getall?page=${page}`,
+          {
+            method: "GET",
+            headers,
+          }
+        );
 
-      const data = await handleResponse<CourseCardProps[]>(response);
-      if (typeof data === "string") {
-        toastOnce(data);
+        const data = await handleResponse<CourseCardProps[]>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
+        }
+        return data;
+      } catch (err: any) {
+        toastOnce(err.message || "Something went wrong");
         return null;
       }
-      return data;
-    } catch (err: any) {
-      toastOnce(err.message || "Something went wrong");
-      return null;
-    }
-  }, [getAuthHeader]);
+    },
+    [getAuthHeader]
+  );
 
   const getFilteredCourses = useCallback(
     async (filter: URLSearchParams) => {
@@ -48,9 +52,7 @@ const useCourseApiController = () => {
           }
         );
 
-        const data = await handleResponse<CourseCardProps[]>(
-          response
-        );
+        const data = await handleResponse<CourseCardProps[]>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
@@ -76,7 +78,7 @@ const useCourseApiController = () => {
           }
         );
 
-        const data = await handleResponse<{ data: any[] }>(response);
+        const data = await handleResponse<ModuleCardProps[]>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
@@ -128,7 +130,7 @@ const useCourseApiController = () => {
           }
         );
 
-        const data = await handleResponse<{ data: any[] }>(response);
+        const data = await handleResponse<LessonCardProps[]>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;

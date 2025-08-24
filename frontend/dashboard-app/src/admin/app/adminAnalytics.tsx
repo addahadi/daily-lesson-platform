@@ -1,5 +1,5 @@
-import LoadingSpinner from "@/components/ui/loading";
-import useAnalytic from "@/hook/useAnalytic";
+import LoadingSpinner from "@/Shared/components/ui/loading";
+import useAnalytic from "@/Shared/hook/useAnalytic";
 import AdminActivity from "../components/analytics/AdminActivity";
 import { Book, Users } from "lucide-react";
 import CompletedLessonsChart from "../components/analytics/CompletedLessonsChart";

@@ -1,4 +1,4 @@
-import type { ModuleCardProps } from "@/lib/type";
+import type { ModuleCardProps } from "@/Shared/lib/type";
 import { useEffect, useState } from "react";
 import Modules from "./Module";
 import useCourseApiController from "@/students/Api/course.Api";

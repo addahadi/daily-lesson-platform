@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import type { section } from "@/lib/adminType";
+import type { section } from "@/Shared/lib/adminType";
 import { useAuth } from "@clerk/clerk-react";
-import type { QuizzProps } from "@/lib/type";
-import { handleResponse, toastOnce } from "@/lib/utils";
+import type { QuizzProps } from "@/Shared/lib/type";
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 
 const useLessonApi = () => {
   const { getToken } = useAuth();
@@ -138,8 +138,7 @@ const useLessonApi = () => {
         if (res.ok) {
           const result = await res.json();
           return result.data;
-        }
-        else return null
+        } else return null;
       } catch (err) {
         console.error("Failed to update lesson content:", err);
         throw err;
@@ -148,36 +147,36 @@ const useLessonApi = () => {
     [getAuthHeader]
   );
 
-  const deleteLesson = async (lessonId : string) => {
-      const URL = `http://localhost:8090/admin/lesson/delete/${lessonId}`;
-      try {
-        const headers = await getAuthHeader();
-        const res = await fetch(URL, {
-          method: "PUT",
-          headers: {
-            ...headers,
-            "Content-Type": "application/json",
-          },
-        });
-        
-        const data = await handleResponse<any>(res)
-        if (typeof data === "string") {
-          toastOnce(data);
-          return null;
-        }
-        return data.message
-      } catch (err : any) {
-        toastOnce(err.message || "Failed to delete the lesson");
+  const deleteLesson = async (lessonId: string) => {
+    const URL = `http://localhost:8090/admin/lesson/delete/${lessonId}`;
+    try {
+      const headers = await getAuthHeader();
+      const res = await fetch(URL, {
+        method: "PUT",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await handleResponse<any>(res);
+      if (typeof data === "string") {
+        toastOnce(data);
         return null;
       }
-  }
+      return data.message;
+    } catch (err: any) {
+      toastOnce(err.message || "Failed to delete the lesson");
+      return null;
+    }
+  };
   return {
     getAllLessons,
     createUpdateLesson,
     updateOrderIndex,
     updateLessonContent,
     updateAddLessonQuizz,
-    deleteLesson
+    deleteLesson,
   };
 };
 

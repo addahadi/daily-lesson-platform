@@ -1,18 +1,21 @@
 import useHomeApi from "@/students/Api/home.Api";
-import { Button } from "@/components/ui/button";
-import type { EnrolledLessons } from "@/lib/type";
-import { getLevelColor } from "@/lib/utils";
-import {BookX, Clock, Play } from "lucide-react";
+import { Button } from "@/Shared/components/ui/button";
+import type { EnrolledLessons } from "@/Shared/lib/type";
+import { BookX, Clock, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/Shared/components/ui/badge";
+import { getLevelColor } from "@/Shared/lib/utils";
 
-
-
-type Courses = { title: string; course_id: string; enrollment_id: string , course_slug : string}[];
+type Courses = {
+  title: string;
+  course_id: string;
+  enrollment_id: string;
+  course_slug: string;
+}[];
 const ContinueLearning = () => {
   const [courses, setCourses] = useState<Courses>();
-  const [lessons, setLessons] = useState<EnrolledLessons | undefined>();
+  const [lessons, setLessons] = useState<EnrolledLessons[] | undefined>(undefined);
   const [noLesson, setNoLesson] = useState(false);
   const [noCourse, setNoCourse] = useState(false);
   const navigate = useNavigate();
@@ -42,8 +45,8 @@ const ContinueLearning = () => {
         );
 
         const lessons = await Promise.all(lessonPromises);
-        const nonNullLessons = lessons.filter((lesson) => lesson !== null);
-        setLessons(nonNullLessons);
+        const nonNullLessons = lessons.filter((lesson) => lesson !== null); 
+        setLessons(nonNullLessons as EnrolledLessons[]);
         if (nonNullLessons.length === 0) {
           setNoLesson(true);
         }
@@ -54,7 +57,7 @@ const ContinueLearning = () => {
     }
 
     fetchData();
-  }, [courses]);
+  }, [courses , getEnrolledCourses , getNextLesson]);
 
   if (noCourse) {
     return (
@@ -83,7 +86,6 @@ const ContinueLearning = () => {
     );
   }
 
-
   if (noLesson) {
     return (
       <div className="flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 to-red-100 dark:from-gray-800 dark:to-gray-900 border border-dashed border-indigo-300 dark:border-gray-600 rounded-2xl p-8 sm:p-10 text-center shadow-md transition-colors">
@@ -102,18 +104,6 @@ const ContinueLearning = () => {
     );
   }
 
-  const getLevelVariant = (level: string) => {
-    switch (level) {
-      case "Beginner":
-        return "success";
-      case "Intermediate":
-        return "warning";
-      case "Advanced":
-        return "destructive";
-      default:
-        return "secondary";
-    }
-  };
 
   return (
     <div className="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-lg border border-gray-200 dark:border-gray-700 w-full transition-colors">
@@ -140,7 +130,7 @@ const ContinueLearning = () => {
                   <h2 className="text-lg font-semibold text-foreground">
                     {course.title}
                   </h2>
-                  <Badge variant={getLevelVariant(currentLesson.level)}>
+                  <Badge variant="destructive" className={`${getLevelColor(currentLesson.level)}`}>
                     {currentLesson.level}
                   </Badge>
                 </div>

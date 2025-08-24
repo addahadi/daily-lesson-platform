@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import EditTitle from "../components/ui/EditTitle";
 import { useLocation, useParams } from "react-router-dom";
 import { BookOpen, X } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { getLevelColor } from "@/lib/utils";
-import type { Module } from "@/lib/adminType";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Shared/components/ui/card";
+import { Badge } from "@/Shared/components/ui/badge";
+import { getLevelColor } from "@/Shared/lib/utils";
+import type { Module } from "@/Shared/lib/adminType";
+import { Button } from "@/Shared/components/ui/button";
 import useModuleApi from "../api/module.api";
-import LoadingSpinner from "@/components/ui/loading";
+import LoadingSpinner from "@/Shared/components/ui/loading";
 
 // dnd-kit
 import {
@@ -24,11 +24,10 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import DraggableAdminCard from "../components/DraggbleAdminCard";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/Shared/components/ui/input";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/Shared/components/ui/sonner";
 import AdminModuleCard from "../components/AdminModuleCard";
-import BackTo from "../components/ui/BackTo";
 
 interface Course {
   id: string;
@@ -99,8 +98,6 @@ const ModuleManagement = () => {
 
   return (
     <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <BackTo title="Back to Courses" URL="/admin/course-management" />
-
       <Card className="mb-8 border border-gray-200 dark:border-gray-700 shadow-sm">
         <CardContent className="flex flex-col md:flex-row gap-6 p-6 bg-white dark:bg-gray-800">
           <div className="w-full md:w-[200px] h-[120px] md:h-[140px]">
@@ -325,60 +322,60 @@ const EditModule = ({
   };
 
   return (
-      <Card className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl">
-        <CardHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {isCreate ? "Create Module" : "Edit Module"}
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={close}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <div className="space-y-6">
-            <div>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                Module Title *
-              </label>
-              <Input
-                type="text"
-                name="title"
-                value={newModule.title}
-                onChange={handleChange}
-                placeholder="Enter module title"
-                className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-              />
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={close}
-                disabled={isLoading}
-                className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={isLoading || !newModule.title.trim()}
-                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
-              >
-                {isLoading ? (
-                  <LoadingSpinner size={20} />
-                ) : (
-                  <span>{isCreate ? "Create Module" : "Save Changes"}</span>
-                )}
-              </Button>
-            </div>
+    <Card className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
+        <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          {isCreate ? "Create Module" : "Edit Module"}
+        </CardTitle>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={close}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <X className="w-4 h-4" />
+        </Button>
+      </CardHeader>
+      <CardContent className="pt-6">
+        <div className="space-y-6">
+          <div>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+              Module Title *
+            </label>
+            <Input
+              type="text"
+              name="title"
+              value={newModule.title}
+              onChange={handleChange}
+              placeholder="Enter module title"
+              className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+            />
           </div>
-        </CardContent>
-      </Card>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={close}
+              disabled={isLoading}
+              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isLoading || !newModule.title.trim()}
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
+            >
+              {isLoading ? (
+                <LoadingSpinner size={20} />
+              ) : (
+                <span>{isCreate ? "Create Module" : "Save Changes"}</span>
+              )}
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };

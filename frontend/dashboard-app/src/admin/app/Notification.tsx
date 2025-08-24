@@ -1,41 +1,37 @@
-import type { NotificationType } from "@/lib/adminType";
+import type { NotificationType } from "@/Shared/lib/adminType";
 import { NotificationList } from "../components/notification/NotificationList";
-import React, {
-  useEffect,
-  useState,
-  type SetStateAction,
-} from "react";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState, type SetStateAction } from "react";
+import { Button } from "@/Shared/components/ui/button";
 import { Bell, Plus, X } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Shared/components/ui/card";
+import { Label } from "@/Shared/components/ui/label";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/Shared/components/ui/select";
+import { Input } from "@/Shared/components/ui/input";
+import { Textarea } from "@/Shared/components/ui/textarea";
 import useNotificationApi from "../api/notification";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
-import EmptyCase from "@/components/empty/EmptyCase";
+import { Toaster } from "@/Shared/components/ui/sonner";
+import EmptyCase from "@/Shared/components/empty/EmptyCase";
 
 const Notification = () => {
   const [isCreate, setIsCreate] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
-  const [Edit , setEdit] = useState<NotificationType | null>(null)
-  const { getCourseNotifications, deleteNotification , createUserNotification} = useNotificationApi();
-  const [page , setPage] = useState(1)
-  const [showMore , setShowMore] = useState(false)
+  const [Edit, setEdit] = useState<NotificationType | null>(null);
+  const { getCourseNotifications, deleteNotification, createUserNotification } =
+    useNotificationApi();
+  const [page, setPage] = useState(1);
+  const [showMore, setShowMore] = useState(false);
+  const [showMoreLoading, setShowMoreLoading] = useState(false);
   const fetchNotifications = async (currentPage: number) => {
-    setLoading(true);
     const result = await getCourseNotifications(currentPage);
     if (result && result.data) {
-      console.log(result)
       setNotifications((prev) => {
         if (result.data && prev) {
           const updatedResult = [...prev, ...result.data];
@@ -45,52 +41,57 @@ const Notification = () => {
       });
 
       if (result.final !== undefined) setShowMore(result.final);
-      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    fetchNotifications(1);
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchNotifications(1);
+      setLoading(false);
+    };
+    fetchData();
   }, [getCourseNotifications]);
 
-  const handleShowMore = () => {
+  const handleShowMore = async () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchNotifications(nextPage);
+    setShowMoreLoading(true);
+    await fetchNotifications(nextPage);
+    setShowMoreLoading(false);
   };
 
-
-  
   const handleNotificationCreated = (newNotification: NotificationType) => {
     setNotifications((prev) => [newNotification, ...prev]);
     setIsCreate(false);
   };
 
-  const handleNotificationUpdated = (updatedNotification : NotificationType) => {
+  const handleNotificationUpdated = (updatedNotification: NotificationType) => {
     setNotifications((prev) => {
       return prev.map((notification) => {
-        if(notification.id === updatedNotification.id){
-          return updatedNotification
+        if (notification.id === updatedNotification.id) {
+          return updatedNotification;
         }
-        return notification
-      })
-    })
-    setEdit(null)
-    setIsCreate(false)
-  }
+        return notification;
+      });
+    });
+    setEdit(null);
+    setIsCreate(false);
+  };
 
-  const handleDeleteNotification = async (DeletedNotification : NotificationType) => {  
-    const response = await deleteNotification(DeletedNotification.id)
-    if(response){
+  const handleDeleteNotification = async (
+    DeletedNotification: NotificationType
+  ) => {
+    const response = await deleteNotification(DeletedNotification.id);
+    if (response) {
       setNotifications((prev) => {
         return prev.filter((notification) => {
-          return notification.id != DeletedNotification.id
-        })
-      })
-      return
+          return notification.id != DeletedNotification.id;
+        });
+      });
+      return;
     }
-  }
+  };
   return (
     <div className="min-h-screen  bg-white dark:bg-gray-900">
       {/* Header */}
@@ -140,9 +141,7 @@ const Notification = () => {
             <EmptyCase
               title="No Notifications Yet"
               description="You haven’t create any notifications to users. When you do, they’ll appear here for tracking and management."
-              icon={
-                <Bell className="w-6 h-6" />
-              }
+              icon={<Bell className="w-6 h-6" />}
               color="blue"
             />
           ) : (
@@ -157,7 +156,11 @@ const Notification = () => {
       </section>
       {showMore && (
         <div className="flex justify-center mt-6">
-          <Button onClick={handleShowMore} variant="outline">
+          <Button
+            disabled={showMoreLoading}
+            onClick={handleShowMore}
+            variant="outline"
+          >
             Show More Users
           </Button>
         </div>
@@ -174,18 +177,18 @@ type CreateNotificationType = {
   close: () => void;
   onNotificationCreated: (notification: NotificationType) => void;
   Edit: NotificationType | null;
-  onNotificationUpdated : (notification: NotificationType) => void; 
+  onNotificationUpdated: (notification: NotificationType) => void;
 };
 
 function CreateNotification({
   close,
   onNotificationCreated,
   Edit,
-  onNotificationUpdated
+  onNotificationUpdated,
 }: CreateNotificationType) {
   const [notificationInfo, setNotificationInfo] = useState({
-    id : Edit?.id || "",
-    type: Edit?.type  || "",
+    id: Edit?.id || "",
+    type: Edit?.type || "",
     title: Edit?.title || "",
     message: Edit?.body || "",
     sent_to: Edit?.sent_to || "",
@@ -196,7 +199,8 @@ function CreateNotification({
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { getCoursesId, createNotification , updateNotification } = useNotificationApi();
+  const { getCoursesId, createNotification, updateNotification } =
+    useNotificationApi();
 
   function handleChange(type: string, value: string) {
     setNotificationInfo((prev) => {
@@ -259,7 +263,6 @@ function CreateNotification({
     setIsSubmitting(false);
   };
 
-  
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -365,43 +368,43 @@ function CreateNotification({
           </Select>
         </div>
 
-        { notificationInfo.type !== "announcement"        
-        && <div>
-          <Label>Course *</Label>
-          <Select
-            value={notificationInfo.course_id}
-            onValueChange={(value) => handleChange("course_id", value)}
-          >
-            <SelectTrigger className=" dark:bg-gray-700">
-              <SelectValue placeholder="Select a course" />
-            </SelectTrigger>
-            <SelectContent className=" dark:bg-gray-700">
-              {loading ? (
-                <SelectItem value="loading" disabled>
-                  Loading courses...
-                </SelectItem>
-              ) : courses && courses.length > 0 ? (
-                courses.map((course: any) => (
-                  <SelectItem key={course.id} value={course.id}>
-                    {course.title}
+        {notificationInfo.type !== "announcement" && (
+          <div>
+            <Label>Course *</Label>
+            <Select
+              value={notificationInfo.course_id}
+              onValueChange={(value) => handleChange("course_id", value)}
+            >
+              <SelectTrigger className=" dark:bg-gray-700">
+                <SelectValue placeholder="Select a course" />
+              </SelectTrigger>
+              <SelectContent className=" dark:bg-gray-700">
+                {loading ? (
+                  <SelectItem value="loading" disabled>
+                    Loading courses...
                   </SelectItem>
-                ))
-              ) : (
-                <SelectItem value="empty" disabled>
-                  No courses available
-                </SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-        </div>
-        }
+                ) : courses && courses.length > 0 ? (
+                  courses.map((course: any) => (
+                    <SelectItem key={course.id} value={course.id}>
+                      {course.title}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="empty" disabled>
+                    No courses available
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <Button
           variant="destructive"
           className=" text-white bg-gray-900 mt-4 dark:bg-blue-600"
           onClick={handleSubmit}
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Sending..." : "Send"}
+          {isSubmitting ? "Saving..." : "Save"}
         </Button>
       </CardContent>
     </Card>

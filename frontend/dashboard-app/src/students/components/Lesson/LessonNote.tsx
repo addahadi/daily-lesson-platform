@@ -1,6 +1,6 @@
 import useNoteApi from "@/students/Api/note.Api";
-import { Button } from "@/components/ui/button";
-import { renderMarkdown } from "@/lib/utils";
+import { Button } from "@/Shared/components/ui/button";
+import { renderMarkdown } from "@/Shared/lib/utils";
 import { Edit2, Edit3, Eye, Move, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -18,10 +18,9 @@ const LessonNote = () => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const modalRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const [loading ,setLoading] = useState(false)
-  const {getLessonNote , addNote} = useNoteApi()
-  
-  
+  const [loading, setLoading] = useState(false);
+  const { getLessonNote, addNote } = useNoteApi();
+
   const closeModal = () => {
     setIsModalOpen(false);
     setIsPreview(false);
@@ -83,30 +82,24 @@ const LessonNote = () => {
     const fetchData = async () => {
       if (!lessonId) return;
       const userNote = await getLessonNote(lessonId);
-      if(userNote){
+      if (userNote) {
         setContent(userNote?.content);
-        setTitle(userNote.title);  
+        setTitle(userNote.title);
       }
     };
     fetchData();
   }, [lessonId]);
 
   async function saveNote() {
-    
     if (!content || !lessonId) return;
-    
-    console.log(content , lessonId)
-    setLoading(true)
-    const message = await addNote(
-      title,
-      content,
-      lessonId,
-    );
-    if(message){
-      toast.success(message)
 
+    console.log(content, lessonId);
+    setLoading(true);
+    const message = await addNote(title, content, lessonId);
+    if (message) {
+      toast.success(message);
     }
-    setLoading(false)
+    setLoading(false);
   }
 
   return (

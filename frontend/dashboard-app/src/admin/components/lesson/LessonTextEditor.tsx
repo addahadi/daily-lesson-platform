@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import type { section } from "@/lib/adminType";
+import { Button } from "@/Shared/components/ui/button";
+import { Input } from "@/Shared/components/ui/input";
+import { Label } from "@/Shared/components/ui/label";
+import { Textarea } from "@/Shared/components/ui/textarea";
+import type { section } from "@/Shared/lib/adminType";
 import {
   ArrowDown,
   ArrowUp,
@@ -80,7 +80,6 @@ const LessonTextEditor = ({
       if (!prev) return;
       if (targetIndex < 0 || targetIndex >= prev.length) return prev;
 
-      // Prevent moving into summary position (last position)
       const summaryIndex = prev.findIndex(
         (section) => "heading" in section && section.heading === "Summary"
       );
@@ -96,7 +95,6 @@ const LessonTextEditor = ({
   }
 
   function handleDelete() {
-    // Prevent deleting summary section
     if (isSummary) return;
 
     setSections((prev) => {
@@ -150,7 +148,7 @@ const LessonTextEditor = ({
             <Label>Heading</Label>
             <Input
               placeholder="Enter section heading"
-              className="w-full"
+              className="w-full dark:bg-gray-700"
               value={currentSection.heading}
               onChange={(e) => {
                 handleChange("heading", e.target.value);
@@ -168,7 +166,7 @@ const LessonTextEditor = ({
           className={`w-full ${
             isSummary && !currentSection.text
               ? "border-red-300 focus:border-red-500"
-              : ""
+              : "dark:bg-gray-700"
           }`}
           rows={8}
           value={currentSection.text}

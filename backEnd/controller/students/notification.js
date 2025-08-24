@@ -2,18 +2,8 @@ const sql = require("../../db")
 
 const getUserNotifications = async (req, res, next) => {
   const userId = req.auth.userId;
-  const { user_id } = req.params;
-  console.log("req.auth.userId:", userId, typeof userId);
-  console.log("req.params.user_id:", user_id, typeof user_id);
-
+  
   try {
-    if (userId !== user_id) {
-      return res.status(403).json({
-        status: false,
-        message: "Unauthorized access.",
-      });
-    }
-
     const userNotifications = await sql`
       SELECT 
         nu.id, 
@@ -47,17 +37,10 @@ const getUserNotifications = async (req, res, next) => {
 };
 
 const MarkAllRead = async (req, res, next) => {
-  const { user_id } = req.params;
   const userId = req.auth.userId;
 
   try {
-    if (userId !== user_id) {
-      return res.status(403).json({
-        status: false,
-        message: "Unauthorized access.",
-      });
-    }
-
+    
     const result = await sql`
       UPDATE user_notification
       SET is_read = true
@@ -83,12 +66,12 @@ const MarkAllRead = async (req, res, next) => {
 
 const MarkAsRead = async (req, res, next) => {
   const userId = req.auth.userId;
-  const { notification_id } = req.params;
+  const { notificationId } = req.params;
 
   try {
     const [existing] = await sql`
       SELECT id FROM user_notification
-      WHERE id = ${notification_id} AND user_id = ${userId}
+      WHERE id = ${notificationId} AND user_id = ${userId}
     `;
 
     if (!existing) {
@@ -101,7 +84,7 @@ const MarkAsRead = async (req, res, next) => {
     const [updated] = await sql`
       UPDATE user_notification
       SET is_read = true
-      WHERE id = ${notification_id}
+      WHERE id = ${notificationId}
       RETURNING id
     `;
 

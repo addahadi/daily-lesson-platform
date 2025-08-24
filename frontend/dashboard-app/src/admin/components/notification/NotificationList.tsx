@@ -1,57 +1,66 @@
-import useNotificationApi from '@/admin/api/notification';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import type { NotificationType } from '@/lib/adminType';
-import { Edit, Trash2 } from 'lucide-react';
-import { useState, type SetStateAction } from 'react';
-import type React from 'react';
-
+import { Badge } from "@/Shared/components/ui/badge";
+import { Button } from "@/Shared/components/ui/button";
+import { Card, CardContent } from "@/Shared/components/ui/card";
+import type { NotificationType } from "@/Shared/lib/adminType";
+import { Edit, Trash2 } from "lucide-react";
+import { useState, type SetStateAction } from "react";
+import type React from "react";
 
 interface NotificationListProps {
   notifications: NotificationType[];
   OpenEdit: React.Dispatch<SetStateAction<NotificationType | null>>;
   onDelete: (notification: NotificationType) => void;
-  createUserNotification : ({ sent_to, courseId, notificationId }: { sent_to: string; courseId: string; notificationId: string; }) => Promise<void>
+  createUserNotification: ({
+    sent_to,
+    courseId,
+    notificationId,
+  }: {
+    sent_to: string;
+    courseId: string;
+    notificationId: string;
+  }) => Promise<void>;
 }
 
-export function NotificationList({ notifications, OpenEdit, onDelete , createUserNotification }: NotificationListProps) {
-  
-  const [loading , setLoading] = useState(false)
-  const {} = useNotificationApi()
+export function NotificationList({
+  notifications,
+  OpenEdit,
+  onDelete,
+  createUserNotification,
+}: NotificationListProps) {
+  const [loading, setLoading] = useState(false);
   const getTypeDisplay = (type: string) => {
-    return type === 'new_content' ? 'Content' : 'Announcement';
+    return type === "new_content" ? "Content" : "Announcement";
   };
 
   const getTargetDisplay = (notification: NotificationType) => {
     switch (notification.sent_to) {
-      case 'all_users':
-        return 'All Users';
-      case 'enrolled_users':
-        return 'Enrolled Users';
+      case "all_users":
+        return "All Users";
+      case "enrolled_users":
+        return "Enrolled Users";
       default:
-        return 'Unknown';
+        return "Unknown";
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
-  async function handleSending(notification : NotificationType) {
-    setLoading(true)
+  async function handleSending(notification: NotificationType) {
+    setLoading(true);
 
     await createUserNotification({
-      sent_to : notification.sent_to,
-      courseId : notification.course_id as string,
-      notificationId : notification.id
-    })
-    setLoading(false)
+      sent_to: notification.sent_to,
+      courseId: notification.course_id as string,
+      notificationId: notification.id,
+    });
+    setLoading(false);
   }
   return (
     <div className="space-y-6 ">
@@ -116,8 +125,9 @@ export function NotificationList({ notifications, OpenEdit, onDelete , createUse
 
                     <Button
                       onClick={() => {
-                        handleSending(notification)
-                      } }
+                        handleSending(notification);
+                      }}
+                      disabled={loading}
                       variant="destructive"
                       className="dark:bg-blue-600 hover:dark:bg-blue-800  mt-auto "
                     >

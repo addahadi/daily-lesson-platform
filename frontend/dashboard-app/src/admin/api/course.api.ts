@@ -1,5 +1,5 @@
-import type { Course } from "@/lib/adminType";
-import { handleResponse, toastOnce } from "@/lib/utils";
+import type { Course } from "@/Shared/lib/adminType";
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 
 const useCourseApi = () => {
@@ -12,22 +12,22 @@ const useCourseApi = () => {
     };
   };
 
-  const getCourses = async (page : number) => {
+  const getCourses = async (page: number) => {
     const URL = `http://localhost:8090/admin/course?page=${page}`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
-      
-      const result = await handleResponse<Course[]>(response)
 
-      if(typeof result === "string"){
-        toastOnce(result)
-        return null
+      const result = await handleResponse<Course[]>(response);
+
+      if (typeof result === "string") {
+        toastOnce(result);
+        return null;
       }
-      return result
+      return result;
     } catch (err: any) {
-      toastOnce(err.message)
-      return null
+      toastOnce(err.message);
+      return null;
     }
   };
   const UpdateCourse = async (courseData: Partial<Course>) => {
@@ -45,13 +45,10 @@ const useCourseApi = () => {
       } else {
         console.error("Failed to update course");
       }
-
     } catch (err) {
       console.error(err);
     }
-  }
-
-
+  };
 
   const ToggleCourseView = async (courseId: string) => {
     const URL = `http://localhost:8090/admin/course/${courseId}`;

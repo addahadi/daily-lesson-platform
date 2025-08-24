@@ -1,8 +1,11 @@
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
-import { handleResponse, toastOnce } from "@/lib/utils";
-import type { CourseCardProps, CourseSave, FolderType } from "@/lib/type";
-
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
+import type {
+  CourseCardProps,
+  CourseSave,
+  FolderType,
+} from "@/Shared/lib/type";
 
 const useFolderApiController = () => {
   const { getToken } = useAuth();
@@ -39,19 +42,13 @@ const useFolderApiController = () => {
     [getAuthHeader]
   );
 
-
-  
-  const getAllFolders = useCallback(
-  async () => {
+  const getAllFolders = useCallback(async () => {
     try {
       const headers = await getAuthHeader();
-      const response = await fetch(
-        `http://localhost:8090/folder`,
-        {
-          method: "GET",
-          headers,
-        }
-      );
+      const response = await fetch(`http://localhost:8090/folder`, {
+        method: "GET",
+        headers,
+      });
 
       const data = await handleResponse<FolderType[]>(response);
       if (typeof data === "string") {
@@ -63,9 +60,7 @@ const useFolderApiController = () => {
       toastOnce(err.message || "Failed to fetch folders");
       return null;
     }
-  },
-  [getAuthHeader]
-);
+  }, [getAuthHeader]);
   const deleteFolder = useCallback(
     async (folderId: string) => {
       try {
@@ -109,7 +104,7 @@ const useFolderApiController = () => {
         }
         return data.data;
       } catch (err: any) {
-        console.log(err)
+        console.log(err);
         toastOnce(err.message || "Failed to save course");
         return null;
       }
@@ -118,7 +113,7 @@ const useFolderApiController = () => {
   );
 
   const unsaveCourse = useCallback(
-    async (course_id: string , folder_id : string) => {
+    async (course_id: string, folder_id: string) => {
       try {
         const headers = await getAuthHeader();
         const response = await fetch(
@@ -154,9 +149,7 @@ const useFolderApiController = () => {
           }
         );
 
-        const data = await handleResponse<CourseCardProps[]>(
-          response
-        );
+        const data = await handleResponse<CourseCardProps[]>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
@@ -175,7 +168,7 @@ const useFolderApiController = () => {
     saveCourseToFolder,
     unsaveCourse,
     getAllFolders,
-    getCoursesInFolder
+    getCoursesInFolder,
   };
 };
 

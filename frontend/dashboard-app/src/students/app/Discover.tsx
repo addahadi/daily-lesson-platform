@@ -1,21 +1,21 @@
 import useCourseApiController from "@/students/Api/course.Api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import type { CourseCardProps } from "@/lib/type";
+import { Button } from "@/Shared/components/ui/button";
+import { Input } from "@/Shared/components/ui/input";
+import type { CourseCardProps } from "@/Shared/lib/type";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Shared/components/ui/select";
 import { Filter } from "lucide-react";
 import { useEffect, useState } from "react";
 import CourseCard from "../components/Discover/CourseCard";
-import EmptySearch from "@/components/empty/EmptySearch";
-import LoadingSpinner from "@/components/ui/loading";
-import { getCach, setCache } from "@/lib/utils";
-import { CACHE_KEY_DISCOVER } from "@/lib/utils";
+import EmptySearch from "@/Shared/components/empty/EmptySearch";
+import LoadingSpinner from "@/Shared/components/ui/loading";
+import { getCach, setCache } from "@/Shared/lib/utils";
+import { CACHE_KEY_DISCOVER } from "@/Shared/lib/utils";
 import FilteredCourseList from "../components/Discover/FilteredCourseList";
 
 const TTL = 1000 * 60 * 60;
@@ -91,7 +91,10 @@ const Discover = () => {
       },
       TTL
     );
-    setCourseCardData((prev) => [...prev, ...result.data as CourseCardProps[]]);
+    setCourseCardData((prev) => [
+      ...prev,
+      ...(result.data as CourseCardProps[]),
+    ]);
     setIsShowMore(result.final as boolean);
     setPage((prev) => prev + 1);
     setShowMoreLoading(false);
@@ -123,7 +126,6 @@ const Discover = () => {
           <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-3 mt-6">
             <Button
               className="text-black-1 dark:text-gray-900 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 transition-colors duration-200"
-              variant="default"
               onClick={() => setFilter(!filter)}
             >
               <Filter className="w-5 h-5 text-black-1 dark:text-gray-900 mr-2" />

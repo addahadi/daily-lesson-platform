@@ -1,13 +1,12 @@
-
 import { Edit, Eye, Search, Trash2, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import useUserApi from "../api/user.api";
-import type { UserInfo } from "@/lib/adminType";
+import type { UserInfo } from "@/Shared/lib/adminType";
 
-import { Button } from "@/components/ui/button";
-import LoadingSpinner from "@/components/ui/loading";
-import { Badge } from "@/components/ui/badge";
-import EmptyCase from "@/components/empty/EmptyCase";
+import { Button } from "@/Shared/components/ui/button";
+import LoadingSpinner from "@/Shared/components/ui/loading";
+import { Badge } from "@/Shared/components/ui/badge";
+import EmptyCase from "@/Shared/components/empty/EmptyCase";
 import {
   Table,
   TableBody,
@@ -15,7 +14,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Shared/components/ui/table";
 
 const UserManagement = () => {
   const { getUsers } = useUserApi();
@@ -27,7 +26,7 @@ const UserManagement = () => {
   const [showMore, setShowMore] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [showMoreLoading , setShowMoreLoading] = useState(false)
+  const [showMoreLoading, setShowMoreLoading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -39,14 +38,14 @@ const UserManagement = () => {
 
   const fetchUsers = async (currentPage: number) => {
     const result = await getUsers(currentPage);
-    console.log(result)
+    console.log(result);
     if (result && result.data) {
-      setUsers((prev) =>{
-        if(result.data){
+      setUsers((prev) => {
+        if (result.data) {
           const updatedResult = [...prev, ...result.data];
-          return (currentPage === 1 ? result.data : updatedResult)
+          return currentPage === 1 ? result.data : updatedResult;
         }
-        return prev
+        return prev;
       });
       setShowMore(result.final as boolean);
     }
@@ -57,7 +56,7 @@ const UserManagement = () => {
     setPage(nextPage);
     setShowMoreLoading(true);
     await fetchUsers(nextPage);
-    setShowMoreLoading(false)
+    setShowMoreLoading(false);
   };
 
   const filteredUsers = users?.filter(
@@ -121,17 +120,15 @@ const UserManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {
-                loading && (
-                  <tr>
-                    <td colSpan={6} className="text-center py-4">
-                      <LoadingSpinner size={40} />
-                    </td>
-                  </tr>
-                )
-              }
+              {loading && (
+                <tr>
+                  <td colSpan={6} className="text-center py-4">
+                    <LoadingSpinner size={40} />
+                  </td>
+                </tr>
+              )}
 
-              {filteredUsers.length === 0  && !loading ? (
+              {filteredUsers.length === 0 && !loading ? (
                 <tr>
                   <td colSpan={6}>
                     <EmptyCase
@@ -236,11 +233,11 @@ const UserManagement = () => {
         {/* Show More */}
         {showMore && (
           <div className="flex justify-center mt-6">
-            <Button 
-            
-            disabled={showMoreLoading}
-            
-            onClick={handleShowMore} variant="outline">
+            <Button
+              disabled={showMoreLoading}
+              onClick={handleShowMore}
+              variant="outline"
+            >
               Show More Users
             </Button>
           </div>
@@ -273,8 +270,6 @@ const UserManagement = () => {
     </div>
   );
 };
-
-
 
 // Modal Backdrop Component
 const ModalBackdrop = ({
@@ -380,10 +375,15 @@ const EditModal = ({
 
         {/* Actions */}
         <div className="flex gap-3 mt-6">
-          <Button variant="outline" onClick={onClose} className="flex-1 bg-gray-900">
+          <Button variant="outline" onClick={onClose} className="flex-1">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={loading} className="flex-1 bg-gray-900">
+          <Button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="flex-1 bg-blue-600 text-white hover:bg-blue-700 
+               dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
             {loading ? <LoadingSpinner size={16} thickness={2} /> : "Save"}
           </Button>
         </div>
@@ -496,16 +496,14 @@ const DeleteModal = ({
 
         {/* Actions */}
         <div className="flex gap-3">
-          <Button variant="destructive" 
-                    
-          onClick={onClose} className="flex-1 bg-gray-900">
+          <Button variant="outline" onClick={onClose} className="flex-1">
             Cancel
           </Button>
           <Button
-            variant="destructive"
             onClick={handleDelete}
             disabled={loading}
-            className="flex-1 bg-red-500  dark:text-red-400 dark:bg-red-900"
+            className="flex-1 bg-red-600 text-white hover:bg-red-700 
+               dark:bg-red-500 dark:hover:bg-red-600"
           >
             {loading ? <LoadingSpinner size={16} thickness={2} /> : "Delete"}
           </Button>

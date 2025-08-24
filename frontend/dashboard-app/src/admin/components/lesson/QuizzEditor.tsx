@@ -1,7 +1,7 @@
 import React, { useEffect, useState, type SetStateAction } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/Shared/components/ui/textarea";
+import { Badge } from "@/Shared/components/ui/badge";
+import { Label } from "@/Shared/components/ui/label";
 
 type QuizzProps = {
   quizz_id: string;
@@ -71,6 +71,7 @@ const QuizzEditor = ({ quizz, setQuizz , setChange }: QuizzEditorType) => {
         <Textarea
           id="question"
           value={quizzData.question}
+          className="dark:bg-gray-700"
           placeholder="Write a question"
           onChange={(e) => handleChange("question", e.target.value)}
           rows={4}
@@ -91,6 +92,7 @@ const QuizzEditor = ({ quizz, setQuizz , setChange }: QuizzEditorType) => {
 
               <Textarea
                 value={option}
+                className="dark:bg-gray-700"
                 onChange={(e) => handleChange("option", e.target.value, index)}
                 placeholder={`Option ${index + 1}`}
                 rows={3}
@@ -109,13 +111,9 @@ const QuizzEditor = ({ quizz, setQuizz , setChange }: QuizzEditorType) => {
                   ? "Correct"
                   : "Incorrect"}
               </Badge>
-
-              
             </div>
           ))}
         </div>
-
-        
       </div>
     </div>
   );

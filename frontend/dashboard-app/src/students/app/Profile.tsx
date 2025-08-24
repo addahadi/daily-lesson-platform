@@ -2,7 +2,7 @@ import AchievementBadges from "@/students/components/profile/AcheivmentBadges";
 import StreakCounter from "@/students/components/profile/streakCounter";
 import UserInfo from "@/students/components/profile/UserInfo";
 import XpChart from "@/students/components/profile/XpChart";
-import type { UserInfoProps } from "@/lib/type";
+import type { UserInfoProps } from "@/Shared/lib/type";
 import { useEffect, useState } from "react";
 
 import useProfileApiController from "@/students/Api/profile.Api";
@@ -15,8 +15,8 @@ const Profile = () => {
   useEffect(() => {
     const fetchData = async () => {
       const result = await getUserInfo();
-      if(result){
-        setUserData(result)
+      if (result) {
+        setUserData(result);
         setCurrentStreak(result.streak_count);
       }
     };

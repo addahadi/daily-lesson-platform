@@ -1,10 +1,10 @@
-import LoadingSpinner from "@/components/ui/loading";
-import { renderMarkdown } from "@/lib/utils";
+import LoadingSpinner from "@/Shared/components/ui/loading";
+import { renderMarkdown } from "@/Shared/lib/utils";
 import useLessonApiController from "@/students/Api/lesson.Api";
 import { CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast} from "sonner";
+import { toast } from "sonner";
 
 const LessonSummary = ({
   text,
@@ -19,23 +19,23 @@ const LessonSummary = ({
   enrollementId: string | undefined;
   completed: boolean | null;
   setCourseCompleted: React.Dispatch<React.SetStateAction<boolean>>;
-  setCompleted : React.Dispatch<React.SetStateAction<boolean | null>>;
+  setCompleted: React.Dispatch<React.SetStateAction<boolean | null>>;
 }) => {
   const { moduleId, lessonId } = useParams();
   const { markAsComplete } = useLessonApiController();
-  const [loading , setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   async function handleComplete() {
     if (!enrollementId || !moduleId || !lessonId) return;
-    setLoading(true)
-    const result =  await markAsComplete(enrollementId, moduleId, lessonId)
-    if(result){
-      toast.success(result.message)
-      if(result.data){
-        setCourseCompleted(result.data?.CourseCompletedAler)
-        setCompleted(true)
-      }  
+    setLoading(true);
+    const result = await markAsComplete(enrollementId, moduleId, lessonId);
+    if (result) {
+      toast.success(result.message);
+      if (result.data) {
+        setCourseCompleted(result.data?.CourseCompletedAlert);
+        setCompleted(true);
+      }
     }
-    setLoading(false)
+    setLoading(false);
   }
 
   return (
@@ -51,7 +51,6 @@ const LessonSummary = ({
             : '<p class="text-gray-500 italic">No content yet...</p>',
         }}
       />
-        
 
       {!completed ? (
         <button

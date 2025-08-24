@@ -1,8 +1,8 @@
-import type { Lesson } from "@/lib/adminType";
-import { formatDuration, getLevelColor } from "@/lib/utils";
+import type { Lesson } from "@/Shared/lib/adminType";
+import { formatDuration, getLevelColor } from "@/Shared/lib/utils";
 import { Clock } from "lucide-react";
 import AdminCard from "../AdminCard";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/Shared/components/ui/badge";
 import { useState, type SetStateAction } from "react";
 import useLessonApi from "@/admin/api/lesson.api";
 import { toast } from "sonner";
@@ -12,33 +12,33 @@ const AdminLessonCard = ({
   course_id,
   module_id,
   setEditLesson,
-  setLessons
+  setLessons,
 }: {
   lesson: Lesson;
   course_id: string | undefined;
   module_id: string | undefined;
   setEditLesson: (lesson: Lesson | null) => void;
-  setLessons : React.Dispatch<SetStateAction<Lesson[]>>
+  setLessons: React.Dispatch<SetStateAction<Lesson[]>>;
 }) => {
-  const [loading , setLoading] = useState(false)
-  const {deleteLesson} = useLessonApi()
+  const [loading, setLoading] = useState(false);
+  const { deleteLesson } = useLessonApi();
   function handleEditModule() {
     setEditLesson(lesson);
   }
 
   async function handleDeleteModule() {
-    setLoading(true)
-    const result = await deleteLesson(lesson.id)
-    if(result !== null){
-      setLoading(false)
-      toast.success(result)
+    setLoading(true);
+    const result = await deleteLesson(lesson.id);
+    if (result !== null) {
+      setLoading(false);
+      toast.success(result);
     }
-    setLoading(false)
+    setLoading(false);
     setLessons((prev) => {
       return prev.filter((les) => {
-        return les.id != lesson.id 
-      })
-    })
+        return les.id != lesson.id;
+      });
+    });
   }
   return (
     <AdminCard

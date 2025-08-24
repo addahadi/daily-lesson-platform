@@ -1,9 +1,8 @@
-import type { NotificationData } from "@/lib/type";
-import { CheckCheck, Trash2, X } from "lucide-react";
+import type { NotificationData } from "@/Shared/lib/type";
+import { CheckCheck, X } from "lucide-react";
 import NotificationItem from "./NotificationItem";
-import LoadingSpinner from "@/components/ui/loading";
+import LoadingSpinner from "@/Shared/components/ui/loading";
 import { useNotificationApi } from "@/students/Api/notification.Api";
-import { useUser } from "@clerk/clerk-react";
 import { useState } from "react";
 import { toast, Toaster } from "sonner";
 
@@ -11,28 +10,30 @@ const NotificationModel = ({
   loading,
   close,
   notifications,
+  setNotifications,
 }: {
   loading: boolean;
   close: () => void;
   notifications: NotificationData[] | null;
+  setNotifications: React.Dispatch<
+    React.SetStateAction<NotificationData[] | null>
+  >;
 }) => {
   const { markAllRead } = useNotificationApi();
-  const [Markloading , setMarkLoading] = useState(false)
-  const {user} = useUser()
+  const [Markloading, setMarkLoading] = useState(false);
   async function handleMarkAsRead() {
-    if(!user?.id) return
-    setMarkLoading(true)
-    const result = await markAllRead(user.id)
-    if(result){
-      console.log(result)
-      toast.success(result.message)
-      setMarkLoading(false)
-      return
+    setMarkLoading(true);
+    const result = await markAllRead();
+    if (result) {
+      console.log(result);
+      toast.success(result.message);
+      setMarkLoading(false);
+      return;
     }
-    setMarkLoading(false)
+    setMarkLoading(false);
   }
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-300 dark:border-gray-700 w-[350px]">
+    <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-300 dark:border-gray-700 w-[350px] z-50">
       <header className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex flex-col gap-3">
         <div className="flex justify-between w-full">
           <h1 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
@@ -44,13 +45,15 @@ const NotificationModel = ({
           />
         </div>
         <div className="flex flex-row gap-5 items-center">
-          <button 
-          disabled={loading}
-          onClick={() => {
-            handleMarkAsRead()
-          }}
-          
-          className="cursor-pointer flex items-center gap-2 text-sm text-orange-500 hover:underline">
+          <button
+            disabled={Markloading}
+            onClick={() => {
+              handleMarkAsRead();
+            }}
+            className={`disabled:cursor-not-allowed cursor-pointer flex items-center gap-2 text-sm text-orange-500 hover:underline ${
+              Markloading ? "opacity-50" : ""
+            }`}
+          >
             <CheckCheck className="w-3 h-3" />
             <span>Mark all Read</span>
           </button>
@@ -72,6 +75,7 @@ const NotificationModel = ({
             <NotificationItem
               key={notification.id}
               notification={notification}
+              setNotifications={setNotifications}
             />
           ))
         )}

@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import type { section } from "@/lib/adminType";
+import { Button } from "@/Shared/components/ui/button";
+import type { section } from "@/Shared/lib/adminType";
 import { Code, FileText } from "lucide-react";
 import React, { type SetStateAction, useEffect } from "react";
 import LessonCodeEditor from "./LessonCodeEditor";
@@ -46,13 +46,6 @@ const ContentBlockEditor = ({
     });
   }, [setSections]);
 
-  const regularSections = sections.filter(
-    (section) => !("heading" in section && section.heading === "Summary")
-  );
-  const summarySection = sections.find(
-    (section) => "heading" in section && section.heading === "Summary"
-  );
-
   return (
     <div className=" w-full mt-4">
       <div className="flex flex-row gap-3">
@@ -83,7 +76,7 @@ const ContentBlockEditor = ({
             });
           }}
           variant="destructive"
-          className=" bg-gray-800 text-white flex flex-row gap-2 items-center"
+          className=" dark:bg-gray-700 hover:dark:bg-gray-900 hover:bg-gray-800  bg-gray-700 text-white flex flex-row gap-2 items-center"
         >
           <FileText className=" w-4 h-4" />
           <span>New Markdown</span>
@@ -93,7 +86,6 @@ const ContentBlockEditor = ({
             setSections((prev) => {
               if (!prev) return;
 
-              // Find summary section and remove it temporarily
               const summaryIndex = prev.findIndex(
                 (section) =>
                   "heading" in section && section.heading === "Summary"

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import useCourseApiController from "@/students/Api/course.Api";
 import useUserApiController from "@/students/Api/user.Api";
-import type { CourseProps } from "@/lib/type";
-import { COURSE_CACH_KEY, getCach, setCache } from "@/lib/utils";
+import type { CourseProps } from "@/Shared/lib/type";
+import { COURSE_CACH_KEY, getCach, setCache } from "@/Shared/lib/utils";
 
 const CACHE_TTL = 3600 * 1000; // 1 hour
 

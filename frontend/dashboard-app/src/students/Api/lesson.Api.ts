@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { handleResponse, toastOnce } from "@/lib/utils";
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
-import type { LessonDataType } from "@/lib/type";
+import type { LessonBarProps, LessonDataType } from "@/Shared/lib/type";
 
 const useLessonApiController = () => {
   const { getToken } = useAuth();
@@ -15,7 +15,7 @@ const useLessonApiController = () => {
   }, [getToken]);
 
   const getLessonDetails = useCallback(
-    async (lessonId: string ,  moduleId : string) => {
+    async (lessonId: string, moduleId: string) => {
       const URL = `http://localhost:8090/lesson/${lessonId}/${moduleId}`;
       try {
         const headers = await getAuthHeader();
@@ -39,8 +39,6 @@ const useLessonApiController = () => {
 
   const getLessonsDetails = useCallback(
     async (courseId: string, enrollmentId: string) => {
-
-      
       const URL = `http://localhost:8090/lesson/all-lessons?courseId=${courseId}&enrollmentId=${enrollmentId}`;
       try {
         const headers = await getAuthHeader();
@@ -48,7 +46,7 @@ const useLessonApiController = () => {
           method: "GET",
           headers,
         });
-        const data = await handleResponse<{ data: any[] }>(response);
+        const data = await handleResponse<LessonBarProps>(response);
         if (typeof data === "string") {
           toastOnce(data);
           return null;
@@ -62,30 +60,6 @@ const useLessonApiController = () => {
     [getAuthHeader]
   );
 
-  const checkValidLesson = useCallback(
-    async (courseId: string, moduleId: string, userId: string) => {
-      const URL = `http://localhost:8090/lesson/is-lesson`;
-      const requestBody = { courseId, moduleId, userId };
-      try {
-        const headers = await getAuthHeader();
-        const response = await fetch(URL, {
-          method: "POST",
-          headers,
-          body: JSON.stringify(requestBody),
-        });
-        const data = await handleResponse(response);
-        if (typeof data === "string") {
-          toastOnce(data);
-          return null;
-        }
-        return data;
-      } catch (err: any) {
-        toastOnce(err.message || "Something went wrong");
-        return null;
-      }
-    },
-    [getAuthHeader]
-  );
 
   const startLesson = useCallback(
     async (enrollmentId: string, moduleId: string, lessonId: string) => {
@@ -99,7 +73,7 @@ const useLessonApiController = () => {
           body: JSON.stringify(requestBody),
         });
         const data = await handleResponse<boolean>(response);
-        
+
         if (typeof data === "string") {
           toastOnce(data);
           return null;
@@ -173,11 +147,7 @@ const useLessonApiController = () => {
   );
 
   const markAsComplete = useCallback(
-    async (
-      enrollmentId: string,
-      moduleId: string,
-      lessonId: string,
-    ) => {
+    async (enrollmentId: string, moduleId: string, lessonId: string) => {
       const URL = `http://localhost:8090/lesson/completed`;
       const requestBody = {
         enrollmentId,
@@ -193,10 +163,10 @@ const useLessonApiController = () => {
           body: JSON.stringify(requestBody),
         });
         const data = await handleResponse<{
-          lessonId : string,
-          moduleProgress: string,
-          xpAwarded: number,
-          CourseCompletedAler : boolean,
+          lessonId: string;
+          moduleProgress: string;
+          xpAwarded: number;
+          CourseCompletedAlert: boolean;
         }>(response);
 
         if (typeof data === "string") {
@@ -215,7 +185,6 @@ const useLessonApiController = () => {
   return {
     getLessonDetails,
     getLessonsDetails,
-    checkValidLesson,
     startLesson,
     SubmitQuizzAnswer,
     getNextLesson,

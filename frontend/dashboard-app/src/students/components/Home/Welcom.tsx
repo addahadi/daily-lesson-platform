@@ -4,18 +4,19 @@ import { Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const Welcome = () => {
-  const { user } = useUser();
-  const [streak, setStreak] = useState<number | undefined>();
+  const [streak, setStreak] = useState<number | undefined>(0);
   const { getDailyStreak } = useHomeApi();
+  const {user} = useUser()
 
   useEffect(() => {
     async function fetchData() {
-      if (!user?.id) return;
-      const result = await getDailyStreak(user.id);
-      setStreak(result[0].streak_count);
+      const result = await getDailyStreak();
+      if(result) {
+        setStreak(result[0].streak_count);
+      }
     }
     fetchData();
-  }, [user]);
+  }, [getDailyStreak]);
 
   return (
     <div className="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-lg border border-gray-200 dark:border-gray-700 w-full mb-4 sm:mb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-colors">

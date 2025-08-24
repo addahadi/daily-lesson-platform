@@ -82,6 +82,7 @@ export interface ModuleCardProps {
   created_at: string;
   order_index: string;
   module_id: string;
+  isAccessible: boolean;
 }
 
 export type LessonSectionProps  = {
@@ -117,7 +118,7 @@ export type EnrolledLessons = ({
   progressPercentage: string;
   total_modules : string
   total_progressed_modules : string
-})[];
+});
 
 export interface QuizzProps {
   quizz_id : string
@@ -142,6 +143,8 @@ export interface LessonBarProps {
 
 export interface CourseProps extends CourseCardProps{
   content : string[]
+  total_modules : number
+  description : string
 }
 
 export interface ToastProps {

@@ -6,7 +6,7 @@ import type {
   LessonDataType,
   QuizzProps,
   LessonSectionProps,
-} from "@/lib/type";
+} from "@/Shared/lib/type";
 
 export function useLessonDetails(
   lessonId: string,
@@ -70,8 +70,8 @@ export function useLessonDetails(
       if (!(lessonId && moduleId && enrollmentId)) return;
       try {
         const isCompleted = await startLesson(enrollmentId, moduleId, lessonId);
-        if(isCompleted === null) return;
-        console.log(isCompleted)
+        if (isCompleted === null) return;
+        console.log(isCompleted);
         setCompleted(isCompleted as boolean);
       } catch (err) {
         console.error("Error starting lesson progress:", err);
@@ -110,7 +110,7 @@ export function useLessonDetails(
       );
       setClickedNavigationButton((prev) => ({ ...prev, next: false }));
     } catch (err) {
-            console.error("Failed to load next lesson:", err);
+      console.error("Failed to load next lesson:", err);
     }
   };
 

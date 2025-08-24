@@ -1,22 +1,21 @@
-import { Card, CardContent } from "@/components/ui/card";
-import BackTo from "../components/ui/BackTo";
+import { Card, CardContent } from "@/Shared/components/ui/card";
 import { useLocation, useParams } from "react-router-dom";
-import {  Clock, Eye, Save } from "lucide-react";
-import {Badge} from "@/components/ui/badge"
-import { formatDuration, getLevelColor } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Clock, Save } from "lucide-react";
+import { Badge } from "@/Shared/components/ui/badge";
+import { formatDuration, getLevelColor } from "@/Shared/lib/utils";
+import { Button } from "@/Shared/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Shared/components/ui/tabs";
 import ContentBlockEditor from "../components/lesson/ContentBlockEditor";
 import { useEffect, useState } from "react";
-import type { section } from "@/lib/adminType";
+import type { section } from "@/Shared/lib/adminType";
 import useLessonApi from "../api/lesson.api";
 import { toast, Toaster } from "sonner";
-import LoadingSpinner from "@/components/ui/loading";
+import LoadingSpinner from "@/Shared/components/ui/loading";
 import QuizzEditor from "../components/lesson/QuizzEditor";
-import type { QuizzProps } from "@/lib/type";
+import type { QuizzProps } from "@/Shared/lib/type";
 
 const LessonContent = () => {
-  const { courseId, moduleId, lessonId } = useParams();
+  const {lessonId } = useParams();
   const lesson = useLocation().state?.State;
   const [sections, setSections] = useState<section[]>();
   const [change, setChange] = useState(false);
@@ -26,11 +25,10 @@ const LessonContent = () => {
 
   useEffect(() => {
     if (!lesson) return;
-    console.log(lesson)
+    console.log(lesson);
     setSections(lesson.content?.sections || []);
   }, [lesson]);
 
- 
   async function handleSave() {
     if (!lessonId || !sections) return;
 
@@ -38,11 +36,8 @@ const LessonContent = () => {
       (section) => "heading" in section && section.heading === "Summary"
     );
 
-    if (
-      !summarySection ||
-      !summarySection.text ||
-      summarySection.text.trim() === ""
-    ) {
+    //@ts-ignore
+    if ( !summarySection || !summarySection.text || summarySection.text.trim() === "") {
       toast.error("Summary content is required before saving.");
       return;
     }
@@ -87,10 +82,6 @@ const LessonContent = () => {
   }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6 w-full">
-      <BackTo
-        title="back to module"
-        URL={`course/${courseId}/module/${moduleId}`}
-      />
       <Card className="mb-14 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <CardContent className="flex flex-row justify-between items-center p-6">
           <div className="flex flex-col gap-2">
@@ -98,11 +89,7 @@ const LessonContent = () => {
               {lesson ? lesson.title : "Lesson Title"}
             </h2>
             <div className="flex items-center gap-4 text-sm">
-              <Badge
-                className={`${getLevelColor(
-                  lesson?.level
-                )} text-white dark:text-gray-100`}
-              >
+              <Badge className={`${getLevelColor(lesson?.level)}`}>
                 {lesson?.level}
               </Badge>
               <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
@@ -115,13 +102,6 @@ const LessonContent = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100"
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              Preview
-            </Button>
             <Button
               onClick={handleSave}
               disabled={!change}

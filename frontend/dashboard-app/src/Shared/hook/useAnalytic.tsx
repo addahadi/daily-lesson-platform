@@ -7,7 +7,6 @@ const useAnalytic = () => {
     const [streakAnalyticData , setStreakAnalyticData] = useState<Record<string , string | number>| null>( null)
     const [lessonAnalyticData , setLessonAnalyticData] = useState<Record<string , string | number>| null>(null)
     const [userAnalyticData , setUserAnalyticData] = useState<Record<string , string | number> | null>(null)
-    const [error , setError] = useState('')
     const [chartData , setChartData] = useState<Record<string , number> | never[] >([])
     const [loading , setLoading] = useState(false)
     const {
@@ -40,8 +39,7 @@ const useAnalytic = () => {
                 console.log(streak , lesson , user)
             }
             catch(err){
-                setError("Something went wrong. Try again later.");
-            }
+                console.log(err)            }
             finally{
                 setLoading(false)
             }

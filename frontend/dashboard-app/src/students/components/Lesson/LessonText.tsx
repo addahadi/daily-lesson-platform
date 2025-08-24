@@ -1,4 +1,4 @@
-import { renderMarkdown } from "@/lib/utils";
+import { renderMarkdown } from "@/Shared/lib/utils";
 
 const LessonText = ({ text, heading }: { text: string; heading: string }) => {
   return (
@@ -10,13 +10,13 @@ const LessonText = ({ text, heading }: { text: string; heading: string }) => {
       </h1>
 
       <div
-              className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6"
-              dangerouslySetInnerHTML={{
-                __html: text
-                  ? renderMarkdown(text)
-                  : '<p class="text-gray-500 italic">No content yet...</p>',
-              }}
-            />
+        className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6"
+        dangerouslySetInnerHTML={{
+          __html: text
+            ? renderMarkdown(text)
+            : '<p class="text-gray-500 italic">No content yet...</p>',
+        }}
+      />
 
       {heading === "Summary" && (
         <div className="mt-4">

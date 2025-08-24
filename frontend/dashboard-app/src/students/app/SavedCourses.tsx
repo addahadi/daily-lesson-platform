@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Shared/components/ui/button";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useFolderApiController from "../Api/folder.Api";
-import type { CourseCardProps } from "@/lib/type";
-import LoadingSpinner from "@/components/ui/loading";
-import EmptyCase from "@/components/empty/EmptyCase";
+import type { CourseCardProps } from "@/Shared/lib/type";
+import LoadingSpinner from "@/Shared/components/ui/loading";
+import EmptyCase from "@/Shared/components/empty/EmptyCase";
 import { File, ArrowLeft } from "lucide-react";
 import CourseCard from "../components/Discover/CourseCard";
 import { toast } from "sonner";
-import { CACHE_KEY_DISCOVER } from "@/lib/utils";
-import { Toaster } from "@/components/ui/sonner";
+import { CACHE_KEY_DISCOVER } from "@/Shared/lib/utils";
+import { Toaster } from "@/Shared/components/ui/sonner";
 
 const SavedCourses = () => {
   const { libraryId } = useParams();
