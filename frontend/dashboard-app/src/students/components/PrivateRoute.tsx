@@ -7,7 +7,7 @@ const PrivateRoute = () => (
       <Navigate to="/dashboard" />
     </SignedIn>
     <SignedOut>
-      <Navigate to="http://localhost:4321/" replace />
+      <Navigate to="https://devlevelup.vercel.app/" replace />
     </SignedOut>
   </>
 );
