@@ -36,7 +36,7 @@ const notificationRouteAdmin = require("../backEnd/routes/admin/notification.rou
 app.use(
   cors({
     origin:
-      process.env.FRONTEND_URL || "https://devlevelup-dashboard.vercel.app/",
+      process.env.FRONTEND_URL || "https://devlevelup-dashboard.vercel.app",
     credentials: true,
   })
 );
