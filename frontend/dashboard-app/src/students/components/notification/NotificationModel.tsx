@@ -43,9 +43,12 @@ const NotificationModel = ({
         h-full md:h-auto
         fixed md:relative
         top-0 right-0 md:top-auto md:right-auto
-        z-50
+        
         flex flex-col
       "
+      style={{
+        zIndex: 50,
+      }}
     >
       {/* Header */}
       <header className="bg-gray-100 dark:bg-gray-800 rounded-t-lg p-4 flex flex-col gap-3">
