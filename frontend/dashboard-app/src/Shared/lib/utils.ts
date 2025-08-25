@@ -6,7 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-
 export const renderMarkdown = (text: string) => {
   return (
     text
@@ -17,18 +16,27 @@ export const renderMarkdown = (text: string) => {
       )
 
       // Headings
-      .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-4">$1</h1>')
-      .replace(/^## (.*$)/gm, '<h2 class="text-xl font-semibold mb-3">$1</h2>')
-      .replace(/^### (.*$)/gm, '<h3 class="text-lg font-medium mb-2">$1</h3>')
+      .replace(
+        /^# (.*$)/gm,
+        '<h1 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">$1</h1>'
+      )
+      .replace(
+        /^## (.*$)/gm,
+        '<h2 class="text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">$1</h2>'
+      )
+      .replace(
+        /^### (.*$)/gm,
+        '<h3 class="text-lg font-medium mb-2 text-gray-900 dark:text-gray-100">$1</h3>'
+      )
       .replace(
         /^#### (.*$)/gm,
-        '<h4 class="text-base font-medium mb-2">$1</h4>'
+        '<h4 class="text-base font-medium mb-2 text-gray-900 dark:text-gray-100">$1</h4>'
       )
 
       // Blockquotes
       .replace(
         /^> (.*$)/gm,
-        '<blockquote class="border-l-4 border-gray-300 pl-4 italic text-gray-700 dark:text-gray-300 mb-4">$1</blockquote>'
+        '<blockquote class="border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic text-gray-700 dark:text-gray-300 mb-4">$1</blockquote>'
       )
 
       // Unordered lists (grouped properly)
@@ -37,7 +45,10 @@ export const renderMarkdown = (text: string) => {
           .trim()
           .split(/\n/)
           .map((line) =>
-            line.replace(/^[-+*] (.*)/, '<li class="mb-1">$1</li>')
+            line.replace(
+              /^[-+*] (.*)/,
+              '<li class="mb-1 text-gray-800 dark:text-gray-200">$1</li>'
+            )
           )
           .join("");
         return `<ul class="list-disc ml-6 mb-4">${items}</ul>`;
@@ -49,7 +60,10 @@ export const renderMarkdown = (text: string) => {
           .trim()
           .split(/\n/)
           .map((line) =>
-            line.replace(/^\d+\. (.*)/, '<li class="mb-1">$1</li>')
+            line.replace(
+              /^\d+\. (.*)/,
+              '<li class="mb-1 text-gray-800 dark:text-gray-200">$1</li>'
+            )
           )
           .join("");
         return `<ol class="list-decimal ml-6 mb-4">${items}</ol>`;
@@ -58,7 +72,7 @@ export const renderMarkdown = (text: string) => {
       // Links
       .replace(
         /\[([^\]]+)\]\(([^)]+)\)/g,
-        '<a href="$2" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">$1</a>'
+        '<a href="$2" class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">$1</a>'
       )
 
       // Images
@@ -69,13 +83,19 @@ export const renderMarkdown = (text: string) => {
 
       // Bold + italic
       .replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>")
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+      .replace(
+        /\*\*(.*?)\*\*/g,
+        '<strong class="font-semibold text-gray-900 dark:text-gray-100">$1</strong>'
+      )
+      .replace(
+        /\*(.*?)\*/g,
+        '<em class="italic text-gray-800 dark:text-gray-200">$1</em>'
+      )
 
       // Inline code
       .replace(
         /`(.*?)`/g,
-        '<code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm font-mono">$1</code>'
+        '<code class="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-1 py-0.5 rounded text-sm font-mono">$1</code>'
       )
 
       // Horizontal rule
@@ -87,7 +107,10 @@ export const renderMarkdown = (text: string) => {
       // Paragraphs
       .replace(/\n\n/g, '</p><p class="mb-4">')
       .replace(/\n/g, "<br>")
-      .replace(/^(.+)$/gm, '<p class="mb-4">$1</p>')
+      .replace(
+        /^(.+)$/gm,
+        '<p class="mb-4 text-gray-800 dark:text-gray-200">$1</p>'
+      )
   );
 };
 

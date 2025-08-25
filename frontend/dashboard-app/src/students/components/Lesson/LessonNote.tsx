@@ -104,21 +104,33 @@ const LessonNote = () => {
 
   return (
     <div>
-      <div className="flex w-full justify-end p-4 fixed top-[70px] right-10 z-50">
+      <div className="fixed top-[70px] w-fit right-10 max-md:right-4 z-50 p-2">
         <Button
-          className="rounded-full  text-gray-600 bg-orange-400 dark:text-white dark:bg-orange-400"
-          variant="outline"
-          size="icon"
           onClick={() => {
             setIsModalOpen(true);
             setPosition({ x: 0, y: 0 });
           }}
+          size="icon"
+          className="
+              w-14 h-14 
+              rounded-full 
+              bg-orange-500 
+              text-white 
+              shadow-lg 
+              hover:bg-orange-600 
+              active:scale-95 
+              transition-all 
+              duration-200 
+              dark:bg-orange-400 
+              dark:hover:bg-orange-500
+          "
         >
-          <Edit2 className="w-9 h-9" />
+          <Edit2 className="w-7 h-7" />
         </Button>
       </div>
+
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-[100] p-4">
           <div
             ref={modalRef}
             className={`rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col ${
