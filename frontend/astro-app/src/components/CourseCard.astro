@@ -1,97 +1,150 @@
-
-
-
 ---
+import { getLevelColor } from "../utils/util.js";
 
-import {getLevelColor} from "../utils/util.js"
-
-const {course} = Astro.props;
-
-const {title, img_url, level, total_duration, category} = course;
-
+const { course } = Astro.props;
+const { title, img_url, level, total_duration, category } = course;
 ---
-
 
 <div class="relative">
-  <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col lg:flex-row border border-gray-200">
-    {/* Image Section */}
-    <div class="relative w-full lg:w-80 h-48 lg:h-auto flex-shrink-0">
+  <div
+    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col lg:flex-row border border-gray-200"
+  >
+    <!-- Image Section -->
+    <div class="relative w-full lg:w-72 h-48 sm:h-60 lg:h-auto flex-shrink-0">
       <img
         src={img_url}
         alt={title}
         class="w-full h-full object-cover"
+        loading="lazy"
       />
 
-      {/* Level Badge */}
-      <div class="absolute top-4 left-4">
+      <!-- Level Badge -->
+      <div class="absolute top-3 left-3 sm:top-4 sm:left-4">
         <span
-          class={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(level)}`}
+          class={`px-2 py-1 rounded-full text-[10px] sm:text-xs font-medium ${getLevelColor(level)}`}
         >
           {level}
         </span>
       </div>
     </div>
 
-    {/* Content Section */}
+    <!-- Content Section -->
     <div class="p-4 sm:p-6 flex-1 flex flex-col justify-between">
-      {/* Title */}
+      <!-- Title -->
       <div class="flex justify-between items-start mb-3">
-        <h3 class="text-lg sm:text-xl font-bold text-gray-900 line-clamp-2 leading-tight">
+        <h3
+          class="text-base sm:text-lg md:text-xl font-bold text-gray-900 line-clamp-2 leading-tight"
+        >
           {title}
         </h3>
       </div>
 
-      {/* Meta Information */}
-      <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4 text-sm text-gray-500">
+      <!-- Meta Information -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4 text-xs sm:text-sm text-gray-500"
+      >
         <div class="flex items-center gap-1">
-          <div>
-            <!-- Clock Icon -->
-            
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"
-              role="img" aria-label="Clock" style="color:#374151; --accent:#f97316;">
-              <title>Clock</title>
-              <circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <line x1="12" y1="12" x2="12" y2="8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-              <line x1="12" y1="12" x2="16.3" y2="13.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-              <line x1="12" y1="12" x2="12" y2="4.8" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
-              <circle cx="12" cy="12" r="0.9" fill="var(--accent)" stroke="none"/>
-            </svg>
-          </div>
+          <!-- Clock Icon -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            role="img"
+            aria-label="Clock"
+            class="text-gray-700"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="9.25"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <line
+              x1="12"
+              y1="12"
+              x2="12"
+              y2="8"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+            <line
+              x1="12"
+              y1="12"
+              x2="16.3"
+              y2="13.8"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+            <line
+              x1="12"
+              y1="12"
+              x2="12"
+              y2="4.8"
+              stroke="#f97316"
+              stroke-width="1.2"
+              stroke-linecap="round"
+            />
+            <circle cx="12" cy="12" r="0.9" fill="#f97316" stroke="none" />
+          </svg>
           <span>{Math.round(parseInt(total_duration) / 60)} hours</span>
         </div>
-        <p class="text-sm text-gray-600 font-bold">by admin</p>
+        <p class="text-gray-600 font-semibold">by admin</p>
       </div>
 
-      {/* Category and Level */}
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <p class="text-xs text-gray-500 capitalize">
-            {level} • {category}
-          </p>
-        </div>
+      <!-- Category + Level -->
+      <div class="mb-4">
+        <p class="text-xs sm:text-sm text-gray-500 capitalize">
+          {level} • {category}
+        </p>
       </div>
 
-      {/* Action Button */}
-      <div class="flex items-center justify-between mt-auto">
-        <button
-          class="bg-orange-600 hover:bg-orange-700 text-white px-4 sm:px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2 text-sm sm:text-base"
+      <!-- Action Button -->
+      <div class="mt-auto">
+        <a
+          href={`/courses/${course.slug}`}
+          class="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 sm:px-6 py-2 rounded-lg font-medium transition-colors duration-200 text-sm sm:text-base"
         >
-          <div>
-            <!-- Play Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"
-              role="img" aria-label="Play" style="color:#111827; --accent:#f97316;">
-              <title>Play</title>
-              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
-              <circle cx="12" cy="12" r="8.2" fill="none" stroke="none" />
-              <path d="M10.2 8.6v6.8a.6.6 0 0 0 .9.52l4.8-3.4a.6.6 0 0 0 0-1.04l-4.8-3.4a.6.6 0 0 0-.9.52z"
-                fill="var(--accent)" stroke="none" />
-              <circle cx="12" cy="12" r="10" fill="none" stroke="var(--accent)" stroke-width="0.6" stroke-opacity="0.12"/>
-            </svg>
-          </div>
-          <a
-           href={`/courses/${course.slug}`}
-          >Check Out</a>
-        </button>
+          <!-- Play Icon -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            role="img"
+            aria-label="Play"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              opacity="0.9"
+            />
+            <path
+              d="M10.2 8.6v6.8a.6.6 0 0 0 .9.52l4.8-3.4a.6.6 0 0 0 0-1.04l-4.8-3.4a.6.6 0 0 0-.9.52z"
+              fill="#f97316"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              fill="none"
+              stroke="#f97316"
+              stroke-width="0.6"
+              stroke-opacity="0.12"
+            />
+          </svg>
+          <span>Check Out</span>
+        </a>
       </div>
     </div>
   </div>

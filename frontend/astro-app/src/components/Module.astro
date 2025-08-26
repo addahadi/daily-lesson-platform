@@ -5,25 +5,26 @@ const { title, description, order_index, created_at, lessons = [], loading = fal
 <div class="w-full module-container">
   <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 border-b border-gray-200 last:border-b-0">
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+      <!-- Left: Title + Meta -->
       <div class="flex-1 min-w-0">
         <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 leading-tight">
           {title}
         </h3>
         <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-          <!-- Calendar Icon -->
+          <!-- Date -->
           <span class="flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
             {new Date(created_at).toLocaleDateString()}
           </span>
 
           <span class="text-gray-400">•</span>
 
-          <!-- Module Icon -->
+          <!-- Module -->
           <span class="flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
             </svg>
             Module {order_index}
           </span>
@@ -32,10 +33,9 @@ const { title, description, order_index, created_at, lessons = [], loading = fal
             <>
               <span class="text-gray-400">•</span>
               <span class="flex items-center gap-1">
-                <!-- PlayCircle Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-4.586-2.659A1 1 0 009 9.37v5.26a1 1 0 001.166.962l4.586-2.659a1 1 0 000-1.732z" />
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <circle cx="12" cy="12" r="10" stroke-width="2" stroke="currentColor" fill="none"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-4.586-2.659A1 1 0 009 9.37v5.26a1 1 0 001.166.962l4.586-2.659a1 1 0 000-1.732z"/>
                 </svg>
                 {lessons.length} lesson{lessons.length !== 1 ? "s" : ""}
               </span>
@@ -52,15 +52,16 @@ const { title, description, order_index, created_at, lessons = [], loading = fal
         >
           <span class="toggle-text hidden sm:inline">Show Content</span>
           <span class="toggle-text-sm sm:hidden">Show</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="chevron w-4 h-4 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <svg class="chevron w-4 h-4 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
           </svg>
         </button>
       </div>
     </div>
   </div>
 
-  <div class="lesson-content bg-gray-50 hidden">
+  <!-- Expandable Lessons -->
+  <div class="lesson-content max-h-0 overflow-hidden transition-all duration-300 bg-gray-50">
     {loading ? (
       <div class="px-4 sm:px-6 lg:px-8 py-8 text-center">
         <div class="inline-flex items-center gap-2 text-gray-600">
@@ -76,26 +77,26 @@ const { title, description, order_index, created_at, lessons = [], loading = fal
               <div class="flex-1 min-w-0">
                 <div class="flex items-start gap-3">
                   <div class="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mt-0.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-4.586-2.659A1 1 0 009 9.37v5.26a1 1 0 001.166.962l4.586-2.659a1 1 0 000-1.732z" />
+                    <svg class="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <circle cx="12" cy="12" r="10" stroke-width="2" stroke="currentColor" fill="none"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-4.586-2.659A1 1 0 009 9.37v5.26a1 1 0 001.166.962l4.586-2.659a1 1 0 000-1.732z"/>
                     </svg>
                   </div>
                   <div class="min-w-0 flex-1">
                     <h4 class="text-base font-medium text-gray-900 mb-1 leading-tight">{lesson.title}</h4>
                     <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
                       <span class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <circle cx="12" cy="12" r="10" stroke-width="2" stroke="currentColor" fill="none"/>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"/>
                         </svg>
                         {lesson.duration_minutes} min{parseInt(lesson.duration_minutes) !== 1 ? "s" : ""}
                       </span>
                       <span class="text-gray-400">•</span>
                       <span class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18" />
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V9m4 8V5m4 12v-6" />
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V9m4 8V5m4 12v-6"/>
                         </svg>
                         {lesson.level}
                       </span>
@@ -111,9 +112,9 @@ const { title, description, order_index, created_at, lessons = [], loading = fal
       <div class="px-4 sm:px-6 lg:px-8 py-8 text-center">
         <div class="max-w-sm mx-auto">
           <div class="w-12 h-12 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-4.586-2.659A1 1 0 009 9.37v5.26a1 1 0 001.166.962l4.586-2.659a1 1 0 000-1.732z" />
+            <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <circle cx="12" cy="12" r="10" stroke-width="2" stroke="currentColor" fill="none"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-4.586-2.659A1 1 0 009 9.37v5.26a1 1 0 001.166.962l4.586-2.659a1 1 0 000-1.732z"/>
             </svg>
           </div>
           <h4 class="text-sm font-medium text-gray-900 mb-1">No lessons available</h4>
@@ -127,25 +128,26 @@ const { title, description, order_index, created_at, lessons = [], loading = fal
 <script>
   document.querySelectorAll('.module-container').forEach(module => {
     const btn = module.querySelector('.toggle-btn');
-    if (!btn) return;
-    
     const content = module.querySelector('.lesson-content');
-    const text = btn.querySelector('.toggle-text');
-    const textSm = btn.querySelector('.toggle-text-sm');
-    const chevron = btn.querySelector('.chevron');
+    const text = btn?.querySelector('.toggle-text');
+    const textSm = btn?.querySelector('.toggle-text-sm');
+    const chevron = btn?.querySelector('.chevron');
 
-    btn.addEventListener('click', () => {
+    btn?.addEventListener('click', () => {
       const isOpen = btn.getAttribute('data-open') === 'true';
       btn.setAttribute('data-open', (!isOpen).toString());
-      
+
       if (content) {
-        content.classList.toggle('hidden', isOpen);
+        if (!isOpen) {
+          content.style.maxHeight = content.scrollHeight + "px";
+        } else {
+          content.style.maxHeight = "0px";
+        }
       }
-      
-      if (text && textSm && chevron) {
-        text.textContent = isOpen ? 'Show Content' : 'Hide Content';
-        textSm.textContent = isOpen ? 'Show' : 'Hide';
-        chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+      if(text && textSm && chevron){
+        text.textContent = isOpen ? "Show Content" : "Hide Content";
+        textSm.textContent = isOpen ? "Show" : "Hide";
+        chevron.style.transform = isOpen ? "rotate(0deg)" : "rotate(180deg)";
       }
     });
   });

@@ -1,7 +1,5 @@
 ---
-
 import { categorySlugs } from "../../data/category.ts";
-
 import '../../../global.css';
 
 import { handleResponse, toastOnce } from "../../utils/util.ts";
@@ -11,11 +9,8 @@ import CourseCard from "../../components/CourseCard.astro";
 import Footer from "../../components/Footer.astro";
 
 export const getStaticPaths = () => {
-  return categorySlugs.map((category:string) =>  {
-    return {
-      params : {category}
-    }    
-
+  return categorySlugs.map((category: string) => {
+    return { params: { category } };
   });
 };
 
@@ -23,19 +18,19 @@ const { category } = Astro.params;
 
 const fetchCoursesApi = async (category: string) => {
   try {
-    const response = await fetch(`https://daily-lesson-platform.onrender.com/public/courses/category/${category}` , {
-      method : "GET",
-      headers : {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `https://daily-lesson-platform.onrender.com/public/courses/category/${category}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       }
-    });
-    console.log("Fetch status:", response.status);
+    );
 
+    console.log("Fetch status:", response.status);
     const data = await handleResponse<CourseCardProps[]>(response);
+
     if (typeof data === "string") {
-      if (typeof window !== "undefined") {
-        toastOnce(data);
-      }
+      if (typeof window !== "undefined") toastOnce(data);
       return null;
     }
     return data.data;
@@ -48,9 +43,8 @@ const fetchCoursesApi = async (category: string) => {
 };
 
 const Courses: CourseCardProps[] = (await fetchCoursesApi(category)) || [];
-console.log(Courses)
+console.log(Courses);
 ---
-
 
 <html lang="en">
   <head>
@@ -58,32 +52,36 @@ console.log(Courses)
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{category} Courses | Learning DZ</title>
   </head>
-  <body class="bg-white text-gray-900">
+  <body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
     <Navbar client:idle />
 
     <!-- Hero Section -->
     <section class="py-12 text-center bg-gradient-to-r from-orange-500 to-orange-600 text-white">
       <div class="max-w-4xl mx-auto px-4">
-        <h1 class="text-4xl font-bold capitalize">{category} Courses</h1>
-        <p class="mt-3 text-lg opacity-90">
-          Explore  lessons and courses to master {category}.
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold capitalize">
+          {category} Courses
+        </h1>
+        <p class="mt-3 text-base sm:text-lg md:text-xl opacity-90">
+          Explore lessons and courses to master {category}.
         </p>
       </div>
     </section>
+
     <!-- Courses Grid -->
-    <section class="py-16 max-w-7xl mx-auto px-4 h-screen">
+    <section class="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {Courses.length > 0 ? (
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-          {Courses.map(course =>  {
-            return <CourseCard key={course.id} course={course} />
-          } )}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {Courses.map((course) => (
+            <CourseCard key={course.id} course={course} />
+          ))}
         </div>
       ) : (
-        <p class="text-center text-gray-500">
-          No Courses found in this category.
+        <p class="text-center text-gray-500 text-sm sm:text-base md:text-lg">
+          No courses found in this category.
         </p>
       )}
     </section>
+
     <Footer />
   </body>
 </html>

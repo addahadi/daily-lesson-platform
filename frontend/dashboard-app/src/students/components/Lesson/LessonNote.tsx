@@ -1,7 +1,7 @@
 import useNoteApi from "@/students/Api/note.Api";
 import { Button } from "@/Shared/components/ui/button";
 import { renderMarkdown } from "@/Shared/lib/utils";
-import { Edit2, Edit3, Eye, Move, X } from "lucide-react";
+import { Edit3, Eye, FileEdit, Move, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -104,7 +104,7 @@ const LessonNote = () => {
 
   return (
     <div>
-      <div className="fixed top-[70px] w-fit right-10 max-md:right-4 z-50 p-2">
+      <div className="fixed top-[70px] w-fit right-10 max-md:right-4 z-30 p-2">
         <Button
           onClick={() => {
             setIsModalOpen(true);
@@ -125,7 +125,7 @@ const LessonNote = () => {
               dark:hover:bg-orange-500
           "
         >
-          <Edit2 className="w-7 h-7" />
+          <FileEdit className="w-7 h-7" />
         </Button>
       </div>
 

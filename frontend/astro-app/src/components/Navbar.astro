@@ -10,95 +10,81 @@ const categories = [
   { name: "Game Development", href: "/courses/game-development" }
 ];
 ---
-
-<nav class="p-4 px-6 flex justify-around items-center shadow-sm bg-white">
+<nav class="p-4 px-6 flex justify-between items-center shadow-sm bg-white">
   <!-- Logo -->
   <div class="flex items-center gap-2">
     <img src="/logo.svg" width={32} alt="Logo" />
-    <span class="text-gray-800 font-bold text-xl cursor-pointer" onclick="window.location.href='/'">{platformName}</span>
+    <span class="text-gray-800 font-bold text-xl cursor-pointer" onclick="window.location.href='/'">
+      {platformName}
+    </span>
   </div>
-  <div></div>
-  <div></div>
-  <div class=" flex items-center gap-4">
-       <!-- Links -->
-       <div class="flex items-center gap-6 text-gray-700">
-         <a href="/" class="hover:text-orange-500">Home</a>
-         <a href="/about" class="hover:text-orange-500">About</a>
 
-         <div class="relative " id="drop_down">
-           <button class="flex items-center gap-1 hover:text-orange-500">
-             Categories
-             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="M19 9l-7 7-7-7" />
-             </svg>
-           </button>
-     
-           <div class="absolute left-0 top-full mt-2 bg-white shadow-md rounded-lg border border-gray-200 hidden z-50" 
-           id="drop_down_container"
-           >
-             <ul class="py-2 w-48">
-               {categories.map(cat => (
-                 <li>
-                   <a href={cat.href} class="block px-4 py-2 hover:bg-orange-50 hover:text-orange-500">
-                     {cat.name}
-                   </a>
-                 </li>
-               ))}
-             </ul>
-           </div>
-         </div>
-         
-       </div>
-     
-       <div class="flex items-center gap-3">
+  <!-- Links -->
+  <div class="flex items-center gap-6 text-gray-700">
+    <a href="/" class="hover:text-orange-500">Home</a>
+    <a href="/about" class="hover:text-orange-500">About</a>
 
-         <a onclick="window.location.href='https://dashboarddevlevelup.vercel.app/signup'"
+    <!-- Dropdown -->
+    <div class="relative" id="dropdown">
+      <button class="flex items-center gap-1 hover:text-orange-500">
+        Categories
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
 
-            class="bg-orange-500 cursor-pointer  text-white px-4 py-2 rounded-2xl hover:bg-orange-600 transition">
-           Sign Up
-         </a>
-       </div>
-   </div>
+      <div class="absolute left-0 top-full mt-2 bg-white shadow-md rounded-lg border border-gray-200 hidden z-50"
+        id="dropdown-container">
+        <ul class="py-2 w-48">
+          {categories.map(cat => (
+            <li>
+              <a href={cat.href} class="block px-4 py-2 hover:bg-orange-50 hover:text-orange-500">
+                {cat.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div>
+    <a onclick="window.location.href='https://dashboarddevlevelup.vercel.app/signup'"
+      class="bg-orange-500 cursor-pointer text-white px-4 py-2 rounded-2xl hover:bg-orange-600 transition">
+      Sign Up
+    </a>
+  </div>
 </nav>
 
-
 <script>
-  const drop_down = document.getElementById("drop_down");
-const drop_down_container = document.getElementById("drop_down_container");
+  const dropdown = document.getElementById("dropdown");
+  const dropdownContainer = document.getElementById("dropdown-container");
 
-if (drop_down && drop_down_container) {
-  let isInside = false;
+  if (dropdown && dropdownContainer) {
+    let timeout;
 
-  function showMenu() {
-    drop_down_container.style.display = "block";
+    dropdown.addEventListener("mouseenter", () => {
+      clearTimeout(timeout);
+      dropdownContainer.style.display = "block";
+    });
+
+    dropdown.addEventListener("mouseleave", () => {
+      timeout = setTimeout(() => {
+        dropdownContainer.style.display = "none";
+      }, 150);
+    });
+
+    dropdownContainer.addEventListener("mouseenter", () => {
+      clearTimeout(timeout);
+    });
+
+    dropdownContainer.addEventListener("mouseleave", () => {
+      timeout = setTimeout(() => {
+        dropdownContainer.style.display = "none";
+      }, 150);
+    });
   }
-
-  function hideMenu() {
-    if (!isInside) {
-      drop_down_container.style.display = "none";
-    }
-  }
-
-  drop_down.addEventListener("mouseenter", () => {
-    isInside = true;
-    showMenu();
-  });
-
-  drop_down_container.addEventListener("mouseenter", () => {
-    isInside = true;
-  });
-
-  drop_down.addEventListener("mouseleave", () => {
-    isInside = false;
-    setTimeout(hideMenu, 50);
-  });
-
-  drop_down_container.addEventListener("mouseleave", () => {
-    isInside = false;
-    setTimeout(hideMenu, 50);
-  });
-}
-
 </script>

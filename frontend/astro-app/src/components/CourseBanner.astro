@@ -1,69 +1,64 @@
-
-
 ---
- const { level, total_duration , total_modules } = Astro.props;
- console.log(level , total_duration , total_modules)
+const { level, total_duration, total_modules } = Astro.props;
 ---
+
 <section class="px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-8 relative z-10">
   <div class="bg-gray-50 border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 shadow-sm">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       
       <!-- Level -->
-      <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg">
-          <!-- Award Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="flex items-center sm:items-start sm:flex-col sm:text-center space-x-3 sm:space-x-0 sm:space-y-2">
+        <div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-xl sm:mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5a12.083 12.083 0 01-6.16-10.922L12 14z" />
           </svg>
         </div>
         <div>
           <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Level</p>
-          <p class="text-sm sm:text-lg font-semibold text-gray-900">{level}</p>
+          <p class="text-base sm:text-lg font-semibold text-gray-900">{level}</p>
         </div>
       </div>
 
       <!-- Duration -->
-      <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-lg">
-          <!-- Clock Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="flex items-center sm:items-start sm:flex-col sm:text-center space-x-3 sm:space-x-0 sm:space-y-2">
+        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-xl sm:mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <circle cx="12" cy="12" r="10" stroke-width="2" stroke="currentColor" fill="none"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" />
           </svg>
         </div>
         <div>
           <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Duration</p>
-          <p class="text-sm sm:text-lg font-semibold text-gray-900">{Math.round(total_duration/60)} hours</p>
+          <p class="text-base sm:text-lg font-semibold text-gray-900">{Math.round(total_duration/60)} hours</p>
         </div>
       </div>
 
       <!-- Modules -->
-      <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 flex items-center justify-center bg-purple-100 rounded-lg">
-          <!-- Book Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="flex items-center sm:items-start sm:flex-col sm:text-center space-x-3 sm:space-x-0 sm:space-y-2">
+        <div class="w-10 h-10 flex items-center justify-center bg-purple-100 rounded-xl sm:mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19.5A2.5 2.5 0 016.5 17H20M4 4.5A2.5 2.5 0 016.5 7H20v13H6.5A2.5 2.5 0 014 17.5v-13z" />
           </svg>
         </div>
         <div>
           <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Modules</p>
-          <p class="text-sm sm:text-lg font-semibold text-gray-900">{total_modules}</p>
+          <p class="text-base sm:text-lg font-semibold text-gray-900">{total_modules}</p>
         </div>
       </div>
 
       <!-- Language -->
-      <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-lg">
-          <!-- Globe Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="flex items-center sm:items-start sm:flex-col sm:text-center space-x-3 sm:space-x-0 sm:space-y-2">
+        <div class="w-10 h-10 flex items-center justify-center bg-orange-100 rounded-xl sm:mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <circle cx="12" cy="12" r="10" stroke-width="2" stroke="currentColor" fill="none"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
           </svg>
         </div>
         <div>
           <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Language</p>
-          <p class="text-sm sm:text-lg font-semibold text-gray-900">English</p>
+          <p class="text-base sm:text-lg font-semibold text-gray-900">English</p>
         </div>
       </div>
 

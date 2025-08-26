@@ -26,7 +26,7 @@ const Dashboard = () => {
   return (
     <div className={`grid ${gridCols} h-screen bg-gray-50 dark:bg-gray-900`}>
       <aside
-        className={`row-span-2 col-start-1 col-end-2 bg-white dark:bg-gray-800 shadow-sm border-r border-gray-200 dark:border-gray-700 flex flex-col fixed left-0 top-0 z-40 h-screen ${sidebarWidth} ${
+        className={`row-span-2 col-start-1 col-end-2 bg-white dark:bg-gray-800 shadow-sm border-r border-gray-200 dark:border-gray-700 flex flex-col fixed left-0 top-0 z-30 h-screen ${sidebarWidth} ${
           isLessonPage ? "p-2" : "p-2 md:p-6"
         }`}
       >

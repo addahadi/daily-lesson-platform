@@ -35,7 +35,7 @@ const LessonBarComponent = ({
         <Button
           onClick={() => setExpand((prev) => !prev)}
           variant="outline"
-          className="lg:hidden z-[1000] dark:hover:bg-gray-700"
+          className="lg:hidden z-[30] dark:hover:bg-gray-700"
         >
           {expand ? (
             <ChevronUp className="w-5 h-5 text-gray-700 dark:text-gray-300" />
