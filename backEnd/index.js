@@ -32,14 +32,30 @@ const lessonRoutesAdmin = require("../backEnd/routes/admin/lesson.route");
 const analyticsRouteAdmin = require("../backEnd/routes/admin/analytics.route")
 const notificationRouteAdmin = require("../backEnd/routes/admin/notification.route")
 
+import cors from "cors";
+
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "https://devlevelup-dashboard.vercel.app",
+  
+];
 
 app.use(
   cors({
-    origin:
-      process.env.FRONTEND_URL || "https://devlevelup-dashboard.vercel.app",
+    origin: (origin, callback) => {
+      // allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 
 app.use(
   "/api/webhooks",
