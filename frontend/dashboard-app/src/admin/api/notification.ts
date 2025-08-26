@@ -2,7 +2,6 @@ import type { NotificationType } from "@/Shared/lib/adminType";
 import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
-import { data } from "react-router-dom";
 import { toast } from "sonner";
 
 const useNotificationApi = () => {
