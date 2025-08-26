@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/Shared/components/ui/table";
+import { Toaster } from "sonner";
 
 const UserManagement = () => {
   const { getUsers } = useUserApi();
@@ -267,6 +268,7 @@ const UserManagement = () => {
           />
         )}
       </div>
+      <Toaster />
     </div>
   );
 };
@@ -458,16 +460,13 @@ const DeleteModal = ({
   const { deleteUser } = useUserApi();
 
   const handleDelete = async () => {
-    try {
-      setLoading(true);
-      await deleteUser(userId);
+    setLoading(true);
+    const result = await deleteUser(userId);
+    if(result){
       onUpdate((prev) => prev.filter((user) => user.clerk_id !== userId));
-      onClose();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
     }
+    onClose();
+    setLoading(false);
   };
 
   return (

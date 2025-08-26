@@ -45,14 +45,18 @@ async function UpdateUser(req, res, next) {
   try {
     const { userId } = req.params;
     const { role, status } = req.body;
-
     const response = await sql`
         UPDATE users
         SET role = ${role}, status = ${status}
         WHERE clerk_id = ${userId}
         RETURNING *;
       `;
-
+      if(response[0].length === 0){
+        return res.status(404).json({
+          status: false,
+          message: "failed to update user"
+        });
+      }
     res.status(200).json({
       status: true,
       data: response[0],

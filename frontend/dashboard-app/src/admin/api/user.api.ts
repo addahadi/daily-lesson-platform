@@ -43,7 +43,7 @@ const useUserApi = () => {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "DELETE", headers });
 
-        const result = await handleResponse<{ message: string }>(response);
+        const result = await handleResponse<any>(response);
         if (typeof result === "string") {
           toastOnce(result);
           return false;
@@ -70,7 +70,7 @@ const useUserApi = () => {
           body: JSON.stringify(requestBody),
         });
 
-        const result = await handleResponse< UserInfo >(response);
+        const result = await handleResponse<UserInfo>(response);
         if (typeof result === "string") {
           toastOnce(result);
           return null;
