@@ -11,14 +11,10 @@ function requireAdmin() {
         if (role !== "admin") {
           return res.status(403).json({ message: "admin only" });
         }
-
-        const user = await users.getUser(req.auth.userId);
-
-        const email = user.emailAddresses.find(
-          (e) => e.id === user.primaryEmailAddressId
-        )?.emailAddress;
-
-        if (email === "demo@dailycodinglessons.com" && req.method !== "GET") {
+        
+        const email = req.auth.sessionClaims?.email;
+        
+        if (email === "demo@devlevelup.com" && req.method !== "GET") {
           return res.status(403).json({ message: "Demo account is read-only" });
         }
 
