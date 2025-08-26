@@ -32,7 +32,6 @@ const lessonRoutesAdmin = require("../backEnd/routes/admin/lesson.route");
 const analyticsRouteAdmin = require("../backEnd/routes/admin/analytics.route")
 const notificationRouteAdmin = require("../backEnd/routes/admin/notification.route")
 
-import cors from "cors";
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
