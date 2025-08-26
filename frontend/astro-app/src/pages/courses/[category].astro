@@ -52,7 +52,7 @@ console.log(Courses);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{category} Courses | Learning DZ</title>
   </head>
-  <body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+  <body class="bg-white text-gray-900">
     <Navbar client:idle />
 
     <!-- Hero Section -->
@@ -68,7 +68,7 @@ console.log(Courses);
     </section>
 
     <!-- Courses Grid -->
-    <section class="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen">
       {Courses.length > 0 ? (
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {Courses.map((course) => (

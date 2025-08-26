@@ -116,6 +116,7 @@ async function updateOrderLesson(req, res, next) {
             status: true,
             message: "lesson order updated successfully",
         });
+        
     } catch (error) {
         console.error("Error updating module order:", error);   
         next(error);

@@ -22,14 +22,15 @@ const useLessonApi = () => {
         const headers = await getAuthHeader();
         const response = await fetch(URL, { method: "GET", headers });
 
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
-        } else if (response.status === 404) {
+        const data = await handleResponse<any>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
           return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data.data ?? null;
+      } catch (err: any) {
+        toastOnce(err.message || "Failed to fetch lessons");
+        return null;
       }
     },
     [getAuthHeader]
@@ -49,14 +50,15 @@ const useLessonApi = () => {
           body: JSON.stringify(requestBody),
         });
 
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
-        } else if (response.status === 404) {
+        const data = await handleResponse<any>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
           return null;
         }
-      } catch (err) {
-        console.error(err);
+        return data.data ?? null;
+      } catch (err: any) {
+        toastOnce(err.message || "Failed to create/update lesson");
+        return null;
       }
     },
     [getAuthHeader]
@@ -65,31 +67,26 @@ const useLessonApi = () => {
   const updateOrderIndex = useCallback(
     async (
       moduleId: string,
-      requestBody: {
-        id: string;
-        order_index: number;
-      }[]
+      requestBody: { id: string; order_index: number }[]
     ) => {
       const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/order/${moduleId}`;
-
       try {
         const headers = await getAuthHeader();
-        const res = await fetch(URL, {
+        const response = await fetch(URL, {
           method: "PUT",
-          headers: {
-            ...headers,
-            "Content-Type": "application/json",
-          },
+          headers,
           body: JSON.stringify(requestBody),
         });
 
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Server Error: ${res.status} - ${errorText}`);
+        const data = await handleResponse<any>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error("Failed to update order:", err);
-        throw err;
+        return data.message ?? null;
+      } catch (err: any) {
+        toastOnce(err.message || "Failed to update lesson order");
+        return null;
       }
     },
     [getAuthHeader]
@@ -98,24 +95,23 @@ const useLessonApi = () => {
   const updateLessonContent = useCallback(
     async (lessonId: string, requestBody: { sections: section[] }) => {
       const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/content/${lessonId}`;
-
       try {
         const headers = await getAuthHeader();
-        const res = await fetch(URL, {
+        const response = await fetch(URL, {
           method: "PUT",
-          headers: {
-            ...headers,
-            "Content-Type": "application/json",
-          },
+          headers,
           body: JSON.stringify(requestBody),
         });
-        if (res.ok) {
-          const result = await res.json();
-          return result.data;
+
+        const data = await handleResponse<any>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
         }
-      } catch (err) {
-        console.error("Failed to update lesson content:", err);
-        throw err;
+        return data.data ?? null;
+      } catch (err: any) {
+        toastOnce(err.message || "Failed to update lesson content");
+        return null;
       }
     },
     [getAuthHeader]
@@ -124,24 +120,23 @@ const useLessonApi = () => {
   const updateAddLessonQuizz = useCallback(
     async (lessonId: string, requestBody: QuizzProps) => {
       const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/quizz/${lessonId}`;
-
       try {
         const headers = await getAuthHeader();
-        const res = await fetch(URL, {
+        const response = await fetch(URL, {
           method: "PUT",
-          headers: {
-            ...headers,
-            "Content-Type": "application/json",
-          },
+          headers,
           body: JSON.stringify(requestBody),
         });
-        if (res.ok) {
-          const result = await res.json();
-          return result.data;
-        } else return null;
-      } catch (err) {
-        console.error("Failed to update lesson content:", err);
-        throw err;
+
+        const data = await handleResponse<any>(response);
+        if (typeof data === "string") {
+          toastOnce(data);
+          return null;
+        }
+        return data.data ?? null;
+      } catch (err: any) {
+        toastOnce(err.message || "Failed to update lesson quiz");
+        return null;
       }
     },
     [getAuthHeader]
@@ -151,25 +146,23 @@ const useLessonApi = () => {
     const URL = `https://daily-lesson-platform.onrender.com/admin/lesson/delete/${lessonId}`;
     try {
       const headers = await getAuthHeader();
-      const res = await fetch(URL, {
+      const response = await fetch(URL, {
         method: "PUT",
-        headers: {
-          ...headers,
-          "Content-Type": "application/json",
-        },
+        headers,
       });
 
-      const data = await handleResponse<any>(res);
+      const data = await handleResponse<any>(response);
       if (typeof data === "string") {
         toastOnce(data);
         return null;
       }
-      return data.message;
+      return data.message ?? null;
     } catch (err: any) {
       toastOnce(err.message || "Failed to delete the lesson");
       return null;
     }
   };
+
   return {
     getAllLessons,
     createUpdateLesson,

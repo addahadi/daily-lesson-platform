@@ -55,16 +55,13 @@ const LessonManagement = () => {
         order_index: index,
       };
     });
-    try {
-      if (!requestBody || !moduleId) return;
-      setIsSaving(true);
-      await updateOrderIndex(moduleId, requestBody);
-      toast.success("lesson order updated successfully");
-    } catch (err) {
-      toast.error("field to save");
-    } finally {
-      setIsSaving(false);
+    if (!requestBody || !moduleId) return;
+    setIsSaving(true);
+    const message = await updateOrderIndex(moduleId, requestBody);
+    if(message){
+      toast.success(message);
     }
+    setIsSaving(false)
   }
   useEffect(() => {
     const fetchLessons = async () => {

@@ -1,3 +1,4 @@
+import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
 
@@ -17,14 +18,18 @@ const useAnalyticApi = () => {
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
+      const data = await handleResponse<Record<string, string | number>>(
+        response
+      );
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
+      if (typeof data === "string") {
+        toastOnce(data);
+        return null;
       }
-      return null;
+      return data.data ?? null;
     } catch (err) {
       console.error("Error fetching streak analytics:", err);
+      toastOnce((err as Error).message);
       return null;
     }
   }, [getAuthHeader]);
@@ -34,14 +39,18 @@ const useAnalyticApi = () => {
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
+      const data = await handleResponse<Record<string, string | number>>(
+        response
+      );
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
+      if (typeof data === "string") {
+        toastOnce(data);
+        return null;
       }
-      return null;
+      return data.data ?? null;
     } catch (err) {
       console.error("Error fetching lesson analytics:", err);
+      toastOnce((err as Error).message);
       return null;
     }
   }, [getAuthHeader]);
@@ -51,42 +60,46 @@ const useAnalyticApi = () => {
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
+      const data = await handleResponse<Record<string, string | number>>(
+        response
+      );
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
+      if (typeof data === "string") {
+        toastOnce(data);
+        return null;
       }
-      return null;
+      return data.data ?? null;
     } catch (err) {
       console.error("Error fetching user analytics:", err);
+      toastOnce((err as Error).message);
       return null;
     }
   }, [getAuthHeader]);
-
 
   const getChartData = useCallback(async () => {
     const URL = `https://daily-lesson-platform.onrender.com/admin/analytics/charts`;
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
+      const data = await handleResponse<Record<string, number>>(response);
+
+      if (typeof data === "string") {
+        toastOnce(data);
+        return null;
       }
-      return null
-    } 
-    catch (err) {
-      console.error("Error fetching user analytics:", err);
+      return data.data ?? null;
+    } catch (err) {
+      console.error("Error fetching chart analytics:", err);
+      toastOnce((err as Error).message);
       return null;
     }
-
   }, [getAuthHeader]);
 
   return {
     getLessonAnalyticData,
     getStreakAnalyticData,
     getUserAnalyticData,
-    getChartData
+    getChartData,
   };
 };
 

@@ -266,16 +266,11 @@ function CreateNotification({
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      try {
-        const data = await getCoursesId();
-        if (data) {
-          setCourses(data);
-        }
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-      } finally {
-        setLoading(false);
+      const data = await getCoursesId();
+      if (data) {
+        setCourses(data);
       }
+      setLoading(false);
     };
     fetchData();
   }, [getCoursesId]);

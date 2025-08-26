@@ -57,9 +57,9 @@ const ModuleManagement = () => {
     if (!course) return;
     const fetchModules = async () => {
       setLoading(true);
-      const response = await getCourseModules(course.id);
-      if (response && response.length > 0) {
-        setModules(response);
+      const result = await getCourseModules(course.id);
+      if (result && result.length > 0) {
+        setModules(result);
         setNoModules(false);
       } else {
         setModules([]);
@@ -76,15 +76,14 @@ const ModuleManagement = () => {
       order_index,
     }));
     setIsSaving(true);
-    const response = await updateModuleOrder(course.id, orderedModules);
-    if (!response) {
+    const result = await updateModuleOrder(course.id, orderedModules);
+    if (!result) {
       setIsSaving(false);
-      toast.error("Failed to save module order");
       return;
     }
     setModules((prev) =>
       prev.map((m) => {
-        const updatedModule = response.find(
+        const updatedModule = result.find(
           (r: Partial<Module>) => r.id === m.id
         );
         return updatedModule
@@ -290,15 +289,15 @@ const EditModule = ({
     setIsLoading(true);
 
     if (isCreate) {
-      const response = await createModule(courseId, newModule.title.trim());
-      if (response) {
+      const result = await createModule(courseId, newModule.title.trim());
+      if (result) {
         const NewModule = {
-          id: response.id,
-          title: response.title,
-          order_index: response.order_index,
+          id: result.id,
+          title: result.title,
+          order_index: result.order_index,
           lessoncount: 0,
           totalduration: 0,
-        };
+      };
         setModules((prev) => {
           const updatedModules = [...prev, NewModule];
           return updatedModules.sort((a, b) => a.order_index - b.order_index);

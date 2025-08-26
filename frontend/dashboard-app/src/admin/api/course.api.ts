@@ -17,7 +17,6 @@ const useCourseApi = () => {
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
-
       const result = await handleResponse<Course[]>(response);
 
       if (typeof result === "string") {
@@ -30,6 +29,7 @@ const useCourseApi = () => {
       return null;
     }
   };
+
   const UpdateCourse = async (courseData: Partial<Course>) => {
     const URL = `https://daily-lesson-platform.onrender.com/admin/course/`;
     try {
@@ -39,14 +39,16 @@ const useCourseApi = () => {
         headers,
         body: JSON.stringify(courseData),
       });
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
-      } else {
-        console.error("Failed to update course");
+
+      const result = await handleResponse<Course>(response);
+      if (typeof result === "string") {
+        toastOnce(result);
+        return null;
       }
-    } catch (err) {
-      console.error(err);
+      return result.data ?? null;
+    } catch (err: any) {
+      toastOnce(err.message);
+      return null;
     }
   };
 
@@ -54,20 +56,20 @@ const useCourseApi = () => {
     const URL = `https://daily-lesson-platform.onrender.com/admin/course/${courseId}`;
     try {
       const headers = await getAuthHeader();
-      const response = await fetch(URL, {
-        method: "PATCH",
-        headers,
-      });
-      const data = await handleResponse<any>(response);
-      if (typeof data === "string") {
-        toastOnce(data);
+      const response = await fetch(URL, { method: "PATCH", headers });
+
+      const result = await handleResponse<{ message: string }>(response);
+      if (typeof result === "string") {
+        toastOnce(result);
         return null;
       }
-      return data.message;
+      return result.message ?? null;
     } catch (err: any) {
-      toastOnce(err.message || "failed to hide the course");
+      toastOnce(err.message || "Failed to hide the course");
+      return null;
     }
   };
+
   return {
     getCourses,
     UpdateCourse,

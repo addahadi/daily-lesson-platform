@@ -2,6 +2,7 @@ import type { NotificationType } from "@/Shared/lib/adminType";
 import { handleResponse, toastOnce } from "@/Shared/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
+import { data } from "react-router-dom";
 import { toast } from "sonner";
 
 const useNotificationApi = () => {
@@ -20,16 +21,16 @@ const useNotificationApi = () => {
     try {
       const headers = await getAuthHeader();
       const response = await fetch(URL, { method: "GET", headers });
+      const result = await handleResponse<any>(response);
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
-      }
-      if (response.status === 404) {
+      if (typeof result === "string") {
+        toastOnce(result);
         return null;
       }
-    } catch (err) {
-      console.error("Error fetching courses ids:", err);
+      return result.data;
+    } catch (err: any) {
+      toastOnce(err.message || "Error fetching courses ids");
+      return null;
     }
   }, [getAuthHeader]);
 
@@ -47,7 +48,7 @@ const useNotificationApi = () => {
         }
         return result;
       } catch (err: any) {
-        toastOnce(err.message);
+        toastOnce(err.message || "Error fetching notifications");
         return null;
       }
     },
@@ -72,15 +73,15 @@ const useNotificationApi = () => {
           body: JSON.stringify(requestBody),
         });
 
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
-        }
-        if (response.status === 404) {
+        const result = await handleResponse<any>(response);
+        if (typeof result === "string") {
+          toastOnce(result);
           return null;
         }
-      } catch (err) {
-        console.error("Error inserting or updating:", err);
+        return result.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Error creating notification");
+        return null;
       }
     },
     [getAuthHeader]
@@ -106,16 +107,16 @@ const useNotificationApi = () => {
           headers,
           body: JSON.stringify(requestBody),
         });
-        console.log(response);
-        if (response.ok) {
-          const result = await response.json();
-          return result.data;
-        }
-        if (response.status === 404) {
+
+        const result = await handleResponse<any>(response);
+        if (typeof result === "string") {
+          toastOnce(result);
           return null;
         }
-      } catch (err) {
-        console.error("Error inserting or updating:", err);
+        return result.data;
+      } catch (err: any) {
+        toastOnce(err.message || "Error updating notification");
+        return null;
       }
     },
     [getAuthHeader]
@@ -131,15 +132,19 @@ const useNotificationApi = () => {
           headers,
         });
 
-        if (response.ok) {
-          toast.success("the notification was deleted successfully");
-          return true;
-        } else {
-          toast.error("failed to delete the notification");
+        const result = await handleResponse<{ message: string }>(response);
+        if (typeof result === "string") {
+          toastOnce(result);
           return false;
         }
-      } catch (err) {
-        console.error("Error deletion :", err);
+
+        toast.success(
+          result.message || "The notification was deleted successfully"
+        );
+        return true;
+      } catch (err: any) {
+        toastOnce(err.message || "Error deleting notification");
+        return false;
       }
     },
     [getAuthHeader]
@@ -156,11 +161,7 @@ const useNotificationApi = () => {
   }) => {
     const headers = await getAuthHeader();
     try {
-      const requestBody = {
-        sent_to,
-        courseId,
-        notificationId,
-      };
+      const requestBody = { sent_to, courseId, notificationId };
       const response = await fetch(
         "https://daily-lesson-platform.onrender.com/admin/notifications/user-notifications",
         {
@@ -170,17 +171,16 @@ const useNotificationApi = () => {
         }
       );
 
-      const result = await handleResponse<{ message: string; data: any }>(
+      const result = await handleResponse<any>(
         response
       );
       if (typeof result === "string") {
         toastOnce(result);
         return;
       }
-      toast(result.message);
+      return result.data;
     } catch (err: any) {
       toastOnce(err.message || "Something went wrong");
-      return;
     }
   };
 
