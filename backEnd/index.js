@@ -2,16 +2,11 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 const app = express();
-
-const { requireAuth } = require("@clerk/express");
-
-
-
+const rateLimit = require("express-rate-limit");
 
 // public routes
 
 const publicCourseRoute = require("../backEnd/routes/public/course.route")
-
 
 // student routes
 const authRoutes = require("../backEnd/routes/students/auth.route");
@@ -30,7 +25,8 @@ const requireAdmin = require("./middleware/admin.middleware");
 const adminCourseRouter = require("../backEnd/routes/admin/course.route");
 const lessonRoutesAdmin = require("../backEnd/routes/admin/lesson.route");
 const analyticsRouteAdmin = require("../backEnd/routes/admin/analytics.route")
-const notificationRouteAdmin = require("../backEnd/routes/admin/notification.route")
+const notificationRouteAdmin = require("../backEnd/routes/admin/notification.route");
+const requireActiveUser = require("./middleware/active.middleware");
 
 
 const allowedOrigins = [
@@ -38,6 +34,22 @@ const allowedOrigins = [
   "https://devlevelup-dashboard.vercel.app",
   
 ];
+
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 min
+  max: 100, // each IP: 100 requests per 15 min
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: "Too many requests, please try again later.",
+  },
+});
+
+
+
+app.use(globalLimiter);
 
 app.use(
   cors({
@@ -55,7 +67,6 @@ app.use(
   })
 );
 
-
 app.use(
   "/api/webhooks",
   express.raw({ type: "*/*" }),
@@ -64,16 +75,22 @@ app.use(
 
 app.use(express.json());
 
+
+
+
+
+
+
 // API routes
 
 app.use("/public/courses" , publicCourseRoute)
-app.use("/auth" , requireAuth(), authRoutes);
-app.use("/course" , requireAuth(), courseRoutes);
-app.use("/lesson" , requireAuth(), lessonRoutes);
-app.use("/home" , requireAuth(), homeRoutes);
-app.use("/note" , requireAuth(), noteRoutes);
-app.use("/folder" , requireAuth() , folderRouter)
-app.use("/notifications", requireAuth(), notificationRoute);
+app.use("/auth" , requireActiveUser(), authRoutes);
+app.use("/course" , requireActiveUser(), courseRoutes);
+app.use("/lesson" , requireActiveUser(), lessonRoutes);
+app.use("/home" , requireActiveUser(), homeRoutes);
+app.use("/note" , requireActiveUser(), noteRoutes);
+app.use("/folder" , requireActiveUser() , folderRouter)
+app.use("/notifications", requireActiveUser(), notificationRoute);
 app.use("/admin/user" , requireAdmin() , adminUserRouter);
 app.use("/admin/course" , requireAdmin() , adminCourseRouter);
 app.use("/admin/lesson", requireAdmin(), lessonRoutesAdmin);

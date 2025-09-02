@@ -51,12 +51,23 @@ async function UpdateUser(req, res, next) {
         WHERE clerk_id = ${userId}
         RETURNING *;
       `;
-      if(response[0].length === 0){
-        return res.status(404).json({
-          status: false,
-          message: "failed to update user"
-        });
-      }
+    if(response[0].length === 0){
+      return res.status(404).json({
+        status: false,
+        message: "failed to update user"
+      });
+    }
+
+    const user = await clerk.users.getUser(userId);
+    await clerk.users.updateUser(userId, {
+      publicMetadata: {
+        ...user.publicMetadata,
+        role,
+        status,
+      },
+    });
+
+
     res.status(200).json({
       status: true,
       data: response[0],

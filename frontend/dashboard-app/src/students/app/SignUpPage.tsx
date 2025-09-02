@@ -1,8 +1,5 @@
 import { SignUp } from "@clerk/clerk-react";
 
-
-
-
 const AnimatedShape = ({
   delay,
   duration,
@@ -10,7 +7,7 @@ const AnimatedShape = ({
   color,
   initialX,
   initialY,
-} : {
+}: {
   delay: number;
   duration: number;
   size: string;
@@ -32,9 +29,10 @@ const AnimatedShape = ({
     />
   );
 };
+
 const SignUpPage = () => {
   return (
-    <div className=" relative  bg-gray-50 flex justify-center  m-0">
+    <div className="relative min-h-screen bg-gray-50 flex justify-center items-center px-4">
       <div className="absolute inset-0 overflow-hidden">
         {/* Floating Circles */}
         <AnimatedShape
@@ -72,7 +70,7 @@ const SignUpPage = () => {
         <AnimatedShape
           delay={3}
           duration={11}
-          size="w-18 h-18"
+          size="w-14 h-14"
           color="bg-orange-300"
           initialX={90}
           initialY={50}
@@ -88,44 +86,46 @@ const SignUpPage = () => {
 
         {/* Geometric Shapes */}
         <div
-          className="absolute top-1/4 left-1/4 w-32 h-32 border-2 border-orange-200 rotate-45 animate-spin opacity-10"
+          className="absolute top-1/4 left-1/4 w-20 h-20 sm:w-32 sm:h-32 border-2 border-orange-200 rotate-45 animate-spin opacity-10"
           style={{ animationDuration: "20s" }}
         />
         <div
-          className="absolute bottom-1/4 right-1/4 w-24 h-24 border-2 border-orange-300 rotate-12 animate-bounce opacity-10"
+          className="absolute bottom-1/4 right-1/4 w-16 h-16 sm:w-24 sm:h-24 border-2 border-orange-300 rotate-12 animate-bounce opacity-10"
           style={{ animationDuration: "3s" }}
         />
 
         {/* Gradient Orbs */}
         <div
-          className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-orange-200 to-transparent rounded-full opacity-30 animate-pulse"
+          className="absolute top-0 right-0 w-60 h-60 sm:w-96 sm:h-96 bg-gradient-to-bl from-orange-200 to-transparent rounded-full opacity-30 animate-pulse"
           style={{ animationDuration: "4s" }}
         />
         <div
-          className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-orange-300 to-transparent rounded-full opacity-30 animate-pulse"
+          className="absolute bottom-0 left-0 w-56 h-56 sm:w-80 sm:h-80 bg-gradient-to-tr from-orange-300 to-transparent rounded-full opacity-30 animate-pulse"
           style={{ animationDuration: "6s" }}
         />
       </div>
-      <div className="w-full max-w-2xl p-10 z-10  bg-white flex flex-col items-center">
-        <div className=" flex flex-col gap-4">
-          <span className=" text-2xl text-gray-800 font-semibold text-center">
+
+      <div className="w-full max-w-[500px] p-6 sm:p-10 z-10 bg-white flex flex-col items-center rounded-xl shadow-lg">
+        <div className="flex flex-col gap-3 sm:gap-4">
+          <span className="text-xl sm:text-2xl text-gray-800 font-semibold text-center">
             Create Your Free Account
           </span>
-          <span className=" text-gray-600 text-center">
+          <span className="text-sm sm:text-base text-gray-600 text-center">
             Join now and start your learning journey today!
           </span>
         </div>
-        <div className=" w-full flex justify-center">
+        <div className="w-full flex justify-center mt-4">
           <SignUp
             appearance={{
               elements: {
-                cardBox: " border-none rounded-none shadow-none w-[500px]",
-
-                card: "shadow-none w-[500px] ",
+                cardBox:
+                  "border-none rounded-none shadow-none w-full max-w-[500px]",
+                card: "shadow-none w-full max-w-[500px]",
                 headerTitle: "hidden",
                 headerSubtitle: "hidden",
-                formFieldInput: "border border-gray-300 rounded-md p-2",
-                formButtonPrimary: "bg-orange-500 text-white rounded-md p-2",
+                formFieldInput: "border border-gray-300 rounded-md p-2 w-full",
+                formButtonPrimary:
+                  "bg-orange-500 text-white rounded-md p-2 w-full",
               },
             }}
           />

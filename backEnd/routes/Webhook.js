@@ -46,6 +46,7 @@ router.post("/", async (req, res) => {
         publicMetadata: {
           role,
           clerk_id: clerkUserId,
+          status: "active",
         },
       });
     } catch (metaErr) {

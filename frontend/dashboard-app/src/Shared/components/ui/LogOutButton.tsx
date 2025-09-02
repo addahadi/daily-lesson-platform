@@ -10,7 +10,7 @@ export default function LogOutButton({ isLessonPage} : {isLessonPage: boolean}) 
     setLoading(true);
     await clerk.signOut();
     // Now redirect to Astro landing page with full reload
-    window.location.href = "http://localhost:4321/";
+    window.location.href = "https://devlevelup.vercel.app/";
     setLoading(false);
   };
 
