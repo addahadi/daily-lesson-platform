@@ -135,8 +135,12 @@ const CourseManegement = () => {
 };
 
 function EditCourse({ editedCourse = {}, close, isCreate }: any) {
+  
   const { UpdateCourse } = useCourseApi();
+  
   const [isLoading, setIsLoading] = useState(false);
+  const [file , setFile] = useState<File | undefined>(undefined);
+  
   const [courseInfo, setCourseInfo] = useState({
     id: editedCourse?.id || "",
     title: editedCourse?.title || "",
@@ -172,16 +176,18 @@ function EditCourse({ editedCourse = {}, close, isCreate }: any) {
     });
   };
 
-  const handleImgChange = async (file: File | undefined) => {
-    if (!file) return;
-    const ImgUrl = await uploadImageToCloudinary(file);
-    if (ImgUrl) {
-      setCourseInfo({ ...courseInfo, img_url: ImgUrl });
-    }
-  };
-
+ 
   const handleSubmit = () => {
+    
+    
     const updateCourse = async () => {
+
+      if (!file || !courseInfo.img_url) return;
+      const ImgUrl = await uploadImageToCloudinary(file);
+      if (ImgUrl) {
+        setCourseInfo({ ...courseInfo, img_url: ImgUrl });
+      }
+
       if (isCreate) {
         if (
           !courseInfo.title ||
@@ -341,7 +347,7 @@ function EditCourse({ editedCourse = {}, close, isCreate }: any) {
                 placeholder="Upload course image"
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleImgChange(e.target.files?.[0])}
+                onChange={(e) => setFile(e.target.files?.[0])}
                 className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 dark:file:bg-blue-900/20 file:text-blue-700 dark:file:text-blue-300"
               />
             </div>
