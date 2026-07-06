@@ -12,21 +12,21 @@ const {
 const router = express.Router()
 
 
-router.get("/getall" , (req , res) => {
-    getAllCourses(req , res)    
+router.get("/getall" , (req , res, next) => {
+    getAllCourses(req , res, next)
 })
 
-router.get("/getbyslug" , (req , res) => {
+router.get("/getbyslug" , (req , res, next) => {
     console.log("yesyeys")
-    getCourseBySlug(req , res)
+    getCourseBySlug(req , res, next)
 })
 
-router.get("/getmodules/:courseId" , (req , res) => {
-    getCourseModules(req , res)
+router.get("/getmodules/:courseId" , (req , res, next) => {
+    getCourseModules(req , res, next)
 })
 
-router.get("/getlessons/:moduleId" , (req , res) => {
-    getModuleLessons(req , res)
+router.get("/getlessons/:moduleId" , (req , res, next) => {
+    getModuleLessons(req , res, next)
 })
 
 router.get("/filtered-courses" , getFilteredCourses )
