@@ -1,5 +1,6 @@
 ---
 const platformName = "DevLevelUp";
+const signupUrl = "https://devlevelup-dashboard.vercel.app/signup";
 const categories = [
   { name: "Frontend", href: "/courses/frontend" },
   { name: "Backend", href: "/courses/backend" },
@@ -7,144 +8,163 @@ const categories = [
   { name: "Data Science & AI", href: "/courses/data-science-ai" },
   { name: "DevOps & Cloud", href: "/courses/devops-cloud" },
   { name: "Cybersecurity", href: "/courses/cybersecurity" },
-  { name: "Game Development", href: "/courses/game-development" }
+  { name: "Game Development", href: "/courses/game-development" },
 ];
 ---
 
-<nav class="p-4 lg:px-6 flex justify-between items-center shadow-sm bg-white relative">
-  <!-- Logo -->
-  <div class="flex items-center gap-2 z-50">
-    <img src="/logo.svg" width={32} height={32} alt="Logo" class="w-6 h-6 sm:w-8 sm:h-8" />
-    <span class="text-gray-800 font-bold text-lg sm:text-xl cursor-pointer" onclick="window.location.href='/'">
-      {platformName}
-    </span>
-  </div>
-
-  <!-- Desktop Navigation -->
-  <div class="hidden lg:flex items-center gap-6 text-gray-700">
-    <a href="/" class="hover:text-orange-500 transition-colors duration-200">Home</a>
-    <a href="/about" class="hover:text-orange-500 transition-colors duration-200">About</a>
-
-    <!-- Desktop Dropdown -->
-    <div class="relative" id="desktop-dropdown">
-      <button class="flex items-center gap-1 hover:text-orange-500 transition-colors duration-200">
-        Categories
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200" fill="none"
-          viewBox="0 0 24 24" stroke="currentColor" id="desktop-dropdown-arrow">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      <div class="absolute left-0 top-full mt-2 bg-white shadow-lg rounded-lg border border-gray-200 hidden z-50 min-w-max"
-        id="desktop-dropdown-container">
-        <ul class="py-2 w-56">
-          {categories.map(cat => (
-            <li>
-              <a href={cat.href} class="block px-4 py-3 hover:bg-orange-50 hover:text-orange-500 transition-colors duration-200">
-                {cat.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Desktop CTA -->
-  <div class="hidden lg:block">
-    <a onclick="window.location.href='https://devlevelup-dashboard.vercel.app/signup'"
-
-      class="bg-orange-500 cursor-pointer text-white px-6 py-2 rounded-2xl hover:bg-orange-600 transition-colors duration-200 font-medium">
-      Sign Up
+<div class="sticky top-0 z-50 px-3 pt-3" id="nav-wrapper">
+  <nav
+    id="site-nav"
+    class="mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-white/40 bg-white/70 px-4 py-3 backdrop-blur-xl transition-all duration-300 lg:px-6"
+  >
+    <!-- Logo -->
+    <a href="/" class="z-50 flex items-center gap-2">
+      <img src="/logo.svg" width={32} height={32} alt="Logo" class="h-7 w-7 sm:h-8 sm:w-8" />
+      <span class="font-display text-lg font-bold text-ink sm:text-xl">{platformName}</span>
     </a>
-  </div>
 
-  <!-- Mobile Menu Button -->
-  <button class="lg:hidden z-50 flex flex-col gap-1 w-6 h-6 justify-center items-center" id="mobile-menu-btn">
-    <span class="w-5 h-0.5 bg-gray-800 transition-all duration-300" id="line1"></span>
-    <span class="w-5 h-0.5 bg-gray-800 transition-all duration-300" id="line2"></span>
-    <span class="w-5 h-0.5 bg-gray-800 transition-all duration-300" id="line3"></span>
-  </button>
+    <!-- Desktop Navigation -->
+    <div class="hidden items-center gap-7 text-sm font-medium text-slate-600 lg:flex">
+      <a href="/" class="transition-colors hover:text-brand-deep">Home</a>
+      <a href="/about" class="transition-colors hover:text-brand-deep">About</a>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30 hidden" id="mobile-overlay"></div>
+      <!-- Desktop Dropdown -->
+      <div class="relative" id="desktop-dropdown">
+        <button class="flex items-center gap-1 transition-colors hover:text-brand-deep">
+          Categories
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" id="desktop-dropdown-arrow">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
 
-  <!-- Mobile Menu -->
-  <div class="lg:hidden fixed top-0 right-0 h-full w-80 max-w-sm bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300" id="mobile-menu">
-    <div class="p-6 pt-20">
-      <!-- Mobile Navigation Links -->
-      <div class="space-y-4 mb-8">
-        <a href="/" class="block text-lg text-gray-700 hover:text-orange-500 transition-colors duration-200 py-2">Home</a>
-        <a href="/about" class="block text-lg text-gray-700 hover:text-orange-500 transition-colors duration-200 py-2">About</a>
-        
-        <!-- Mobile Categories -->
-        <div class="border-t pt-4">
-          <button class="flex items-center justify-between w-full text-lg text-gray-700 hover:text-orange-500 transition-colors duration-200 py-2" id="mobile-categories-btn">
-            Categories
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform duration-200" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor" id="mobile-categories-arrow">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          
-          <div class="hidden mt-2 space-y-2 pl-4" id="mobile-categories-list">
-            {categories.map(cat => (
-              <a href={cat.href} class="block text-gray-600 hover:text-orange-500 transition-colors duration-200 py-2">
-                {cat.name}
-              </a>
+        <div class="absolute left-0 top-full z-50 mt-3 hidden min-w-max rounded-2xl border border-white/50 bg-white/90 shadow-card backdrop-blur-xl"
+          id="desktop-dropdown-container">
+          <ul class="w-60 p-2">
+            {categories.map((cat) => (
+              <li>
+                <a href={cat.href}
+                  class="block rounded-xl px-4 py-2.5 text-slate-600 transition-colors hover:bg-brand-orange/10 hover:text-brand-deep">
+                  {cat.name}
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
+    </div>
 
-      <!-- Mobile CTA -->
-      <div class="border-t pt-6">
-        <a onclick="window.location.href='https://devlevelup-dashboard.vercel.app/signup'"
-          class="block w-full text-center bg-orange-500 cursor-pointer text-white px-6 py-3 rounded-2xl hover:bg-orange-600 transition-colors duration-200 font-medium">
-          Sign Up
-        </a>
+    <!-- Desktop CTA -->
+    <div class="hidden lg:block">
+      <a href={signupUrl} class="nav-cta group">
+        Sign up
+        <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="z-50 flex h-6 w-6 flex-col items-center justify-center gap-1 lg:hidden" id="mobile-menu-btn" aria-label="Open menu">
+      <span class="h-0.5 w-5 bg-ink transition-all duration-300" id="line1"></span>
+      <span class="h-0.5 w-5 bg-ink transition-all duration-300" id="line2"></span>
+      <span class="h-0.5 w-5 bg-ink transition-all duration-300" id="line3"></span>
+    </button>
+
+    <!-- Mobile Overlay -->
+    <div class="fixed inset-0 z-30 hidden bg-ink/50 backdrop-blur-sm lg:hidden" id="mobile-overlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="fixed right-0 top-0 z-50 h-full w-80 max-w-sm translate-x-full bg-cream shadow-xl transition-transform duration-300 lg:hidden" id="mobile-menu">
+      <div class="p-6 pt-20">
+        <div class="mb-8 space-y-2">
+          <a href="/" class="block rounded-lg px-2 py-2 text-lg text-slate-700 transition-colors hover:bg-brand-orange/10 hover:text-brand-deep">Home</a>
+          <a href="/about" class="block rounded-lg px-2 py-2 text-lg text-slate-700 transition-colors hover:bg-brand-orange/10 hover:text-brand-deep">About</a>
+
+          <div class="border-t border-slate-200 pt-3">
+            <button class="flex w-full items-center justify-between rounded-lg px-2 py-2 text-lg text-slate-700 transition-colors hover:text-brand-deep" id="mobile-categories-btn">
+              Categories
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-200" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" id="mobile-categories-arrow">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div class="mt-1 hidden space-y-1 pl-3" id="mobile-categories-list">
+              {categories.map((cat) => (
+                <a href={cat.href} class="block rounded-lg px-2 py-2 text-slate-600 transition-colors hover:text-brand-deep">
+                  {cat.name}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-200 pt-6">
+          <a href={signupUrl} class="nav-cta w-full justify-center">Sign up</a>
+        </div>
       </div>
     </div>
-  </div>
-</nav>
+  </nav>
+</div>
+
+<style>
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #F97316, #EA580C);
+    padding: 0.55rem 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    box-shadow: 0 8px 24px -10px rgba(234, 88, 12, 0.6);
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+  .nav-cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+
+  /* scrolled state — set via JS */
+  #site-nav.scrolled {
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 12px 40px -18px rgba(15, 17, 22, 0.25);
+    border-color: rgba(249, 115, 22, 0.18);
+  }
+</style>
 
 <script>
-  // Desktop dropdown functionality
+  // Sticky nav: add shadow / stronger blur after scrolling
+  const nav = document.getElementById("site-nav");
+  const onScroll = () => {
+    if (!nav) return;
+    if (window.scrollY > 16) nav.classList.add("scrolled");
+    else nav.classList.remove("scrolled");
+  };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  // Desktop dropdown
   const desktopDropdown = document.getElementById("desktop-dropdown");
   const desktopDropdownContainer = document.getElementById("desktop-dropdown-container");
   const desktopDropdownArrow = document.getElementById("desktop-dropdown-arrow");
 
-  if (desktopDropdown && desktopDropdownContainer) {
-    let timeout;
-
-    desktopDropdown.addEventListener("mouseenter", () => {
+  if (desktopDropdown && desktopDropdownContainer && desktopDropdownArrow) {
+    let timeout: ReturnType<typeof setTimeout>;
+    const open = () => {
       clearTimeout(timeout);
       desktopDropdownContainer.classList.remove("hidden");
       desktopDropdownArrow.style.transform = "rotate(180deg)";
-    });
-
-    desktopDropdown.addEventListener("mouseleave", () => {
+    };
+    const close = () => {
       timeout = setTimeout(() => {
         desktopDropdownContainer.classList.add("hidden");
         desktopDropdownArrow.style.transform = "rotate(0deg)";
       }, 150);
-    });
-
-    desktopDropdownContainer.addEventListener("mouseenter", () => {
-      clearTimeout(timeout);
-    });
-
-    desktopDropdownContainer.addEventListener("mouseleave", () => {
-      timeout = setTimeout(() => {
-        desktopDropdownContainer.classList.add("hidden");
-        desktopDropdownArrow.style.transform = "rotate(0deg)";
-      }, 150);
-    });
+    };
+    desktopDropdown.addEventListener("mouseenter", open);
+    desktopDropdown.addEventListener("mouseleave", close);
+    desktopDropdownContainer.addEventListener("mouseenter", () => clearTimeout(timeout));
+    desktopDropdownContainer.addEventListener("mouseleave", close);
   }
 
-  // Mobile menu functionality
+  // Mobile menu
   const mobileMenuBtn = document.getElementById("mobile-menu-btn");
   const mobileMenu = document.getElementById("mobile-menu");
   const mobileOverlay = document.getElementById("mobile-overlay");
@@ -155,14 +175,13 @@ const categories = [
   let isMobileMenuOpen = false;
 
   function toggleMobileMenu() {
+    if (!mobileMenu || !mobileOverlay || !line1 || !line2 || !line3) return;
     isMobileMenuOpen = !isMobileMenuOpen;
-    
+
     if (isMobileMenuOpen) {
       mobileMenu.classList.remove("translate-x-full");
       mobileOverlay.classList.remove("hidden");
       document.body.style.overflow = "hidden";
-      
-      // Animate hamburger to X
       line1.style.transform = "rotate(45deg) translateY(4px)";
       line2.style.opacity = "0";
       line3.style.transform = "rotate(-45deg) translateY(-4px)";
@@ -170,8 +189,6 @@ const categories = [
       mobileMenu.classList.add("translate-x-full");
       mobileOverlay.classList.add("hidden");
       document.body.style.overflow = "auto";
-      
-      // Animate X back to hamburger
       line1.style.transform = "rotate(0deg) translateY(0px)";
       line2.style.opacity = "1";
       line3.style.transform = "rotate(0deg) translateY(0px)";
@@ -181,16 +198,15 @@ const categories = [
   mobileMenuBtn?.addEventListener("click", toggleMobileMenu);
   mobileOverlay?.addEventListener("click", toggleMobileMenu);
 
-  // Mobile categories dropdown
+  // Mobile categories accordion
   const mobileCategoriesBtn = document.getElementById("mobile-categories-btn");
   const mobileCategoriesList = document.getElementById("mobile-categories-list");
   const mobileCategoriesArrow = document.getElementById("mobile-categories-arrow");
 
   let isMobileCategoriesOpen = false;
-
   mobileCategoriesBtn?.addEventListener("click", () => {
+    if (!mobileCategoriesList || !mobileCategoriesArrow) return;
     isMobileCategoriesOpen = !isMobileCategoriesOpen;
-    
     if (isMobileCategoriesOpen) {
       mobileCategoriesList.classList.remove("hidden");
       mobileCategoriesArrow.style.transform = "rotate(180deg)";
@@ -200,20 +216,15 @@ const categories = [
     }
   });
 
-  // Close mobile menu when clicking on links
-  const mobileMenuLinks = document.querySelectorAll('#mobile-menu a[href]');
-  mobileMenuLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      if (isMobileMenuOpen) {
-        toggleMobileMenu();
-      }
+  // Close mobile menu when a link is clicked
+  document.querySelectorAll("#mobile-menu a[href]").forEach((link) => {
+    link.addEventListener("click", () => {
+      if (isMobileMenuOpen) toggleMobileMenu();
     });
   });
 
-  // Handle window resize
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 1024 && isMobileMenuOpen) {
-      toggleMobileMenu();
-    }
+  // Reset on resize to desktop
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 1024 && isMobileMenuOpen) toggleMobileMenu();
   });
 </script>

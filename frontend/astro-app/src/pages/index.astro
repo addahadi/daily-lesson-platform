@@ -5,144 +5,406 @@ import Navbar from "../components/Navbar.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const platformName = "DevLevelUp";
+const signupUrl = "https://devlevelup-dashboard.vercel.app/signup";
 
+// ---- Stats bar (edit these to your real numbers) ----
+const stats = [
+  { value: 120, suffix: "+", label: "Interactive lessons" },
+  { value: 7, suffix: "", label: "Learning tracks" },
+  { value: 15, suffix: "k+", label: "XP earned by learners" },
+  { value: 4.9, suffix: "", label: "Average rating", decimals: 1 },
+];
+
+// ---- Why DevLevelUp ----
 const features = [
   {
-    title: "Gamified Learning",
+    title: "Gamified learning",
     description:
-      "Earn XP, unlock achievements, and keep your streak alive while leveling up your coding skills.",
-    icon: `<svg class="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="#F97316" stroke-width="2" viewBox="0 0 24 24">
-             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-             <circle cx="12" cy="12" r="10" stroke="#374151" stroke-width="2" />
-           </svg>`,
+      "Earn XP, unlock achievements, and keep your streak alive while you level up real coding skills.",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.2l1-5.8L3.5 9.2l5.9-.9z"/></svg>`,
   },
   {
-    title: "Track Your Progress",
+    title: "Track your progress",
     description:
-      "See your learning journey with detailed progress tracking and personalized growth insights.",
-    icon: `<svg class="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="#F97316" stroke-width="2" viewBox="0 0 24 24">
-             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18" />
-             <path stroke-linecap="round" stroke-linejoin="round" d="M7 13l3 3 7-7" />
-           </svg>`,
+      "See your journey with detailed progress tracking and personalized insights that show what to learn next.",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 14l3 3 7-8"/></svg>`,
   },
   {
-    title: "Learn lessons",
-    description: "Engage with interactive lessons and solve coding challenges",
-    icon: `<svg class="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="#F97316" stroke-width="2" viewBox="0 0 24 24">
-             <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l9 4.5v11L12 22l-9-4.5v-11z" />
-           </svg>`,
+    title: "Learn by doing",
+    description:
+      "Engage with bite-sized lessons and solve real coding challenges instead of just watching videos.",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l-3 3 3 3M16 9l3 3-3 3M13.5 5l-3 14"/></svg>`,
   },
   {
-    title: "Write Notes",
+    title: "Keep your notes",
     description:
-      "Take notes, jot down ideas, and keep track of your learning in one place.",
-    icon: `<svg class="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="#F97316" stroke-width="2" viewBox="0 0 24 24">
-             <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5V4H2v16h5" />
-             <circle cx="12" cy="10" r="3" />
-           </svg>`,
+      "Jot down ideas, save snippets, and keep your learning in one place you can come back to anytime.",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 4h11l3 3v13H5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 9h8M8 13h8M8 17h5"/></svg>`,
   },
 ];
 
-const featuredCourses = await getFeaturedCourses();
+// ---- How it works ----
+const steps = [
+  {
+    n: "01",
+    title: "Pick your track",
+    description:
+      "Choose from frontend, backend, mobile, AI and more. Start where you are — beginner or pro.",
+  },
+  {
+    n: "02",
+    title: "Learn a little every day",
+    description:
+      "Short, focused lessons and quizzes that fit around your life. Practice as you go, not after.",
+  },
+  {
+    n: "03",
+    title: "Earn XP & level up",
+    description:
+      "Build streaks, unlock achievements, and watch your skills — and your profile — grow over time.",
+  },
+];
+
+// ---- Categories ----
+const categories = [
+  { name: "Frontend", slug: "frontend", from: "#F97316", to: "#FB923C", icon: `<path d="M4 5h16v14H4z"/><path d="M4 9h16"/>` },
+  { name: "Backend", slug: "backend", from: "#EA580C", to: "#F59E0B", icon: `<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/>` },
+  { name: "Mobile Development", slug: "mobile-development", from: "#F59E0B", to: "#FBBF24", icon: `<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>` },
+  { name: "Data Science & AI", slug: "data-science-ai", from: "#FB923C", to: "#F97316", icon: `<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/>` },
+  { name: "DevOps & Cloud", slug: "devops-cloud", from: "#F97316", to: "#FDBA74", icon: `<path d="M7 18a4 4 0 010-8 5 5 0 019.6-1.3A3.5 3.5 0 1117 18z"/>` },
+  { name: "Cybersecurity", slug: "cybersecurity", from: "#EA580C", to: "#FB923C", icon: `<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l1.8 1.8L15 10"/>` },
+  { name: "Game Development", slug: "game-development", from: "#F59E0B", to: "#F97316", icon: `<rect x="3" y="8" width="18" height="9" rx="4"/><path d="M8 11v3M6.5 12.5h3M15 12h.01M17.5 13.5h.01"/>` },
+];
+
+// ---- Testimonials ----
+const testimonials = [
+  {
+    quote:
+      "The daily lessons kept me consistent for the first time. My streak hit 40 days and I finally understand backend routing.",
+    name: "Sara M.",
+    role: "Junior Backend Dev",
+    tone: "#F97316",
+  },
+  {
+    quote:
+      "XP and achievements sound gimmicky until they actually make you show up. I learned React here and landed my first internship.",
+    name: "Youssef K.",
+    role: "Frontend Intern",
+    tone: "#EA580C",
+  },
+  {
+    quote:
+      "Bite-sized and practical. I fit a lesson into my commute every morning and my problem-solving got noticeably sharper.",
+    name: "Lina D.",
+    role: "CS Student",
+    tone: "#F59E0B",
+  },
+];
+
+// ---- Featured courses (graceful fallback if the API is unreachable) ----
+const fetched = await getFeaturedCourses();
+const featuredCourses =
+  fetched && fetched.length
+    ? fetched
+    : [
+        { title: "Modern JavaScript", description: "Master the language that powers the web — from fundamentals to async patterns.", slug: "frontend", img_url: "" },
+        { title: "APIs with Node.js", description: "Design, build and secure real REST APIs you can put on your resume.", slug: "backend", img_url: "" },
+        { title: "Intro to Machine Learning", description: "Understand the core ideas behind AI with hands-on, approachable projects.", slug: "data-science-ai", img_url: "" },
+      ];
 ---
 
 <BaseLayout>
   <Navbar />
 
-  <!-- Hero Section -->
-  <section class="flex flex-col-reverse lg:flex-row items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 xl:py-20">
-    <!-- Left: Text content -->
-    <div class="w-full lg:w-1/2 max-w-xl text-center lg:text-left mt-8 lg:mt-0">
-      <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight">
-        Level Up Your <span class="text-orange-500">Developer Skills</span>
-      </h1>
-      <p class="mt-4 sm:mt-6 text-gray-600 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
-        {platformName} helps you grow as a developer through interactive lessons, quizzes, and hands-on projects. Track your progress, earn XP, and reach new levels in your coding journey.
-      </p>
+  <!-- ================= HERO ================= -->
+  <section class="relative overflow-hidden">
+    <canvas id="hero-canvas" class="pointer-events-none absolute inset-0 h-full w-full"></canvas>
+    <div class="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-brand-glow/30 blur-3xl"></div>
+    <div class="pointer-events-none absolute top-40 -right-16 h-80 w-80 rounded-full bg-brand-amber/20 blur-3xl"></div>
 
-      <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:justify-center lg:justify-start">
-        <a
-          onclick="window.location.href='https://devlevelup-dashboard.vercel.app/signup'"
-          class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-orange-500 text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-lg hover:shadow-xl"
-        >
-          Get Started
-        </a>
+    <div class="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:py-24">
+      <!-- Left: copy -->
+      <div class="reveal text-center lg:text-left">
+        <span class="inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-white/70 px-4 py-1.5 font-mono text-xs font-medium tracking-wide text-brand-deep backdrop-blur">
+          <span class="h-2 w-2 animate-pulseGlow rounded-full bg-brand-orange"></span>
+          // learn by doing, every day
+        </span>
+
+        <h1 class="mt-6 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink sm:text-5xl xl:text-6xl">
+          Level up your
+          <span class="gradient-text">developer skills</span>,
+          one lesson a day.
+        </h1>
+
+        <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg lg:mx-0">
+          {platformName} turns learning to code into a habit. Interactive lessons, real challenges,
+          XP and streaks — so you actually finish what you start.
+        </p>
+
+        <div class="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+          <a href={signupUrl} class="btn-primary group w-full sm:w-auto">
+            Start learning free
+            <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#courses" class="btn-ghost w-full sm:w-auto">Browse courses</a>
+        </div>
+
+        <div class="mt-8 flex items-center justify-center gap-6 text-sm text-slate-500 lg:justify-start">
+          <div class="flex items-center gap-2"><span class="text-brand-orange">★★★★★</span> 4.9 average</div>
+          <div class="hidden h-4 w-px bg-slate-300 sm:block"></div>
+          <div class="hidden sm:block">No credit card needed</div>
+        </div>
+      </div>
+
+      <!-- Right: floating gamified badges -->
+      <div class="reveal relative mx-auto h-[340px] w-full max-w-md sm:h-[420px]">
+        <div class="absolute left-1/2 top-6 w-64 -translate-x-1/2 animate-floaty rounded-2xl border border-white/60 bg-white/80 p-5 shadow-card backdrop-blur">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-xs text-slate-500">LEVEL 12</span>
+            <span class="rounded-full bg-brand-orange/10 px-2 py-0.5 font-mono text-xs font-semibold text-brand-deep">+50 XP</span>
+          </div>
+          <div class="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+            <div class="h-full w-3/4 rounded-full bg-gradient-to-r from-brand-orange to-brand-amber"></div>
+          </div>
+          <div class="mt-2 text-xs text-slate-500">720 / 1000 XP to next level</div>
+        </div>
+
+        <div class="animate-floatySlow absolute left-2 top-44 flex items-center gap-2 rounded-xl border border-white/60 bg-white/85 px-4 py-3 shadow-card backdrop-blur">
+          <span class="text-2xl">🔥</span>
+          <div>
+            <div class="font-display text-lg font-bold leading-none text-ink">14</div>
+            <div class="font-mono text-[10px] uppercase tracking-wide text-slate-500">day streak</div>
+          </div>
+        </div>
+
+        <div class="animate-floaty absolute bottom-8 right-1 flex items-center gap-3 rounded-xl border border-white/60 bg-white/85 px-4 py-3 shadow-card backdrop-blur">
+          <span class="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-brand-orange to-brand-deep text-white">🏆</span>
+          <div>
+            <div class="text-sm font-semibold text-ink">Achievement unlocked</div>
+            <div class="text-xs text-slate-500">Finished “JS Basics”</div>
+          </div>
+        </div>
+
+        <div class="animate-pulseGlow absolute left-1/2 top-1/2 -z-10 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-glow/25 blur-2xl"></div>
       </div>
     </div>
 
-    <!-- Right: Image -->
-    <div class="w-full lg:w-1/2 flex justify-center lg:justify-end">
-      <img
-        src="/hero_illustration.svg"
-        alt="Learning Illustration"
-        class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
-      />
+    <div class="relative flex justify-center pb-6">
+      <span class="animate-bob font-mono text-xs text-slate-400">scroll ↓</span>
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="py-12 sm:py-16 lg:py-20 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12 lg:mb-16">
-        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
-          Why Learn with {platformName}?
+  <!-- ================= STATS ================= -->
+  <section class="border-y border-brand-orange/10 bg-white/60">
+    <div class="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-10 sm:px-6 lg:grid-cols-4 lg:px-8">
+      {stats.map((s) => (
+        <div class="reveal text-center">
+          <div
+            class="counter font-display text-3xl font-extrabold text-ink sm:text-4xl"
+            data-target={s.value}
+            data-suffix={s.suffix}
+            data-decimals={s.decimals ?? 0}
+          >0{s.suffix}</div>
+          <div class="mt-1 text-xs text-slate-500 sm:text-sm">{s.label}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ================= WHY / FEATURES ================= -->
+  <section class="py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <span class="font-mono text-xs font-medium uppercase tracking-widest text-brand-deep">Why {platformName}</span>
+        <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          Learning that actually sticks
         </h2>
-        <p class="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
-          Learn smarter with gamified challenges — gain XP, build streaks, and see your skills grow with every lesson.
+        <p class="mt-4 text-slate-600">
+          Gamified challenges keep you motivated. Real practice makes it stick. Here's what you get.
         </p>
       </div>
 
-      <!-- Features Grid -->
-      <div class="grid gap-6 sm:gap-8 lg:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {features.map((feature) => (
-          <div class="p-6 sm:p-8 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
-            <div class="mb-4 sm:mb-6 flex justify-center items-center">
-              <span set:html={feature.icon}></span>
-            </div>
-            <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
-              {feature.title}
-            </h3>
-            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
-              {feature.description}
-            </p>
+      <div class="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {features.map((f, i) => (
+          <div class="reveal feature-card group" style={`transition-delay:${i * 80}ms`}>
+            <div class="feature-icon" set:html={f.icon}></div>
+            <h3 class="mt-5 font-display text-lg font-semibold text-ink">{f.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600">{f.description}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- Courses Section -->
-  <section class="py-12 sm:py-16 lg:py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12 lg:mb-16">
-        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
-          Explore Our Courses
+  <!-- ================= HOW IT WORKS ================= -->
+  <section class="bg-white/60 py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <span class="font-mono text-xs font-medium uppercase tracking-widest text-brand-deep">How it works</span>
+        <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          Three steps to your next level
         </h2>
-        <p class="text-gray-600 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto">
-          Learn by building — each course is packed with interactive lessons and quizzes to help you reinforce your knowledge.
+      </div>
+
+      <div class="relative mt-16 grid grid-cols-1 gap-10 md:grid-cols-3">
+        <div class="pointer-events-none absolute left-0 right-0 top-8 hidden h-px bg-gradient-to-r from-transparent via-brand-orange/40 to-transparent md:block"></div>
+        {steps.map((step) => (
+          <div class="reveal relative text-center">
+            <div class="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-brand-orange/20 bg-cream font-display text-xl font-extrabold text-brand-deep shadow-card">
+              {step.n}
+            </div>
+            <h3 class="mt-6 font-display text-xl font-semibold text-ink">{step.title}</h3>
+            <p class="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-slate-600">{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GAMIFICATION SHOWCASE ================= -->
+  <section class="py-20 sm:py-24">
+    <div class="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <div class="reveal">
+        <span class="font-mono text-xs font-medium uppercase tracking-widest text-brand-deep">Stay motivated</span>
+        <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          Progress you can feel
+        </h2>
+        <p class="mt-4 text-slate-600">
+          Every lesson rewards you. Watch your XP climb, protect your streak, and collect achievements
+          that prove how far you've come.
+        </p>
+        <ul class="mt-6 space-y-3">
+          {[
+            "Earn XP for finishing lessons and quizzes",
+            "Build daily streaks that keep you consistent",
+            "Unlock achievement badges as you grow",
+            "Level up a profile that tracks real skills",
+          ].map((item) => (
+            <li class="flex items-start gap-3 text-slate-700">
+              <span class="mt-0.5 grid h-5 w-5 flex-none place-items-center rounded-full bg-brand-orange/15 text-brand-deep">
+                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <a href={signupUrl} class="btn-primary group mt-8 inline-flex">
+          Create your profile
+          <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+
+      <!-- Mock dashboard card -->
+      <div class="reveal relative">
+        <div class="absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-tr from-brand-orange/20 via-brand-amber/10 to-transparent blur-2xl"></div>
+        <div class="rounded-3xl border border-white/70 bg-white/85 p-6 shadow-lift backdrop-blur">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-brand-orange to-brand-deep font-display text-lg font-bold text-white">12</span>
+              <div>
+                <div class="text-sm font-semibold text-ink">Your level</div>
+                <div class="font-mono text-xs text-slate-500">Full-Stack Track</div>
+              </div>
+            </div>
+            <span class="flex items-center gap-1 rounded-full bg-brand-orange/10 px-3 py-1 text-sm font-semibold text-brand-deep">🔥 14</span>
+          </div>
+
+          <div class="mt-6">
+            <div class="mb-2 flex justify-between font-mono text-xs text-slate-500">
+              <span>XP progress</span><span>720 / 1000</span>
+            </div>
+            <div class="h-3 w-full overflow-hidden rounded-full bg-slate-100">
+              <div class="relative h-full w-[72%] rounded-full bg-gradient-to-r from-brand-orange to-brand-amber">
+                <span class="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/50 to-transparent"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-3 gap-3">
+            {["🏆","⚡","🎯","🧠","🚀","💎"].map((b, i) => (
+              <div class={`grid aspect-square place-items-center rounded-xl border text-xl ${i < 4 ? "border-brand-orange/20 bg-cream" : "border-slate-200 bg-slate-50 opacity-40"}`}>{b}</div>
+            ))}
+          </div>
+          <div class="mt-4 text-center font-mono text-[11px] text-slate-400">4 of 6 achievements unlocked</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CATEGORIES ================= -->
+  <section class="bg-white/60 py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <span class="font-mono text-xs font-medium uppercase tracking-widest text-brand-deep">Tracks</span>
+        <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          Pick a path that fits your goals
+        </h2>
+      </div>
+
+      <div class="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {categories.map((cat, i) => (
+          <a
+            href={`/courses/${cat.slug}`}
+            class="reveal group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
+            style={`transition-delay:${i * 50}ms`}
+          >
+            <span
+              class="grid h-12 w-12 place-items-center rounded-xl text-white shadow-md"
+              style={`background:linear-gradient(135deg, ${cat.from}, ${cat.to})`}
+            >
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={cat.icon}></svg>
+            </span>
+            <h3 class="mt-4 font-display text-base font-semibold text-ink group-hover:text-brand-deep">{cat.name}</h3>
+            <span class="mt-2 inline-flex items-center gap-1 font-mono text-xs text-slate-500">
+              Explore
+              <svg class="h-3 w-3 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </a>
+        ))}
+        <a href="/courses/frontend" class="reveal group grid place-items-center rounded-2xl border border-dashed border-brand-orange/40 bg-cream p-5 text-center transition-all hover:-translate-y-1 hover:border-brand-orange">
+          <span class="font-display text-sm font-semibold text-brand-deep">View all tracks →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FEATURED COURSES ================= -->
+  <section id="courses" class="scroll-mt-20 py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <span class="font-mono text-xs font-medium uppercase tracking-widest text-brand-deep">Featured</span>
+        <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          Start with a popular course
+        </h2>
+        <p class="mt-4 text-slate-600">
+          Each course is packed with interactive lessons and quizzes to help you reinforce what you learn.
         </p>
       </div>
 
-      <div class="grid gap-6 sm:gap-8 lg:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {featuredCourses?.map((featuredCourse) => (
+      <div class="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {featuredCourses?.map((course, i) => (
           <a
-            href={`courses/${featuredCourse.slug}`}
-            class="group block rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 bg-white"
+            href={`courses/${course.slug}`}
+            class="reveal group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift"
+            style={`transition-delay:${i * 70}ms`}
           >
-            <div class="overflow-hidden">
-              <img
-                src={featuredCourse.img_url}
-                alt={featuredCourse.title}
-                class="w-full h-40 sm:h-48 md:h-52 object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+            <div class="relative h-44 overflow-hidden">
+              {course.img_url ? (
+                <img src={course.img_url} alt={course.title} class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              ) : (
+                <div class="grid h-full w-full place-items-center bg-gradient-to-br from-brand-orange to-brand-deep">
+                  <span class="font-display text-4xl font-extrabold text-white/90">{course.title.charAt(0)}</span>
+                </div>
+              )}
+              <span class="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 font-mono text-[11px] font-medium text-brand-deep backdrop-blur">Course</span>
             </div>
-            <div class="p-4 sm:p-6">
-              <h3 class="text-lg sm:text-xl font-semibold text-gray-900 group-hover:text-orange-500 transition-colors duration-200 mb-2 sm:mb-3">
-                {featuredCourse.title}
-              </h3>
-              <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
-                {featuredCourse.description}
-              </p>
+            <div class="flex flex-1 flex-col p-6">
+              <h3 class="font-display text-lg font-semibold text-ink transition-colors group-hover:text-brand-deep">{course.title}</h3>
+              <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{course.description}</p>
+              <span class="mt-4 inline-flex items-center gap-1 font-mono text-xs font-medium text-brand-deep">
+                Start course
+                <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
             </div>
           </a>
         ))}
@@ -150,6 +412,327 @@ const featuredCourses = await getFeaturedCourses();
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- ================= TESTIMONIALS ================= -->
+  <section class="bg-white/60 py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <span class="font-mono text-xs font-medium uppercase tracking-widest text-brand-deep">Loved by learners</span>
+        <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          Developers who kept showing up
+        </h2>
+      </div>
+
+      <div class="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+        {testimonials.map((t, i) => (
+          <figure class="reveal flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-card" style={`transition-delay:${i * 80}ms`}>
+            <div class="text-brand-orange">★★★★★</div>
+            <blockquote class="mt-4 flex-1 text-sm leading-relaxed text-slate-700">"{t.quote}"</blockquote>
+            <figcaption class="mt-6 flex items-center gap-3">
+              <span class="grid h-11 w-11 place-items-center rounded-full font-display text-sm font-bold text-white" style={`background:linear-gradient(135deg, ${t.tone}, #FBBF24)`}>
+                {t.name.charAt(0)}
+              </span>
+              <div>
+                <div class="text-sm font-semibold text-ink">{t.name}</div>
+                <div class="font-mono text-xs text-slate-500">{t.role}</div>
+              </div>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FINAL CTA ================= -->
+  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
+    <div class="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-ink px-6 py-16 text-center shadow-lift sm:px-12">
+      <div class="pointer-events-none absolute -top-20 left-1/4 h-64 w-64 rounded-full bg-brand-orange/30 blur-3xl"></div>
+      <div class="pointer-events-none absolute -bottom-24 right-1/4 h-64 w-64 rounded-full bg-brand-amber/20 blur-3xl"></div>
+      <div class="cta-grid pointer-events-none absolute inset-0 opacity-[0.15]"></div>
+
+      <div class="reveal relative">
+        <span class="font-mono text-xs font-medium uppercase tracking-widest text-brand-glow">Ready when you are</span>
+        <h2 class="mx-auto mt-4 max-w-2xl font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+          Your next level starts with one lesson.
+        </h2>
+        <p class="mx-auto mt-4 max-w-xl text-slate-300">
+          Join {platformName} and turn learning to code into a daily habit you'll actually keep.
+        </p>
+        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <a href={signupUrl} class="btn-primary group w-full sm:w-auto">
+            Start learning free
+            <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#courses" class="w-full rounded-xl border border-white/20 px-6 py-3 font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto">
+            See the courses
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <Footer />
 </BaseLayout>
+
+<!-- ================= GLOBAL STYLES ================= -->
+<style is:global>
+  html { scroll-behavior: smooth; }
+
+  .gradient-text {
+    background: linear-gradient(90deg, #EA580C, #F97316, #FBBF24, #F97316);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientShift 6s ease infinite;
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #F97316, #EA580C);
+    padding: 0.85rem 1.6rem; font-weight: 600; color: #fff;
+    box-shadow: 0 10px 30px -10px rgba(234, 88, 12, 0.6);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  }
+  .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 18px 40px -12px rgba(234, 88, 12, 0.7); }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 0.75rem; border: 1px solid rgba(234, 88, 12, 0.25);
+    background: rgba(255, 255, 255, 0.7); padding: 0.85rem 1.6rem;
+    font-weight: 600; color: #EA580C; backdrop-filter: blur(6px);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .btn-ghost:hover { background: #fff; transform: translateY(-2px); }
+
+  .feature-card {
+    position: relative; border-radius: 1rem; border: 1px solid rgb(226 232 240);
+    background: #fff; padding: 1.75rem;
+    box-shadow: 0 10px 40px -12px rgba(15, 17, 22, 0.10);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .feature-card:hover { transform: translateY(-6px); border-color: rgba(249,115,22,0.35); box-shadow: 0 24px 60px -20px rgba(234, 88, 12, 0.30); }
+  .feature-icon {
+    display: grid; place-items: center; height: 3rem; width: 3rem; border-radius: 0.9rem;
+    background: linear-gradient(135deg, rgba(249,115,22,0.14), rgba(251,191,36,0.14)); color: #EA580C;
+  }
+  .feature-icon svg { height: 1.6rem; width: 1.6rem; }
+
+  .cta-grid {
+    background-image:
+      linear-gradient(rgba(249,115,22,0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(249,115,22,0.4) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+  }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in-view { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+    .gradient-text, .animate-floaty, .animate-floatySlow, .animate-pulseGlow, .animate-shimmer, .animate-bob { animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+
+<!-- ================= SCROLL REVEAL + COUNTERS ================= -->
+<script>
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const revealEls = document.querySelectorAll(".reveal");
+  if (prefersReduced) {
+    revealEls.forEach((el) => el.classList.add("in-view"));
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    revealEls.forEach((el) => io.observe(el));
+  }
+
+  const counters = document.querySelectorAll<HTMLElement>(".counter");
+  const runCounter = (el: HTMLElement) => {
+    const target = parseFloat(el.dataset.target || "0");
+    const suffix = el.dataset.suffix || "";
+    const decimals = parseInt(el.dataset.decimals || "0", 10);
+    const duration = 1400;
+    const start = performance.now();
+    const step = (now: number) => {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = target.toFixed(decimals) + suffix;
+    };
+    requestAnimationFrame(step);
+  };
+
+  if (prefersReduced) {
+    counters.forEach((el) => {
+      const target = parseFloat(el.dataset.target || "0");
+      const decimals = parseInt(el.dataset.decimals || "0", 10);
+      el.textContent = target.toFixed(decimals) + (el.dataset.suffix || "");
+    });
+  } else {
+    const cio = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            runCounter(entry.target as HTMLElement);
+            cio.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+    counters.forEach((el) => cio.observe(el));
+  }
+</script>
+
+<!-- ================= THREE.JS HERO BACKGROUND ================= -->
+<script>
+  import * as THREE from "three";
+
+  const canvas = document.getElementById("hero-canvas") as HTMLCanvasElement | null;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (canvas && !reducedMotion) {
+    const parent = canvas.parentElement as HTMLElement;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
+    camera.position.z = 16;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const key = new THREE.DirectionalLight(0xffa94d, 1.4);
+    key.position.set(5, 6, 8);
+    scene.add(key);
+    const fill = new THREE.PointLight(0xf97316, 1.2, 60);
+    fill.position.set(-8, -4, 6);
+    scene.add(fill);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const geoms = [
+      new THREE.IcosahedronGeometry(1.4, 0),
+      new THREE.OctahedronGeometry(1.5, 0),
+      new THREE.DodecahedronGeometry(1.3, 0),
+      new THREE.TetrahedronGeometry(1.6, 0),
+      new THREE.TorusGeometry(1.1, 0.4, 12, 30),
+    ];
+    const palette = [0xf97316, 0xea580c, 0xfb923c, 0xfbbf24, 0xf59e0b];
+
+    type Shape = { mesh: THREE.Mesh; wire?: THREE.LineSegments; rx: number; ry: number; baseY: number; floatOffset: number; floatAmp: number };
+    const shapes: Shape[] = [];
+    const COUNT = 7;
+
+    for (let i = 0; i < COUNT; i++) {
+      const geo = geoms[i % geoms.length];
+      const color = palette[i % palette.length];
+      const mat = new THREE.MeshStandardMaterial({
+        color, metalness: 0.3, roughness: 0.35, flatShading: true, transparent: true, opacity: 0.92,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      const s = 0.5 + Math.random() * 0.9;
+      mesh.scale.setScalar(s);
+      const baseY = (Math.random() - 0.5) * 12;
+      mesh.position.set((Math.random() - 0.5) * 22, baseY, (Math.random() - 0.5) * 8 - 2);
+      mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+      group.add(mesh);
+
+      let wire: THREE.LineSegments | undefined;
+      if (i % 3 === 0) {
+        const wireMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 });
+        wire = new THREE.LineSegments(new THREE.WireframeGeometry(geo), wireMat);
+        wire.scale.setScalar(s * 1.02);
+        wire.position.copy(mesh.position);
+        group.add(wire);
+      }
+
+      shapes.push({
+        mesh, wire,
+        rx: 0.1 + Math.random() * 0.25,
+        ry: 0.1 + Math.random() * 0.25,
+        baseY,
+        floatOffset: Math.random() * Math.PI * 2,
+        floatAmp: 0.4 + Math.random() * 0.5,
+      });
+    }
+
+    const particleCount = 500;
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 40;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 24;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 20 - 4;
+    }
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const pMat = new THREE.PointsMaterial({ color: 0xf97316, size: 0.08, transparent: true, opacity: 0.5 });
+    const particles = new THREE.Points(pGeo, pMat);
+    scene.add(particles);
+
+    let targetX = 0, targetY = 0, curX = 0, curY = 0;
+    window.addEventListener("pointermove", (e) => {
+      targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+      targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    const resize = () => {
+      const w = parent.clientWidth || window.innerWidth;
+      const h = parent.clientHeight || 600;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    let visible = true;
+    let running = false;
+    const clock = new THREE.Clock();
+
+    const loop = () => {
+      if (!visible) { running = false; return; }
+      const t = clock.getElapsedTime();
+
+      shapes.forEach((s) => {
+        s.mesh.rotation.x += s.rx * 0.01;
+        s.mesh.rotation.y += s.ry * 0.013;
+        s.mesh.position.y = s.baseY + Math.sin(t + s.floatOffset) * s.floatAmp;
+        if (s.wire) { s.wire.rotation.copy(s.mesh.rotation); s.wire.position.copy(s.mesh.position); }
+      });
+
+      curX += (targetX - curX) * 0.04;
+      curY += (targetY - curY) * 0.04;
+      group.rotation.y = curX * 0.3;
+      group.rotation.x = curY * 0.2;
+      particles.rotation.y = t * 0.02;
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(loop);
+    };
+
+    const start = () => { if (!running) { running = true; loop(); } };
+
+    new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting;
+      if (visible) start();
+    }, { threshold: 0 }).observe(parent);
+
+    start();
+  }
+</script>
