@@ -3,7 +3,7 @@ const postgres = require("postgres");
 let sql;
 
 if (!global._sql) {
-  const connectionString = process.env.SUPABASE_DB_URL;
+  const connectionString = process.env.DATABASE_URL;
 
   global._sql = postgres(connectionString, {
     max: 10, // Maximum connections in pool
